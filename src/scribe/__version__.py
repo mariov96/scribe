@@ -1,8 +1,8 @@
 """Version information for Scribe."""
 
-VERSION = (2, 0, 0, "alpha")
+VERSION = (2, 0, 0)
 
-__version__ = "2.0.0-alpha"
+__version__ = "2.0.0"
 
 
 def get_version():

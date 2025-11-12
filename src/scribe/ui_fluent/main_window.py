@@ -616,6 +616,8 @@ def main():
     
     window = ScribeMainWindow()
     window.show()
+    window.raise_()  # Bring window to front
+    window.activateWindow()  # Give it focus
     
     sys.exit(app.exec())
 
