@@ -1,0 +1,41 @@
+version: 2.0.0
+profile_name: default
+audio:
+  device_id: null
+  sample_rate: 48000
+  channels: 1
+  silence_duration: 1200
+  min_duration: 800
+hotkey:
+  activation_key: alt+ctrl
+  recording_mode: voice_activity_detection
+whisper:
+  use_api: false
+  model: base
+  language: null
+  device: auto
+  compute_type: auto
+  temperature: 0.0
+  api_key: null
+  api_base_url: https://api.openai.com/v1
+ai_formatting:
+  enable_ai_cleanup: true
+  enable_voice_commands: true
+  enable_smart_punctuation: true
+  enable_number_conversion: true
+  phantom_recording_protection: true
+post_processing:
+  add_trailing_space: true
+  remove_trailing_period: false
+  remove_capitalization: false
+  writing_key_press_delay: 0.002
+  auto_insert_mode: paste
+plugins:
+  enabled_plugins:
+  - window_manager
+  plugin_config: {}
+ui:
+  theme: auto
+  show_system_tray: true
+  minimize_to_tray: false
+  start_minimized: false

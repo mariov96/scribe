@@ -1,188 +1,437 @@
-# <img src="./assets/ww-logo.png" alt="WhisperWriter icon" width="25" height="25"> WhisperWriter
+# 📜 SCRIBE
 
-![version](https://img.shields.io/badge/version-1.0.1-blue)
+**The Open Voice Platform**
 
-<p align="center">
-    <img src="./assets/ww-demo-image-02.gif" alt="WhisperWriter demo gif" width="340" height="136">
-</p>
+> Your personal memory keeper. From the community, for the community.
 
-**Update (2024-05-28):** I've just merged in a major rewrite of WhisperWriter! We've migrated from using `tkinter` to using `PyQt5` for the UI, added a new settings window for configuration, a new continuous recording mode, support for a local API, and more! Please be patient as I work out any bugs that may have been introduced in the process. If you encounter any problems, please [open a new issue](https://github.com/savbell/whisper-writer/issues)!
+[![Version](https://img.shields.io/badge/version-2.0.0--alpha-blue)](https://github.com/yourusername/scribe)
+[![Python](https://img.shields.io/badge/python-3.11+-blue)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
+[![Open Source](https://img.shields.io/badge/open%20source-forever-brightgreen)](https://github.com/yourusername/scribe)
 
-WhisperWriter is a small speech-to-text app that uses [OpenAI's Whisper model](https://openai.com/research/whisper) to auto-transcribe recordings from a user's microphone to the active window.
+---
 
-Once started, the script runs in the background and waits for a keyboard shortcut to be pressed (`ctrl+shift+space` by default). When the shortcut is pressed, the app starts recording from your microphone. There are four recording modes to choose from:
-- `continuous` (default): Recording will stop after a long enough pause in your speech. The app will transcribe the text and then start recording again. To stop listening, press the keyboard shortcut again.
-- `voice_activity_detection`: Recording will stop after a long enough pause in your speech. Recording will not start until the keyboard shortcut is pressed again.
-- `press_to_toggle` Recording will stop when the keyboard shortcut is pressed again. Recording will not start until the keyboard shortcut is pressed again.
-- `hold_to_record` Recording will continue until the keyboard shortcut is released. Recording will not start until the keyboard shortcut is held down again.
+## 🎯 **What is Scribe?**
 
-You can change the keyboard shortcut (`activation_key`) and recording mode in the [Configuration Options](#configuration-options). While recording and transcribing, a small status window is displayed that shows the current stage of the process (but this can be turned off). Once the transcription is complete, the transcribed text will be automatically written to the active window.
+Scribe is the **open-source successor to WhisperWriter** - evolved into a complete voice automation platform that learns from you.
 
-The transcription can either be done locally through the [faster-whisper Python package](https://github.com/SYSTRAN/faster-whisper/) or through a request to [OpenAI's API](https://platform.openai.com/docs/guides/speech-to-text). By default, the app will use a local model, but you can change this in the [Configuration Options](#configuration-options). If you choose to use the API, you will need to either provide your OpenAI API key or change the base URL endpoint.
+Think Siri/Alexa/Cortana, but:
+- 🔓 **Open source** - See exactly how it works, modify anything
+- 🏠 **Local-first** - Your data stays on your machine
+- 🧠 **Actually learns** - Gets smarter with every use
+- 🔌 **Infinitely extensible** - Community-driven plugins for everything
+- 💰 **Free forever** - No subscriptions, no corporate lock-in
 
-**Fun fact:** Almost the entirety of the initial release of the project was pair-programmed with [ChatGPT-4](https://openai.com/product/gpt-4) and [GitHub Copilot](https://github.com/features/copilot) using VS Code. Practically every line, including most of this README, was written by AI. After the initial prototype was finished, WhisperWriter was used to write a lot of the prompts as well!
+---
 
-## Getting Started
+## ✨ **What Makes Scribe Different?**
 
-### Prerequisites
-Before you can run this app, you'll need to have the following software installed:
+### 🗣️ **Voice-First Everything**
+```
+"Hey Scribe, switch to Chrome"           → Switches to Chrome
+"Scribe, pause Spotify"                  → Pauses music
+"Write this down: Meeting notes..."      → Transcribes to active window
+"Where did we talk about mortgage rates?" → Finds conversation + context
+```
 
-- Git: [https://git-scm.com/downloads](https://git-scm.com/downloads)
-- Python `3.11`: [https://www.python.org/downloads/](https://www.python.org/downloads/)
+### 🧠 **It Actually Remembers**
+- **Conversation Memory**: Recalls what you discussed and where
+- **Voice Profile Learning**: Adapts to your speech patterns, vocabulary, jargon
+- **Cross-Device Sync**: Learn on desktop, use on laptop - same intelligence
+- **Context Awareness**: Knows which app, URL, or file you were using
 
-If you want to run `faster-whisper` on your GPU, you'll also need to install the following NVIDIA libraries:
+### 📊 **Proves Its Value to YOU**
+```
+Your Scribe Value Report - This Month
 
-- [cuBLAS for CUDA 12](https://developer.nvidia.com/cublas)
-- [cuDNN 8 for CUDA 12](https://developer.nvidia.com/cudnn)
+Time Saved: 26.4 hours
+├─ Typing: 13.9 hours (45,382 words at speaking speed)
+├─ Context Switching: 10.4 hours (1,247 voice commands)
+└─ Searching: 2.1 hours (23 instant recalls)
 
-<details>
-<summary>More information on GPU execution</summary>
+💰 Value at your rate: $1,980
 
-The below was taken directly from the [`faster-whisper` README](https://github.com/SYSTRAN/faster-whisper?tab=readme-ov-file#gpu):
+Your Improvement:
+├─ Accuracy: 87% → 94% (+7%)
+├─ Speed: 145 WPM → 168 WPM (+16%)
+└─ Errors: -34%
+```
 
-**Note:** The latest versions of `ctranslate2` support CUDA 12 only. For CUDA 11, the current workaround is downgrading to the `3.24.0` version of `ctranslate2` (This can be done with `pip install --force-reinsall ctranslate2==3.24.0`).
+### 🔌 **Day 1 Extensions**
+- **Window Manager**: Control windows by voice
+- **Media Control**: Spotify, YouTube, system volume
+- **Memory Scribe**: Remember and recall conversations
+- **Sync Scribe**: Share learnings across devices
+- **+ Community Plugins**: Build your own!
 
-There are multiple ways to install the NVIDIA libraries mentioned above. The recommended way is described in the official NVIDIA documentation, but we also suggest other installation methods below.
+---
 
-#### Use Docker
+## 🚀 **Quick Start**
 
-The libraries (cuBLAS, cuDNN) are installed in these official NVIDIA CUDA Docker images: `nvidia/cuda:12.0.0-runtime-ubuntu20.04` or `nvidia/cuda:12.0.0-runtime-ubuntu22.04`.
+### **Prerequisites**
+- Python 3.11+
+- Windows 10/11 (Mac/Linux support coming)
+- Microphone
+- (Optional) API key for AI enhancement
 
-#### Install with `pip` (Linux only)
-
-On Linux these libraries can be installed with `pip`. Note that `LD_LIBRARY_PATH` must be set before launching Python.
-
+### **Installation**
 ```bash
-pip install nvidia-cublas-cu12 nvidia-cudnn-cu12
+# Clone the repository
+git clone https://github.com/yourusername/scribe.git
+cd scribe
 
-export LD_LIBRARY_PATH=`python3 -c 'import os; import nvidia.cublas.lib; import nvidia.cudnn.lib; print(os.path.dirname(nvidia.cublas.lib.__file__) + ":" + os.path.dirname(nvidia.cudnn.lib.__file__))'`
+# Install in development mode
+pip install -e .
+
+# Or use pip when released
+pip install scribe-voice
 ```
 
-**Note**: Version 9+ of `nvidia-cudnn-cu12` appears to cause issues due its reliance on cuDNN 9 (Faster-Whisper does not currently support cuDNN 9). Ensure your version of the Python package is for cuDNN 8.
+### **First Run**
+```bash
+# Launch Scribe (recommended - if installed)
+scribe
 
-#### Download the libraries from Purfview's repository (Windows & Linux)
-
-Purfview's [whisper-standalone-win](https://github.com/Purfview/whisper-standalone-win) provides the required NVIDIA libraries for Windows & Linux in a [single archive](https://github.com/Purfview/whisper-standalone-win/releases/tag/libs). Decompress the archive and place the libraries in a directory included in the `PATH`.
-
-</details>
-
-### Installation
-To set up and run the project, follow these steps:
-
-#### 1. Clone the repository:
-
-```
-git clone https://github.com/savbell/whisper-writer
-cd whisper-writer
+# Or run directly from source
+python scribe.py
 ```
 
-#### 2. Create a virtual environment and activate it:
+### **Setup Wizard**
+On first run, Scribe will:
+1. ✅ Check your Python environment
+2. ✅ Configure your microphone
+3. ✅ Set up your voice profile
+4. ✅ (Optional) Add your API key for AI features
+5. ✅ Choose your privacy/telemetry level
+6. ✅ Enable default plugins
 
+---
+
+## 🎮 **How to Use**
+
+### **Basic Transcription** (Classic Mode)
 ```
-python -m venv venv
-
-# For Linux and macOS:
-source venv/bin/activate
-
-# For Windows:
-venv\Scripts\activate
-```
-
-#### 3. Install the required packages:
-
-```
-pip install -r requirements.txt
-```
-
-#### 4. Run the Python code:
-
-```
-python run.py
+Press: Ctrl+Win (or configured hotkey)
+Speak: "Send an email to John about the project update..."
+Release: [Scribe types into active window]
 ```
 
-#### 5. Configure and start WhisperWriter:
-On first run, a Settings window should appear. Once configured and saved, another window will open. Press "Start" to activate the keyboard listener. Press the activation key (`ctrl+shift+space` by default) to start recording and transcribing to the active window.
+### **Voice Commands** (New!)
+```
+You: "Hey Scribe"
+Scribe: 🎤 Active
 
-### Configuration Options
+You: "Switch to Chrome"
+Scribe: ✓ Switched to Chrome
 
-WhisperWriter uses a configuration file to customize its behaviour. To set up the configuration, open the Settings window:
+You: "Pause Spotify"
+Scribe: ✓ Paused Spotify
 
-<p align="center">
-    <img src="./assets/ww-settings-demo.gif" alt="WhisperWriter Settings window demo gif" width="350" height="350">
-</p>
+You: "Thanks"
+Scribe: 💤 Sleeping
+```
 
-#### Model Options
-- `use_api`: Toggle to choose whether to use the OpenAI API or a local Whisper model for transcription. (Default: `false`)
-- `common`: Options common to both API and local models.
-  - `language`: The language code for the transcription in [ISO-639-1 format](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes). (Default: `null`)
-  - `temperature`: Controls the randomness of the transcription output. Lower values make the output more focused and deterministic. (Default: `0.0`)
-  - `initial_prompt`: A string used as an initial prompt to condition the transcription. More info: [OpenAI Prompting Guide](https://platform.openai.com/docs/guides/speech-to-text/prompting). (Default: `null`)
+### **Memory & Context** (Game Changer!)
+```
+[Monday - Browsing mortgage rates in Chrome]
+You: "Scribe, remember this page"
+Scribe: ✓ Noted
 
-- `api`: Configuration options for the OpenAI API. See the [OpenAI API documentation](https://platform.openai.com/docs/api-reference/audio/create?lang=python) for more information.
-  - `model`: The model to use for transcription. Currently, only `whisper-1` is available. (Default: `whisper-1`)
-  - `base_url`: The base URL for the API. Can be changed to use a local API endpoint, such as [LocalAI](https://localai.io/). (Default: `https://api.openai.com/v1`)
-  - `api_key`: Your API key for the OpenAI API. Required for non-local API usage. (Default: `null`)
+[Friday - Writing code in VS Code]
+You: "Scribe, where did we talk about mortgage rates?"
+Scribe: "On a Chrome page: 'Top 10 Mortgage Companies'.
+        Would you like me to open it?"
 
-- `local`: Configuration options for the local Whisper model.
-  - `model`: The model to use for transcription. The larger models provide better accuracy but are slower. See [available models and languages](https://github.com/openai/whisper?tab=readme-ov-file#available-models-and-languages). (Default: `base`)
-  - `device`: The device to run the local Whisper model on. Use `cuda` for NVIDIA GPUs, `cpu` for CPU-only processing, or `auto` to let the system automatically choose the best available device. (Default: `auto`)
-  - `compute_type`: The compute type to use for the local Whisper model. [More information on quantization here](https://opennmt.net/CTranslate2/quantization.html). (Default: `default`)
-  - `condition_on_previous_text`: Set to `true` to use the previously transcribed text as a prompt for the next transcription request. (Default: `true`)
-  - `vad_filter`: Set to `true` to use [a voice activity detection (VAD) filter](https://github.com/snakers4/silero-vad) to remove silence from the recording. (Default: `false`)
-  - `model_path`: The path to the local Whisper model. If not specified, the default model will be downloaded. (Default: `null`)
+You: "Yes"
+Scribe: ✓ [Opens exact page]
+```
 
-#### Recording Options
-- `activation_key`: The keyboard shortcut to activate the recording and transcribing process. Separate keys with a `+`. (Default: `ctrl+shift+space`)
-- `input_backend`: The input backend to use for detecting key presses. `auto` will try to use the best available backend. (Default: `auto`)
-- `recording_mode`: The recording mode to use. Options include `continuous` (auto-restart recording after pause in speech until activation key is pressed again), `voice_activity_detection` (stop recording after pause in speech), `press_to_toggle` (stop recording when activation key is pressed again), `hold_to_record` (stop recording when activation key is released). (Default: `continuous`)
-- `sound_device`: The numeric index of the sound device to use for recording. To find device numbers, run `python -m sounddevice`. (Default: `null`)
-- `sample_rate`: The sample rate in Hz to use for recording. (Default: `16000`)
-- `silence_duration`: The duration in milliseconds to wait for silence before stopping the recording. (Default: `900`)
-- `min_duration`: The minimum duration in milliseconds for a recording to be processed. Recordings shorter than this will be discarded. (Default: `100`)
+---
 
-#### Post-processing Options
-- `writing_key_press_delay`: The delay in seconds between each key press when writing the transcribed text. (Default: `0.005`)
-- `remove_trailing_period`: Set to `true` to remove the trailing period from the transcribed text. (Default: `false`)
-- `add_trailing_space`: Set to `true` to add a space to the end of the transcribed text. (Default: `true`)
-- `remove_capitalization`: Set to `true` to convert the transcribed text to lowercase. (Default: `false`)
-- `input_method`: The method to use for simulating keyboard input. (Default: `pynput`)
+## 🏗️ **Architecture**
 
-#### Miscellaneous Options
-- `print_to_terminal`: Set to `true` to print the script status and transcribed text to the terminal. (Default: `true`)
-- `hide_status_window`: Set to `true` to hide the status window during operation. (Default: `false`)
-- `noise_on_completion`: Set to `true` to play a noise after the transcription has been typed out. (Default: `false`)
+```
+scribe/
+├── src/scribe/
+│   ├── core/              # Transcription engine
+│   ├── plugins/           # Extension system
+│   │   ├── window_manager/    # Control windows
+│   │   ├── media_control/     # Control media playback
+│   │   ├── memory_scribe/     # Remember conversations
+│   │   └── sync_scribe/       # Multi-device sync
+│   ├── analytics/         # Value tracking & learning
+│   ├── ai/               # AI enhancement
+│   └── ui/               # User interface
+│
+├── data/                 # Your data (gitignored)
+│   ├── analytics/        # Voice profile, learnings
+│   ├── logs/            # Session logs
+│   ├── metrics/         # Performance data
+│   └── sessions/        # Conversation history
+│
+├── profiles/            # Multi-user support
+│   └── default/         # Your profile
+│
+└── plugins/             # Custom/community plugins
+```
 
-If any of the configuration options are invalid or not provided, the program will use the default values.
+---
 
-## Known Issues
+## 🔌 **Plugin System**
 
-You can see all reported issues and their current status in our [Issue Tracker](https://github.com/savbell/whisper-writer/issues). If you encounter a problem, please [open a new issue](https://github.com/savbell/whisper-writer/issues/new) with a detailed description and reproduction steps, if possible.
+### **Day 1 Plugins**
 
-## Roadmap
-Below are features I am planning to add in the near future:
-- [x] Restructuring configuration options to reduce redundancy
-- [x] Update to use the latest version of the OpenAI API
-- [ ] Additional post-processing options:
-  - [ ] Simple word replacement (e.g. "gonna" -> "going to" or "smiley face" -> "😊")
-  - [ ] Using GPT for instructional post-processing
-- [x] Updating GUI
-- [ ] Creating standalone executable file
+#### **1. Window Manager**
+```python
+Commands:
+- "switch to {app}"      → Activate application
+- "minimize"             → Minimize current window
+- "maximize"             → Maximize current window
+- "close window"         → Close current window
+```
 
-Below are features not currently planned:
-- [ ] Pipelining audio files
+#### **2. Media Control**
+```python
+Commands:
+- "pause [app]"          → Pause playback
+- "play / resume"        → Resume playback
+- "next song / skip"     → Next track
+- "volume up / down"     → Adjust volume
+- "mute"                 → Mute audio
+```
 
-Implemented features can be found in the [CHANGELOG](CHANGELOG.md).
+#### **3. Memory Scribe** (Opt-in)
+```python
+Commands:
+- "remember this"                    → Save current context
+- "where did we talk about {topic}"  → Search conversations
+- "open that page"                   → Restore context
+- "forget that"                      → Delete memory
+```
 
-## Contributing
+#### **4. Sync Scribe**
+```python
+Commands:
+- "sync to {device}"     → Sync voice profile
+- "export profile"       → Backup profile
+- "import profile"       → Load profile from file
+```
 
-Contributions are welcome! I created this project for my own personal use and didn't expect it to get much attention, so I haven't put much effort into testing or making it easy for others to contribute. If you have ideas or suggestions, feel free to [open a pull request](https://github.com/savbell/whisper-writer/pulls) or [create a new issue](https://github.com/savbell/whisper-writer/issues/new). I'll do my best to review and respond as time allows.
+### **Build Your Own Plugin**
+```python
+# plugins/my_plugin/plugin.py
+from scribe.plugins.base import BasePlugin
 
-## Credits
+class MyPlugin(BasePlugin):
+    name = "my_plugin"
+    version = "1.0.0"
 
-- [OpenAI](https://openai.com/) for creating the Whisper model and providing the API. Plus [ChatGPT](https://chat.openai.com/), which was used to write a lot of the initial code for this project.
-- [Guillaume Klein](https://github.com/guillaumekln) for creating the [faster-whisper Python package](https://github.com/SYSTRAN/faster-whisper).
-- All of our [contributors](https://github.com/savbell/whisper-writer/graphs/contributors)!
+    def commands(self):
+        return [
+            {
+                'patterns': ['do something cool'],
+                'handler': self.do_something,
+                'examples': ['do something cool']
+            }
+        ]
 
-## License
+    def do_something(self):
+        return "Something cool done!"
+```
 
-This project is licensed under the GNU General Public License. See the [LICENSE](LICENSE) file for details.
+See [Plugin Development Guide](docs/PLUGIN_DEVELOPMENT.md) for details.
+
+---
+
+## 📊 **Analytics & Privacy**
+
+### **Your Data, Your Choice**
+
+Scribe tracks analytics to prove its value **to you**:
+- ✅ Time saved
+- ✅ Accuracy improvements
+- ✅ Command usage
+- ✅ Feature effectiveness
+
+**All data stays local by default.** Optionally share anonymized usage patterns to help improve Scribe.
+
+### **Privacy Levels**
+1. **None** (Default): No data shared, complete privacy
+2. **Errors Only**: Share crash reports to fix bugs
+3. **Usage Insights**: Share feature usage counts (no content)
+4. **Full Collaboration**: Detailed patterns (still no conversation content)
+
+**You can view/export/delete all collected data anytime.**
+
+---
+
+## 🌍 **Multi-Device Sync**
+
+Share your voice learnings across devices:
+
+### **Option 1: Local Network** (Most Private)
+```bash
+# On Desktop
+scribe sync start
+
+# On Laptop (same WiFi)
+scribe sync discover
+scribe sync connect desktop
+```
+
+### **Option 2: Manual Export** (Maximum Privacy)
+```bash
+# Desktop
+scribe profile export --output my-profile.scribe
+
+# Laptop
+scribe profile import my-profile.scribe
+```
+
+### **Option 3: Cloud Sync** (Convenient, E2E Encrypted)
+```bash
+# Enable cloud sync (you control the keys)
+scribe sync enable-cloud
+```
+
+**Your API keys are NEVER synced** - each device keeps its own.
+
+---
+
+## 🎯 **Roadmap**
+
+### **v2.0 - The Foundation** (Current)
+- ✅ Voice transcription with AI cleanup
+- ✅ Plugin architecture
+- ✅ Window Manager plugin
+- ✅ Media Control plugin
+- ✅ Value analytics
+- ⏳ Wake word detection ("Hey Scribe")
+- ⏳ Memory Scribe plugin
+- ⏳ Multi-device sync
+
+### **v2.5 - Intelligence** (Q1 2025)
+- Voice macros (multi-step workflows)
+- Context awareness (knows what app you're in)
+- Proactive suggestions
+- Custom wake words
+
+### **v3.0 - Platform** (Q2 2025)
+- Cross-platform (macOS, Linux)
+- Plugin marketplace
+- Team profiles
+- Advanced automation
+
+---
+
+## 🤝 **Contributing**
+
+Scribe is **open source and community-driven**. We welcome:
+- 🐛 Bug reports
+- 💡 Feature requests
+- 🔌 Plugin development
+- 📚 Documentation improvements
+- 🧪 Testing and feedback
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+### **Why Contribute?**
+- Build features **you** want to use
+- Learn voice AI, plugin architecture, Python packaging
+- Join a community building the open alternative to corporate voice assistants
+- Your contributions help everyone
+
+---
+
+## 📖 **Documentation**
+
+- [User Guide](docs/USER_GUIDE.md) - Complete usage documentation
+- [Plugin Development](docs/PLUGIN_DEVELOPMENT.md) - Build your own plugins
+- [Analytics Guide](docs/ANALYTICS.md) - Understanding your metrics
+- [Team Deployment](docs/DEPLOYMENT.md) - Set up for your team
+- [Development Guide](docs/DEVELOPMENT.md) - Contributing to Scribe
+
+---
+
+## 💬 **Community**
+
+- **GitHub Issues**: [Report bugs, request features](https://github.com/yourusername/scribe/issues)
+- **Discussions**: [Ask questions, share plugins](https://github.com/yourusername/scribe/discussions)
+- **Discord**: [Join the community](#) (coming soon)
+
+---
+
+## 📜 **License**
+
+Scribe is licensed under the [Apache License 2.0](LICENSE).
+
+**TL;DR**: Free to use, modify, distribute. No warranties. Attribution appreciated.
+
+---
+
+## 🙏 **Acknowledgments**
+
+Scribe builds on the foundation of:
+- [WhisperWriter](https://github.com/savbell/whisper-writer) by savbell - The original inspiration
+- [faster-whisper](https://github.com/SYSTRAN/faster-whisper) - Fast, accurate transcription
+- [OpenAI Whisper](https://github.com/openai/whisper) - Revolutionary speech recognition
+- The open-source community - For making this possible
+
+---
+
+## 🚀 **Why Scribe Exists**
+
+**Corporate voice assistants:**
+- Lock you into their ecosystem
+- Send your data to their servers
+- Prioritize their business goals
+- Cost money or show ads
+
+**Scribe:**
+- Works with any tool you use
+- Keeps your data local
+- Prioritizes YOUR productivity
+- Free forever, no strings attached
+
+**People deserve better than corporate software.** Scribe is the community's answer.
+
+---
+
+## 📈 **Project Status**
+
+**Current Version**: v2.0.0-alpha
+**Status**: Active development
+**Stability**: Alpha (usable, but expect changes)
+**Looking for**: Early adopters, contributors, feedback
+
+---
+
+## ❓ **FAQ**
+
+**Q: Is this really free?**
+A: Yes. Open source, MIT licensed, no hidden costs.
+
+**Q: Does it work offline?**
+A: Yes! Local models work completely offline. AI features require API keys.
+
+**Q: Can I use my own API keys?**
+A: Absolutely. Your keys, your control.
+
+**Q: What about my privacy?**
+A: All data local by default. You control what (if anything) gets shared.
+
+**Q: Can I build commercial products with this?**
+A: Yes! The license allows commercial use.
+
+**Q: Why not just use Whisper directly?**
+A: Scribe adds: learning, plugins, analytics, multi-device sync, UI, and community.
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the community, for the community**
+
+[⭐ Star on GitHub](https://github.com/yourusername/scribe) • [📖 Read the Docs](docs/) • [🐛 Report Bug](https://github.com/yourusername/scribe/issues) • [💡 Request Feature](https://github.com/yourusername/scribe/issues)
+
+</div>

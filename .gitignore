@@ -129,4 +129,30 @@ dmypy.json
 .pyre/
 
 # Configuration files
+src/config.yaml
 config.yaml
+profiles/
+
+# Scribe data files (all runtime data)
+data/
+*.log
+*_metrics_*.json
+*_session_summary_*.json
+complete_ai_monitor_*.log
+complete_metrics_*.json
+complete_session_summary_*.json
+ai_enhancement_report_*.json
+
+# User profiles and API keys
+.env
+profiles/*/
+!profiles/.gitkeep
+
+# Model cache
+models/
+*.bin
+
+# Keep example files
+!.env.example
+!config/*.yaml
+!profiles/default/.gitkeep
