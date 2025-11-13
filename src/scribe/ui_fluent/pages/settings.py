@@ -2,6 +2,7 @@
 Settings Page - Configuration interface with ConfigManager integration
 """
 
+import logging
 from PyQt5.QtCore import pyqtSignal as Signal, QThread, QEvent, Qt
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QProgressBar, QApplication, QDialog
 from PyQt5.QtGui import QKeyEvent
@@ -13,6 +14,8 @@ from qfluentwidgets import (
 )
 
 from scribe.config import ConfigManager
+
+logger = logging.getLogger(__name__)
 
 
 class SettingsPage(ScrollArea):
