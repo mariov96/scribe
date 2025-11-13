@@ -41,6 +41,7 @@ class SettingsPage(ScrollArea):
         audio_card = self._create_audio_settings()
         whisper_card = self._create_whisper_settings()
         appearance_card = self._create_appearance_settings()
+        logs_card = self._create_logs_settings()
         
         # Save button
         save_btn = PrimaryPushButton(FIF.SAVE, "Save Configuration")
@@ -59,6 +60,9 @@ class SettingsPage(ScrollArea):
         self.vBoxLayout.addSpacing(12)
         self.vBoxLayout.addWidget(SubtitleLabel("Appearance"))
         self.vBoxLayout.addWidget(appearance_card)
+        self.vBoxLayout.addSpacing(12)
+        self.vBoxLayout.addWidget(SubtitleLabel("Logs & Debugging"))
+        self.vBoxLayout.addWidget(logs_card)
         self.vBoxLayout.addSpacing(20)
         
         save_row = QHBoxLayout()
@@ -534,6 +538,193 @@ class SettingsPage(ScrollArea):
         layout.addLayout(theme_row)
         
         return card
+    
+    def _create_logs_settings(self):
+        """Create logs and debugging section."""
+        from pathlib import Path
+        
+        card = CardWidget()
+        layout = QVBoxLayout(card)
+        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(12)
+        
+        # Info text
+        info_label = BodyLabel("View application logs for debugging and troubleshooting")
+        info_label.setStyleSheet("color: #888;")
+        layout.addWidget(info_label)
+        
+        # Log file path display
+        log_dir = Path.home() / ".scribe" / "logs"
+        log_file = log_dir / "scribe.log"
+        
+        path_row = QHBoxLayout()
+        path_label = BodyLabel("Log file:")
+        path_value = BodyLabel(str(log_file))
+        path_value.setStyleSheet("color: #4CAF50; font-family: monospace;")
+        path_row.addWidget(path_label)
+        path_row.addWidget(path_value, 1)
+        layout.addLayout(path_row)
+        
+        # Buttons row
+        buttons_row = QHBoxLayout()
+        
+        view_log_btn = PrimaryPushButton(FIF.DOCUMENT, "View Log")
+        view_log_btn.setFixedWidth(140)
+        view_log_btn.clicked.connect(self._view_log)
+        
+        open_folder_btn = PushButton(FIF.FOLDER, "Open Log Folder")
+        open_folder_btn.setFixedWidth(160)
+        open_folder_btn.clicked.connect(self._open_log_folder)
+        
+        clear_log_btn = PushButton(FIF.DELETE, "Clear Log")
+        clear_log_btn.setFixedWidth(130)
+        clear_log_btn.clicked.connect(self._clear_log)
+        
+        buttons_row.addWidget(view_log_btn)
+        buttons_row.addSpacing(8)
+        buttons_row.addWidget(open_folder_btn)
+        buttons_row.addSpacing(8)
+        buttons_row.addWidget(clear_log_btn)
+        buttons_row.addStretch()
+        
+        layout.addLayout(buttons_row)
+        
+        return card
+    
+    def _view_log(self):
+        """Open log viewer dialog."""
+        from pathlib import Path
+        from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QDialogButtonBox
+        from PyQt5.QtCore import Qt
+        
+        log_file = Path.home() / ".scribe" / "logs" / "scribe.log"
+        
+        # Check if log file exists
+        if not log_file.exists():
+            InfoBar.warning(
+                title="No log file",
+                content="Log file doesn't exist yet. Start using Scribe to generate logs.",
+                parent=self,
+                duration=3000,
+                position=InfoBarPosition.TOP_RIGHT
+            )
+            return
+        
+        # Create dialog
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Scribe Log Viewer")
+        dialog.setMinimumSize(900, 600)
+        
+        layout = QVBoxLayout(dialog)
+        layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Text edit for log content
+        text_edit = QTextEdit()
+        text_edit.setReadOnly(True)
+        text_edit.setStyleSheet("""
+            QTextEdit {
+                background-color: #1E1E1E;
+                color: #D4D4D4;
+                font-family: 'Consolas', 'Monaco', monospace;
+                font-size: 11px;
+                border: none;
+                padding: 10px;
+            }
+        """)
+        
+        # Load log content (last 5000 lines to avoid memory issues)
+        try:
+            with open(log_file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+                # Show last 5000 lines
+                content = ''.join(lines[-5000:])
+                text_edit.setPlainText(content)
+                
+                # Scroll to bottom
+                text_edit.verticalScrollBar().setValue(
+                    text_edit.verticalScrollBar().maximum()
+                )
+        except Exception as e:
+            text_edit.setPlainText(f"Error reading log file: {e}")
+        
+        layout.addWidget(text_edit)
+        
+        # Button box
+        button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Close)
+        button_box.rejected.connect(dialog.reject)
+        layout.addWidget(button_box)
+        
+        dialog.exec_()
+    
+    def _open_log_folder(self):
+        """Open the logs folder in file explorer."""
+        from pathlib import Path
+        import subprocess
+        import sys
+        
+        log_dir = Path.home() / ".scribe" / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        
+        try:
+            if sys.platform == 'win32':
+                subprocess.run(['explorer', str(log_dir)])
+            elif sys.platform == 'darwin':
+                subprocess.run(['open', str(log_dir)])
+            else:
+                subprocess.run(['xdg-open', str(log_dir)])
+            
+            InfoBar.success(
+                title="Folder opened",
+                content=f"Log folder: {log_dir}",
+                parent=self,
+                duration=2000,
+                position=InfoBarPosition.TOP_RIGHT
+            )
+        except Exception as e:
+            InfoBar.error(
+                title="Error",
+                content=f"Failed to open folder: {e}",
+                parent=self,
+                duration=3000,
+                position=InfoBarPosition.TOP_RIGHT
+            )
+    
+    def _clear_log(self):
+        """Clear the log file after confirmation."""
+        from pathlib import Path
+        
+        # Confirmation dialog
+        result = MessageBox(
+            "Clear Log File?",
+            "This will delete all log entries. This action cannot be undone.",
+            self
+        ).exec_()
+        
+        if result != MessageBox.StandardButton.Yes:
+            return
+        
+        log_file = Path.home() / ".scribe" / "logs" / "scribe.log"
+        
+        try:
+            if log_file.exists():
+                log_file.unlink()
+                log_file.touch()  # Create empty file
+            
+            InfoBar.success(
+                title="Log cleared",
+                content="Log file has been cleared successfully",
+                parent=self,
+                duration=2000,
+                position=InfoBarPosition.TOP_RIGHT
+            )
+        except Exception as e:
+            InfoBar.error(
+                title="Error",
+                content=f"Failed to clear log: {e}",
+                parent=self,
+                duration=3000,
+                position=InfoBarPosition.TOP_RIGHT
+            )
     
     def _load_from_config(self):
         """Load settings from ConfigManager into UI."""

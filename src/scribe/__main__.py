@@ -7,11 +7,21 @@ Modern voice automation platform - Clean break from WhisperWriter.
 import sys
 import os
 import logging
+from pathlib import Path
 
-# Setup logging
+# Setup logging - both file and console
+log_dir = Path.home() / ".scribe" / "logs"
+log_dir.mkdir(parents=True, exist_ok=True)
+log_file = log_dir / "scribe.log"
+
+# Configure root logger
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(log_file, mode='a', encoding='utf-8'),
+        logging.StreamHandler()  # Also log to console
+    ]
 )
 
 from scribe.__version__ import __version__
