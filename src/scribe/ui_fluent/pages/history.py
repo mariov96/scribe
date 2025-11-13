@@ -13,12 +13,87 @@ from PyQt5.QtWidgets import (
 from qfluentwidgets import (
     ScrollArea, TitleLabel, SubtitleLabel, BodyLabel, StrongBodyLabel,
     CardWidget, PrimaryPushButton, PushButton, LineEdit,
-    ComboBox, FluentIcon as FIF, InfoBar, InfoBarPosition, RatingWidget, TextEdit
+    ComboBox, FluentIcon as FIF, InfoBar, InfoBarPosition, TextEdit
 )
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
+
+
+class StarRatingWidget(QWidget):
+    """Simple 5-star rating widget"""
+    
+    valueChanged = Signal()
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._value = 0
+        
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(4)
+        
+        self.star_buttons = []
+        for i in range(5):
+            btn = QPushButton("☆")
+            btn.setFixedSize(30, 30)
+            btn.setStyleSheet("""
+                QPushButton {
+                    border: none;
+                    background: transparent;
+                    font-size: 20px;
+                    color: #666;
+                }
+                QPushButton:hover {
+                    color: #FFD700;
+                }
+            """)
+            btn.clicked.connect(lambda checked, idx=i+1: self.setValue(idx))
+            self.star_buttons.append(btn)
+            layout.addWidget(btn)
+        
+        layout.addStretch()
+    
+    def setValue(self, value: int):
+        """Set rating value (0-5)"""
+        self._value = max(0, min(5, value))
+        self._update_stars()
+        self.valueChanged.emit()
+    
+    def value(self) -> int:
+        """Get current rating value"""
+        return self._value
+    
+    def _update_stars(self):
+        """Update star display"""
+        for i, btn in enumerate(self.star_buttons):
+            if i < self._value:
+                btn.setText("★")
+                btn.setStyleSheet("""
+                    QPushButton {
+                        border: none;
+                        background: transparent;
+                        font-size: 20px;
+                        color: #FFD700;
+                    }
+                    QPushButton:hover {
+                        color: #FFA500;
+                    }
+                """)
+            else:
+                btn.setText("☆")
+                btn.setStyleSheet("""
+                    QPushButton {
+                        border: none;
+                        background: transparent;
+                        font-size: 20px;
+                        color: #666;
+                    }
+                    QPushButton:hover {
+                        color: #FFD700;
+                    }
+                """)
 
 
 class HistoryPage(QWidget):
@@ -184,7 +259,7 @@ class HistoryPage(QWidget):
         rating_header.addWidget(rating_label)
         rating_header.addStretch()
         
-        self.rating_widget = RatingWidget()
+        self.rating_widget = StarRatingWidget()
         self.rating_widget.valueChanged.connect(self._on_rating_changed)
         
         self.feedback_input = TextEdit()
