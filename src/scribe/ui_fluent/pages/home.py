@@ -146,14 +146,19 @@ class HomePage(ScrollArea):
 
         # Header with test button inline
         header_row = QHBoxLayout()
-        desc = BodyLabel("🧪 Test Formatting:")
+        desc = BodyLabel("🧪 Test AI Formatting:")
         desc.setStyleSheet("font-weight: bold; font-size: 11px;")
+        
+        # Add description subtitle
+        info_label = BodyLabel("Preview how AI formats your speech (numbers, punctuation, capitalization)")
+        info_label.setStyleSheet("font-size: 9px; color: #888;")
         
         test_btn = PrimaryPushButton(FIF.PLAY, "Test")
         test_btn.clicked.connect(self._on_test_transcribe)
         test_btn.setFixedSize(80, 28)
         
         header_row.addWidget(desc)
+        header_row.addWidget(info_label)
         header_row.addStretch()
         header_row.addWidget(test_btn)
 

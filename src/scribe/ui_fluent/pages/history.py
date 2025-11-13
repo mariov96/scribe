@@ -691,6 +691,8 @@ class HistoryPage(QWidget):
         
         # Save to disk
         self._save_history()
+        
+        logger.info(f"Added transcription to history: {entry.get('text', '')[:30]}... (Total: {len(self._history_items)} items)")
     
     def _save_history(self):
         """Save history to JSON file"""
@@ -737,10 +739,13 @@ class HistoryPage(QWidget):
             self._history_items = []
     
     def _refresh_list(self, filtered_items: Optional[List[Dict[str, Any]]] = None):
-        """Refresh the list widget with current or filtered items"""
+        """Refresh the history list widget with current items"""
         # Safety check - widgets might not be created yet
-        if not hasattr(self, 'history_list') or not self.history_list:
+        if not hasattr(self, 'history_list') or self.history_list is None:
+            logger.warning("Cannot refresh list - history_list widget not initialized")
             return
+        
+        logger.debug(f"Refreshing history list with {len(self._history_items)} items")
         
         self.history_list.clear()
         
@@ -752,8 +757,10 @@ class HistoryPage(QWidget):
             item.setData(Qt.ItemDataRole.UserRole, entry)
             self.history_list.addItem(item)
         
+        logger.debug(f"Added {len(items_to_show)} items to list widget")
+        
         # Update count
-        if hasattr(self, 'count_label') and self.count_label:
+        if hasattr(self, 'count_label') and self.count_label is not None:
             self.count_label.setText(f"{len(items_to_show)} recordings")
     
     def _format_list_item(self, entry: Dict[str, Any]) -> str:

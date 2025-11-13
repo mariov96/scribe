@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(timeout:*)",
+      "Bash(dir:*)",
+      "Bash(del:*)",
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(mv:*)",
+      "Bash(grep:*)",
+      "Bash(where python)",
+      "Bash(requirements.txt)",
+      "Bash(tee:*)",
+      "Bash(pkill:*)",
+      "Bash(gh pr list:*)",
+      "Bash(taskkill:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
