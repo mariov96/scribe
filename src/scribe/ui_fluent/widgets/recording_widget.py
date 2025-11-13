@@ -165,38 +165,30 @@ class RecordingWidget(QWidget):
         self.hide()
     
     def _setup_ui(self):
-        """Setup the widget UI with waveform as center focus"""
-        self.setFixedSize(140, 50)  # Slightly larger: 140x50px for better waveform visibility
+        """Setup the widget UI - simplified without waveform"""
+        self.setFixedSize(140, 40)  # Smaller height without waveform
         
         # Main layout
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(8, 6, 8, 6)
-        layout.setSpacing(4)
+        layout = QHBoxLayout(self)
+        layout.setContentsMargins(10, 8, 10, 8)
+        layout.setSpacing(6)
         
-        # Waveform takes center stage - larger and more prominent
-        self.waveform = WaveformWidget(self)
-        self.waveform.setFixedHeight(30)  # Prominent waveform
-        
-        # Status row at bottom (compact)
-        status_row = QHBoxLayout()
-        status_row.setSpacing(4)
-        
+        # Status icon
         self.status_icon = QLabel("🔴")
-        self.status_icon.setStyleSheet("font-size: 12px; background: transparent;")
+        self.status_icon.setStyleSheet("font-size: 16px; background: transparent;")
         
+        # Status label
         self.status_label = QLabel("Recording")
-        self.status_label.setStyleSheet("font-size: 9px; font-weight: bold; color: #FFFFFF; background: transparent;")
+        self.status_label.setStyleSheet("font-size: 11px; font-weight: bold; color: #FFFFFF; background: transparent;")
         
+        # Timer label
         self.timer_label = QLabel("0.0s")
-        self.timer_label.setStyleSheet("font-size: 9px; color: #CCCCCC; background: transparent;")
+        self.timer_label.setStyleSheet("font-size: 10px; color: #CCCCCC; background: transparent;")
         
-        status_row.addWidget(self.status_icon)
-        status_row.addWidget(self.status_label)
-        status_row.addStretch()
-        status_row.addWidget(self.timer_label)
-        
-        layout.addWidget(self.waveform)
-        layout.addLayout(status_row)
+        layout.addWidget(self.status_icon)
+        layout.addWidget(self.status_label)
+        layout.addStretch()
+        layout.addWidget(self.timer_label)
         
         # Enhanced background with semi-transparent grey and border for readability
         self.setStyleSheet("""
@@ -216,11 +208,10 @@ class RecordingWidget(QWidget):
         # Update UI
         self.status_icon.setText("🔴")
         self.status_label.setText("Recording")
-        self.status_label.setStyleSheet("font-size: 9px; font-weight: bold; color: #FF5252; background: transparent;")
+        self.status_label.setStyleSheet("font-size: 11px; font-weight: bold; color: #FF5252; background: transparent;")
         self.timer_label.setText("0.0s")
         
-        # Start animations - check if not already running
-        self.waveform.start_recording()
+        # Start duration timer
         if not self.duration_timer.isActive():
             self.duration_timer.start()
         
@@ -239,11 +230,8 @@ class RecordingWidget(QWidget):
         # Update UI
         self.status_icon.setText("⚙️")
         self.status_label.setText("Processing")
-        self.status_label.setStyleSheet("font-size: 9px; font-weight: bold; color: #00BCD4; background: transparent;")
+        self.status_label.setStyleSheet("font-size: 11px; font-weight: bold; color: #00BCD4; background: transparent;")
         self.timer_label.setText(f"{self.recording_time:.1f}s")
-        
-        # Start transcribing animation
-        self.waveform.start_transcribing()
     
     def finish(self):
         """Finish and hide widget"""
@@ -253,8 +241,6 @@ class RecordingWidget(QWidget):
         # Stop timers safely
         if self.duration_timer.isActive():
             self.duration_timer.stop()
-        
-        self.waveform.stop()
         
         # Fade out
         self._fade_out()

@@ -279,10 +279,10 @@ class HistoryPage(QWidget):
         rating_container.setLayout(rating_row)
         rating_container.setStyleSheet("""
             QWidget {
-                background-color: #2A2A2A;
-                border: 1px solid #3F3F3F;
-                border-radius: 4px;
-                padding: 6px;
+                background-color: rgba(255, 255, 255, 0.03);
+                border: none;
+                border-radius: 6px;
+                padding: 8px;
             }
         """)
         
@@ -297,13 +297,15 @@ class HistoryPage(QWidget):
         
         self.before_text = QTextEdit()
         self.before_text.setReadOnly(True)
-        self.before_text.setFixedHeight(80)
+        self.before_text.setMinimumHeight(40)  # Minimum for short text
+        self.before_text.setMaximumHeight(150)  # Maximum for long text
         self.before_text.setPlaceholderText("Original transcription...")
         self.before_text.setStyleSheet("""
             QTextEdit {
-                background-color: #2A2A2A;
-                border: 1px solid #3F3F3F;
-                border-radius: 4px;
+                background-color: #1E1E1E;
+                border: none;
+                border-left: 3px solid #666;
+                border-radius: 2px;
                 padding: 8px;
                 font-size: 11px;
             }
@@ -311,13 +313,15 @@ class HistoryPage(QWidget):
         
         self.after_text = QTextEdit()
         self.after_text.setReadOnly(True)
-        self.after_text.setFixedHeight(80)
+        self.after_text.setMinimumHeight(40)  # Minimum for short text
+        self.after_text.setMaximumHeight(150)  # Maximum for long text
         self.after_text.setPlaceholderText("AI formatted text...")
         self.after_text.setStyleSheet("""
             QTextEdit {
-                background-color: #252525;
-                border: 1px solid #4CAF50;
-                border-radius: 4px;
+                background-color: #1E1E1E;
+                border: none;
+                border-left: 3px solid #4CAF50;
+                border-radius: 2px;
                 padding: 8px;
                 font-size: 11px;
             }
@@ -337,12 +341,15 @@ class HistoryPage(QWidget):
         
         self.text_display = QTextEdit()
         self.text_display.setReadOnly(True)
+        self.text_display.setMinimumHeight(60)  # Minimum for short text
+        self.text_display.setMaximumHeight(300)  # Maximum for long text
         self.text_display.setPlaceholderText("Select a recording to view transcription...")
         self.text_display.setStyleSheet("""
             QTextEdit {
-                background-color: #252525;
-                border: 1px solid #3F3F3F;
-                border-radius: 4px;
+                background-color: #1E1E1E;
+                border: none;
+                border-left: 3px solid #2196F3;
+                border-radius: 2px;
                 padding: 12px;
                 font-size: 13px;
                 line-height: 1.5;
@@ -374,26 +381,27 @@ class HistoryPage(QWidget):
         return panel
     
     def _create_metric_label(self, title: str, value: str) -> QWidget:
-        """Create a metric display widget"""
+        """Create a metric display widget with clean, minimal design"""
         widget = QWidget()
         layout = QVBoxLayout(widget)
-        layout.setContentsMargins(6, 4, 6, 4)  # Reduced padding
-        layout.setSpacing(1)  # Reduced spacing
+        layout.setContentsMargins(8, 6, 8, 6)
+        layout.setSpacing(2)
         
         title_label = BodyLabel(title)
-        title_label.setStyleSheet("font-size: 9px; color: #888;")  # Smaller font
+        title_label.setStyleSheet("font-size: 10px; color: #999;")
         
         value_label = StrongBodyLabel(value)
         value_label.setObjectName("value")
-        value_label.setStyleSheet("font-size: 11px; color: #FFF;")  # Smaller font
+        value_label.setStyleSheet("font-size: 12px; color: #FFF; font-weight: 500;")
         
         layout.addWidget(title_label)
         layout.addWidget(value_label)
         
+        # Clean minimal style - no borders, subtle background
         widget.setStyleSheet("""
             QWidget {
-                background-color: #2A2A2A;
-                border: 1px solid #3F3F3F;
+                background-color: transparent;
+                border: none;
                 border-radius: 4px;
             }
         """)
@@ -441,10 +449,11 @@ class HistoryPage(QWidget):
         used_plugin = entry.get("used_plugin")
         if used_plugin:
             self._update_metric_value(self.plugin_metric, used_plugin)
+            # Subtle green background for plugin used
             self.plugin_metric.setStyleSheet("""
                 QWidget {
-                    background-color: #2A4A2A;
-                    border: 1px solid #4CAF50;
+                    background-color: rgba(76, 175, 80, 0.15);
+                    border: none;
                     border-radius: 4px;
                 }
             """)
@@ -452,20 +461,21 @@ class HistoryPage(QWidget):
             self._update_metric_value(self.plugin_metric, "None")
             self.plugin_metric.setStyleSheet("""
                 QWidget {
-                    background-color: #2A2A2A;
-                    border: 1px solid #3F3F3F;
+                    background-color: transparent;
+                    border: none;
                     border-radius: 4px;
                 }
             """)
         
-        # AI formatting
+        # AI formatting - make it clear what blue means
         ai_formatted = entry.get("ai_formatted", False)
         if ai_formatted:
-            self._update_metric_value(self.ai_metric, "✓ Applied")
+            self._update_metric_value(self.ai_metric, "✓ Formatted")
+            # Subtle blue background indicates AI enhancement was applied
             self.ai_metric.setStyleSheet("""
                 QWidget {
-                    background-color: #2A3A4A;
-                    border: 1px solid #4A9EEA;
+                    background-color: rgba(33, 150, 243, 0.15);
+                    border: none;
                     border-radius: 4px;
                 }
             """)
@@ -476,15 +486,17 @@ class HistoryPage(QWidget):
             if raw_text and raw_text != final_text:
                 self.before_text.setPlainText(raw_text)
                 self.after_text.setPlainText(final_text)
+                self._resize_text_edit(self.before_text, raw_text)
+                self._resize_text_edit(self.after_text, final_text)
                 self.comparison_widget.setVisible(True)
             else:
                 self.comparison_widget.setVisible(False)
         else:
-            self._update_metric_value(self.ai_metric, "—")
+            self._update_metric_value(self.ai_metric, "Raw")
             self.ai_metric.setStyleSheet("""
                 QWidget {
-                    background-color: #2A2A2A;
-                    border: 1px solid #3F3F3F;
+                    background-color: transparent;
+                    border: none;
                     border-radius: 4px;
                 }
             """)
@@ -505,6 +517,7 @@ class HistoryPage(QWidget):
         # Update text display
         text = entry.get("text", "")
         self.text_display.setPlainText(text)
+        self._resize_text_edit(self.text_display, text)
         
         # Check if audio file exists
         audio_file = entry.get("audio_file")
@@ -548,6 +561,29 @@ class HistoryPage(QWidget):
             
             InfoBar.success(
                 title="Playing",
+    
+    def _resize_text_edit(self, text_edit: QTextEdit, text: str):
+        """Dynamically resize text edit based on content length"""
+        if not text:
+            text_edit.setFixedHeight(40)  # Minimum height for empty
+            return
+        
+        # Calculate required height based on content
+        doc = text_edit.document()
+        doc.setTextWidth(text_edit.viewport().width())
+        doc_height = doc.size().height()
+        
+        # Add padding and constrain to min/max
+        padding = 20
+        desired_height = int(doc_height + padding)
+        
+        # Get min/max from stylesheet or use defaults
+        min_height = text_edit.minimumHeight() or 40
+        max_height = text_edit.maximumHeight() or 300
+        
+        # Clamp to range
+        final_height = max(min_height, min(desired_height, max_height))
+        text_edit.setFixedHeight(final_height)
                 content="Opening recording in default audio player",
                 parent=self,
                 duration=2000,

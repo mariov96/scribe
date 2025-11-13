@@ -40,8 +40,8 @@ class StatusPopup(QWidget):
         )
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        # Compact but readable size for descriptive text
-        self.setFixedSize(240, 50)
+        # Wider to accommodate full error messages like "No speech detected"
+        self.setFixedSize(280, 50)
 
         # Layout
         layout = QHBoxLayout(self)

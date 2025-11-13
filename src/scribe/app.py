@@ -566,7 +566,8 @@ class ScribeApp(QObject):
         self.transcription_failed.emit(error_message)
 
         if self.status_popup:
-            self.status_popup.show_error(f"Error: {error_message[:30]}")
+            # Show full error message (status popup is now wider to accommodate)
+            self.status_popup.show_error(f"Error: {error_message}")
             QTimer.singleShot(2000, self.status_popup.close)
         
         self.is_transcribing = False
@@ -813,9 +814,14 @@ class ScribeApp(QObject):
             
             logger.debug(f"Copying transcription to clipboard: '{text[:50]}...'")
             pyperclip.copy(text)
+            
+            # Give window more time to activate and cursor to stabilize
+            time.sleep(0.2)
+            
             logger.debug("Simulating Ctrl+V...")
             pyautogui.hotkey('ctrl', 'v')
-            # Wait a moment for paste to complete
+            
+            # Wait for paste to complete
             time.sleep(0.15)
             logger.info("✅ Inserted text via clipboard paste (text remains in clipboard for re-paste)")
             return True
