@@ -44,7 +44,7 @@ class HomePage(ScrollArea):
         status_card = self._create_status_card()
         
         # Value metrics
-        metrics_flow = self._create_metrics()
+        self.metrics_container = self._create_metrics()
         
         # Test transcription area (moved down, optional)
         test_card = self._create_test_transcription()
@@ -52,10 +52,16 @@ class HomePage(ScrollArea):
         self.vBoxLayout.addWidget(header)
         self.vBoxLayout.addWidget(status_card)
         self.vBoxLayout.addSpacing(12)
-        self.vBoxLayout.addWidget(metrics_flow)
+        self.vBoxLayout.addWidget(self.metrics_container)
         self.vBoxLayout.addSpacing(8)
         self.vBoxLayout.addWidget(test_card)
         self.vBoxLayout.addStretch(1)
+        
+        # Store metric cards for updates
+        self.time_card = None
+        self.words_card = None
+        self.accuracy_card = None
+        self.commands_card = None
     
     def _create_status_card(self):
         """Create compact status card with prominent background"""
@@ -212,7 +218,7 @@ class HomePage(ScrollArea):
             accuracy_str = "0.0%"
             commands_str = "0"
         
-        time_card = ValueCard(
+        self.time_card = ValueCard(
             FIF.HISTORY,
             "Time Saved",
             time_saved_str,
@@ -220,7 +226,7 @@ class HomePage(ScrollArea):
             ""
         )
         
-        words_card = ValueCard(
+        self.words_card = ValueCard(
             FIF.PENCIL_INK,
             "Words Transcribed",
             words_str,
@@ -228,7 +234,7 @@ class HomePage(ScrollArea):
             ""
         )
         
-        accuracy_card = ValueCard(
+        self.accuracy_card = ValueCard(
             FIF.CERTIFICATE,
             "Accuracy",
             accuracy_str,
@@ -236,7 +242,7 @@ class HomePage(ScrollArea):
             ""
         )
         
-        commands_card = ValueCard(
+        self.commands_card = ValueCard(
             FIF.COMMAND_PROMPT,
             "Voice Commands",
             commands_str,
@@ -249,9 +255,41 @@ class HomePage(ScrollArea):
         layout = FlowLayout(container, needAni=False)  # Disable animation for better performance
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(16)
-        layout.addWidget(time_card)
-        layout.addWidget(words_card)
-        layout.addWidget(accuracy_card)
-        layout.addWidget(commands_card)
+        layout.addWidget(self.time_card)
+        layout.addWidget(self.words_card)
+        layout.addWidget(self.accuracy_card)
+        layout.addWidget(self.commands_card)
         
         return container
+    
+    def update_metrics(self):
+        """Update metric cards with latest data from ValueCalculator"""
+        if not self.value_calculator:
+            return
+            
+        summary = self.value_calculator.get_session_summary()
+        
+        # Update time saved
+        time_saved_seconds = summary.time_saved_vs_typing
+        hours = int(time_saved_seconds // 3600)
+        minutes = int((time_saved_seconds % 3600) // 60)
+        time_saved_str = f"{hours}h {minutes}m" if hours > 0 else f"{minutes}m"
+        
+        # Update words
+        words_str = f"{summary.total_words:,}"
+        
+        # Update accuracy
+        accuracy_str = f"{summary.accuracy_score * 100:.1f}%"
+        
+        # Update commands
+        commands_str = f"{summary.total_commands}"
+        
+        # Update the card values
+        if self.time_card:
+            self.time_card.valueLabel.setText(time_saved_str)
+        if self.words_card:
+            self.words_card.valueLabel.setText(words_str)
+        if self.accuracy_card:
+            self.accuracy_card.valueLabel.setText(accuracy_str)
+        if self.commands_card:
+            self.commands_card.valueLabel.setText(commands_str)

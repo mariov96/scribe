@@ -50,10 +50,11 @@ class PluginCard(CardWidget):
         
         # Footer
         footer_layout = QHBoxLayout()
-        if has_config:
-            self.config_btn = TransparentPushButton(FIF.SETTING, "Configure")
-            self.config_btn.clicked.connect(lambda: self.configureClicked.emit(self.plugin_id))
-            footer_layout.addWidget(self.config_btn)
+        # Configure button hidden for now - feature coming in future release
+        # if has_config:
+        #     self.config_btn = TransparentPushButton(FIF.SETTING, "Configure")
+        #     self.config_btn.clicked.connect(lambda: self.configureClicked.emit(self.plugin_id))
+        #     footer_layout.addWidget(self.config_btn)
         footer_layout.addStretch()
         
         # Status indicator

@@ -25,20 +25,21 @@ class InsightsPage(ScrollArea):
         
         self.vBoxLayout = QVBoxLayout(self.view)
         self.vBoxLayout.setContentsMargins(20, 20, 20, 20)
-        self.vBoxLayout.setSpacing(12)
+        self.vBoxLayout.setSpacing(8)  # Tighter spacing (was 12)
         
         # Title
         self.title = TitleLabel("💡 Insights")
-        self.subtitle = BodyLabel("Interesting patterns from your voice usage")
+        self.subtitle = BodyLabel("AI-powered insights based on your usage patterns • More usage = Better insights")
         is_dark = isDarkTheme()
         self.subtitle.setTextColor(get_secondary_color(is_dark), get_secondary_color(is_dark))
         
         self.vBoxLayout.addWidget(self.title)
         self.vBoxLayout.addWidget(self.subtitle)
-        self.vBoxLayout.addSpacing(8)
+        self.vBoxLayout.addSpacing(4)  # Reduced from 8
         
         # Insights container - will be regenerated dynamically
         self.insights_layout = QVBoxLayout()
+        self.insights_layout.setSpacing(8)  # Tighter spacing between cards
         self.vBoxLayout.addLayout(self.insights_layout)
         
         # Initial insights

@@ -1,14 +1,14 @@
 """
-History Page - View and manage transcription history
+History Page - View and manage transcription history with two-column layout
 """
 
 from PyQt5.QtCore import pyqtSignal as Signal, Qt, QDateTime
 from PyQt5.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-    QListWidget, QListWidgetItem, QPushButton
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSplitter,
+    QListWidget, QListWidgetItem, QPushButton, QTextEdit
 )
 from qfluentwidgets import (
-    ScrollArea, TitleLabel, SubtitleLabel, BodyLabel,
+    ScrollArea, TitleLabel, SubtitleLabel, BodyLabel, StrongBodyLabel,
     CardWidget, PrimaryPushButton, PushButton, LineEdit,
     ComboBox, FluentIcon as FIF, InfoBar, InfoBarPosition
 )
@@ -16,15 +16,15 @@ from typing import Dict, Any, List, Optional
 from datetime import datetime
 
 
-class HistoryPage(ScrollArea):
+class HistoryPage(QWidget):
     """
-    History page showing transcription history with metadata.
+    History page with two-column layout: 25% list, 75% details.
     
     Features:
-    - List of last 50-100 transcriptions
-    - Click to view full text
-    - Metadata: timestamp, app, duration, confidence
-    - Search and filter capabilities (future)
+    - Compact list of transcriptions on the left (25%)
+    - Full details panel on the right (75%)
+    - Click to view full text and metadata
+    - Search and filter capabilities
     """
     
     # Signals
@@ -34,204 +34,262 @@ class HistoryPage(ScrollArea):
         super().__init__(parent)
         self.setObjectName("HistoryPage")
         
-        self.view = QWidget()
-        self.setWidget(self.view)
-        self.setWidgetResizable(True)
-        
-        self.vBoxLayout = QVBoxLayout(self.view)
-        self.vBoxLayout.setContentsMargins(30, 30, 30, 30)
-        self.vBoxLayout.setSpacing(20)
-        
         # History data
         self._history_items: List[Dict[str, Any]] = []
         self._max_items = 100
+        self._selected_item = None
         
-        # UI Components
-        self._create_header()
-        self._create_stats_card()
-        self._create_search_filter()
-        self._create_history_list()
-        self._create_detail_view()
+        # Main layout
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(20, 20, 20, 20)
+        main_layout.setSpacing(12)
         
-        self.vBoxLayout.addStretch(1)
-    
-    def _create_header(self):
-        """Create page header"""
+        # Header
+        header_layout = QVBoxLayout()
         title = TitleLabel("Transcription History")
-        subtitle = BodyLabel("View and search your past transcriptions")
+        subtitle = BodyLabel("Click a recording to view details")
         subtitle.setStyleSheet("color: #808080; font-size: 12px;")
+        header_layout.addWidget(title)
+        header_layout.addWidget(subtitle)
+        header_layout.addSpacing(4)
         
-        self.vBoxLayout.addWidget(title)
-        self.vBoxLayout.addWidget(subtitle)
-        self.vBoxLayout.addSpacing(8)
-    
-    def _create_stats_card(self):
-        """Create quick stats card"""
-        card = CardWidget()
-        layout = QHBoxLayout(card)
-        layout.setContentsMargins(20, 16, 20, 16)
-        layout.setSpacing(32)
-        
-        # Total count
-        total_container = QVBoxLayout()
-        self.total_label = SubtitleLabel("0")
-        self.total_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        total_subtitle = BodyLabel("Total")
-        total_subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        total_subtitle.setStyleSheet("color: #808080; font-size: 11px;")
-        total_container.addWidget(self.total_label)
-        total_container.addWidget(total_subtitle)
-        
-        # Total words
-        words_container = QVBoxLayout()
-        self.words_label = SubtitleLabel("0")
-        self.words_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        words_subtitle = BodyLabel("Total Words")
-        words_subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        words_subtitle.setStyleSheet("color: #808080; font-size: 11px;")
-        words_container.addWidget(self.words_label)
-        words_container.addWidget(words_subtitle)
-        
-        # Total duration
-        duration_container = QVBoxLayout()
-        self.duration_label = SubtitleLabel("0s")
-        self.duration_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        duration_subtitle = BodyLabel("Total Duration")
-        duration_subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        duration_subtitle.setStyleSheet("color: #808080; font-size: 11px;")
-        duration_container.addWidget(self.duration_label)
-        duration_container.addWidget(duration_subtitle)
-        
-        # Avg confidence
-        conf_container = QVBoxLayout()
-        self.conf_label = SubtitleLabel("—")
-        self.conf_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        conf_subtitle = BodyLabel("Avg Confidence")
-        conf_subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        conf_subtitle.setStyleSheet("color: #808080; font-size: 11px;")
-        conf_container.addWidget(self.conf_label)
-        conf_container.addWidget(conf_subtitle)
-        
-        layout.addLayout(total_container)
-        layout.addLayout(words_container)
-        layout.addLayout(duration_container)
-        layout.addLayout(conf_container)
-        layout.addStretch()
-        
-        self.vBoxLayout.addWidget(card)
-    
-    def _create_search_filter(self):
-        """Create search and filter controls"""
-        card = CardWidget()
-        layout = QVBoxLayout(card)
-        layout.setContentsMargins(20, 16, 20, 16)
-        layout.setSpacing(12)
-        
-        # Search box
-        search_row = QHBoxLayout()
-        search_label = BodyLabel("Search:")
+        # Search bar
+        search_layout = QHBoxLayout()
         self.search_input = LineEdit()
-        self.search_input.setPlaceholderText("Search transcriptions...")
-        self.search_input.setFixedWidth(300)
+        self.search_input.setPlaceholderText("🔍 Search transcriptions...")
         self.search_input.textChanged.connect(self._on_search_changed)
+        search_layout.addWidget(self.search_input)
         
-        search_row.addWidget(search_label)
-        search_row.addWidget(self.search_input)
-        search_row.addStretch()
+        # Splitter for 25/75 layout
+        self.splitter = QSplitter(Qt.Orientation.Horizontal)
         
-        # Filter row
-        filter_row = QHBoxLayout()
-        filter_label = BodyLabel("Filter by App:")
-        self.app_filter = ComboBox()
-        self.app_filter.addItem("All Applications")
-        self.app_filter.setFixedWidth(200)
-        self.app_filter.currentTextChanged.connect(self._on_filter_changed)
+        # Left panel: List (25%)
+        self.list_panel = self._create_list_panel()
         
-        clear_btn = PushButton(FIF.DELETE, "Clear Filters")
-        clear_btn.clicked.connect(self._clear_filters)
+        # Right panel: Details (75%)
+        self.detail_panel = self._create_detail_panel()
         
-        filter_row.addWidget(filter_label)
-        filter_row.addWidget(self.app_filter)
-        filter_row.addSpacing(16)
-        filter_row.addWidget(clear_btn)
-        filter_row.addStretch()
+        self.splitter.addWidget(self.list_panel)
+        self.splitter.addWidget(self.detail_panel)
+        self.splitter.setStretchFactor(0, 1)  # List gets 1 part
+        self.splitter.setStretchFactor(1, 3)  # Details gets 3 parts (75%)
         
-        layout.addLayout(search_row)
-        layout.addLayout(filter_row)
-        
-        self.vBoxLayout.addWidget(card)
+        main_layout.addLayout(header_layout)
+        main_layout.addLayout(search_layout)
+        main_layout.addWidget(self.splitter, 1)
     
-    def _create_history_list(self):
-        """Create history list widget"""
-        list_card = CardWidget()
-        layout = QVBoxLayout(list_card)
-        layout.setContentsMargins(20, 16, 20, 16)
-        layout.setSpacing(8)
+    def _create_list_panel(self):
+        """Create left panel with transcription list"""
+        panel = CardWidget()
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setSpacing(4)
         
-        list_header = SubtitleLabel("Recent Transcriptions")
-        layout.addWidget(list_header)
+        # List title
+        list_title = BodyLabel("Recordings")
+        list_title.setStyleSheet("font-weight: bold; font-size: 11px;")
         
+        # List widget
         self.history_list = QListWidget()
+        self.history_list.setAlternatingRowColors(True)
+        self.history_list.itemClicked.connect(self._on_item_selected)
         self.history_list.setStyleSheet("""
             QListWidget {
-                background-color: transparent;
-                border: none;
+                background-color: #2D2D2D;
+                border: 1px solid #3F3F3F;
+                border-radius: 4px;
                 font-size: 11px;
             }
             QListWidget::item {
                 padding: 8px;
                 border-bottom: 1px solid #3F3F3F;
-                min-height: 60px;
             }
             QListWidget::item:selected {
-                background-color: rgba(0, 120, 212, 0.3);
+                background-color: #4A90E2;
+                color: white;
             }
             QListWidget::item:hover {
-                background-color: rgba(255, 255, 255, 0.05);
+                background-color: #3A3A3A;
             }
         """)
-        self.history_list.itemClicked.connect(self._on_item_selected)
         
-        layout.addWidget(self.history_list)
+        # Count label
+        self.count_label = BodyLabel("0 recordings")
+        self.count_label.setStyleSheet("color: #808080; font-size: 10px;")
         
-        self.vBoxLayout.addWidget(list_card, 2)  # Give it 2x space
+        layout.addWidget(list_title)
+        layout.addWidget(self.history_list, 1)
+        layout.addWidget(self.count_label)
+        
+        return panel
     
-    def _create_detail_view(self):
-        """Create detail view for selected transcription"""
-        detail_card = CardWidget()
-        layout = QVBoxLayout(detail_card)
-        layout.setContentsMargins(20, 16, 20, 16)
+    def _create_detail_panel(self):
+        """Create right panel with selected recording details"""
+        panel = CardWidget()
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(16, 16, 16, 16)
         layout.setSpacing(12)
         
-        header_row = QHBoxLayout()
-        detail_header = SubtitleLabel("Selected Transcription")
+        # Detail title
+        self.detail_title = SubtitleLabel("Select a recording")
+        self.detail_title.setStyleSheet("font-size: 14px; font-weight: bold;")
         
-        copy_btn = PushButton(FIF.COPY, "Copy Text")
-        copy_btn.clicked.connect(self._copy_selected_text)
+        # Metadata row
+        self.metadata_widget = QWidget()
+        meta_layout = QHBoxLayout(self.metadata_widget)
+        meta_layout.setContentsMargins(0, 0, 0, 0)
+        meta_layout.setSpacing(16)
         
-        header_row.addWidget(detail_header)
-        header_row.addStretch()
-        header_row.addWidget(copy_btn)
+        self.timestamp_label = BodyLabel("—")
+        self.app_label = BodyLabel("—")
+        self.duration_label = BodyLabel("—")
+        self.confidence_label = BodyLabel("—")
         
-        layout.addLayout(header_row)
+        meta_layout.addWidget(QLabel("🕐"))
+        meta_layout.addWidget(self.timestamp_label)
+        meta_layout.addWidget(QLabel("📱"))
+        meta_layout.addWidget(self.app_label)
+        meta_layout.addWidget(QLabel("⏱️"))
+        meta_layout.addWidget(self.duration_label)
+        meta_layout.addWidget(QLabel("✓"))
+        meta_layout.addWidget(self.confidence_label)
+        meta_layout.addStretch()
         
-        # Detail text
-        self.detail_text = BodyLabel("Select a transcription to view details")
-        self.detail_text.setWordWrap(True)
-        self.detail_text.setStyleSheet("""
-            QLabel {
-                background-color: rgba(80, 80, 80, 0.2);
-                border-radius: 8px;
-                padding: 16px;
-                font-size: 12px;
-                line-height: 1.6;
+        self.metadata_widget.setStyleSheet("font-size: 11px; color: #B0B0B0;")
+        
+        # Transcription text area
+        self.text_display = QTextEdit()
+        self.text_display.setReadOnly(True)
+        self.text_display.setPlaceholderText("Select a recording to view transcription...")
+        self.text_display.setStyleSheet("""
+            QTextEdit {
+                background-color: #252525;
+                border: 1px solid #3F3F3F;
+                border-radius: 4px;
+                padding: 12px;
+                font-size: 13px;
+                line-height: 1.5;
             }
         """)
-        self.detail_text.setMinimumHeight(120)
         
-        layout.addWidget(self.detail_text)
+        # Action buttons
+        button_layout = QHBoxLayout()
+        self.copy_btn = PrimaryPushButton(FIF.COPY, "Copy Text")
+        self.copy_btn.clicked.connect(self._copy_text)
+        self.copy_btn.setEnabled(False)
         
-        self.vBoxLayout.addWidget(detail_card, 1)
+        self.delete_btn = PushButton(FIF.DELETE, "Delete")
+        self.delete_btn.clicked.connect(self._delete_item)
+        self.delete_btn.setEnabled(False)
+        
+        button_layout.addWidget(self.copy_btn)
+        button_layout.addWidget(self.delete_btn)
+        button_layout.addStretch()
+        
+        layout.addWidget(self.detail_title)
+        layout.addWidget(self.metadata_widget)
+        layout.addWidget(self.text_display, 1)
+        layout.addLayout(button_layout)
+        
+        return panel
+    
+    # ==================== Event Handlers ====================
+    
+    def _on_item_selected(self, item: QListWidgetItem):
+        """Handle list item selection and show details"""
+        entry = item.data(Qt.ItemDataRole.UserRole)
+        if not entry:
+            return
+        
+        self._selected_item = entry
+        
+        # Update detail title
+        timestamp = entry.get("timestamp")
+        if hasattr(timestamp, "strftime"):
+            time_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            time_str = "Unknown time"
+        self.detail_title.setText(time_str)
+        
+        # Update metadata
+        self.timestamp_label.setText(time_str)
+        self.app_label.setText(entry.get("application") or "Unknown")
+        self.duration_label.setText(f"{entry.get('audio_duration', 0):.1f}s")
+        
+        confidence = entry.get("confidence")
+        if confidence is not None:
+            self.confidence_label.setText(f"{confidence*100:.0f}%")
+        else:
+            self.confidence_label.setText("—")
+        
+        # Update text display
+        text = entry.get("text", "")
+        self.text_display.setPlainText(text)
+        
+        # Enable buttons
+        self.copy_btn.setEnabled(True)
+        self.delete_btn.setEnabled(True)
+    
+    def _on_search_changed(self, text: str):
+        """Filter list by search text"""
+        search = text.lower().strip()
+        
+        if not search:
+            self._refresh_list()
+            return
+        
+        # Filter items
+        filtered = [
+            entry for entry in self._history_items
+            if search in entry.get("text", "").lower()
+            or search in entry.get("application", "").lower()
+        ]
+        
+        self._refresh_list(filtered)
+    
+    def _copy_text(self):
+        """Copy selected transcription text to clipboard"""
+        if not self._selected_item:
+            return
+        
+        text = self._selected_item.get("text", "")
+        if text:
+            from PyQt5.QtWidgets import QApplication
+            QApplication.clipboard().setText(text)
+            InfoBar.success(
+                title="Copied!",
+                content="Transcription copied to clipboard",
+                parent=self,
+                duration=2000,
+                position=InfoBarPosition.TOP
+            )
+    
+    def _delete_item(self):
+        """Delete selected transcription"""
+        if not self._selected_item:
+            return
+        
+        # Remove from list
+        if self._selected_item in self._history_items:
+            self._history_items.remove(self._selected_item)
+        
+        # Clear selection
+        self._selected_item = None
+        self.detail_title.setText("Select a recording")
+        self.text_display.clear()
+        self.copy_btn.setEnabled(False)
+        self.delete_btn.setEnabled(False)
+        
+        # Refresh
+        self._refresh_list()
+        
+        InfoBar.success(
+            title="Deleted",
+            content="Transcription removed from history",
+            parent=self,
+            duration=2000,
+            position=InfoBarPosition.TOP
+        )
     
     # ==================== Data Management ====================
     
@@ -259,12 +317,6 @@ class HistoryPage(ScrollArea):
         
         # Update list widget
         self._refresh_list()
-        
-        # Update stats
-        self._update_stats()
-        
-        # Update app filter dropdown
-        self._update_app_filter()
     
     def _refresh_list(self, filtered_items: Optional[List[Dict[str, Any]]] = None):
         """Refresh the list widget with current or filtered items"""
@@ -277,209 +329,23 @@ class HistoryPage(ScrollArea):
             item = QListWidgetItem(item_text)
             item.setData(Qt.ItemDataRole.UserRole, entry)
             self.history_list.addItem(item)
+        
+        # Update count
+        self.count_label.setText(f"{len(items_to_show)} recordings")
     
     def _format_list_item(self, entry: Dict[str, Any]) -> str:
-        """Format a transcription entry for list display"""
+        """Format a transcription entry for compact list display"""
         timestamp = entry.get("timestamp")
         if hasattr(timestamp, "strftime"):
-            time_str = timestamp.strftime("%H:%M:%S")
-            date_str = timestamp.strftime("%Y-%m-%d")
+            time_str = timestamp.strftime("%H:%M")
         else:
-            time_str = "??:??:??"
-            date_str = "????-??-??"
+            time_str = "??"
         
-        app = entry.get("application") or "Unknown"
-        duration = entry.get("audio_duration", 0)
-        words = entry.get("word_count", 0)
-        chars = entry.get("character_count", 0)
-        confidence = entry.get("confidence")
-        
-        conf_str = f"{confidence*100:.0f}%" if confidence is not None else "—"
-        
-        # Preview of text (first 80 chars)
+        # Preview of text (first 30 chars)
         text = entry.get("text", "")
-        preview = text[:80] + "..." if len(text) > 80 else text
+        preview = text[:30] + "..." if len(text) > 30 else text
         preview = preview.replace("\n", " ")
         
-        return (
-            f"📅 {date_str} {time_str} • 💻 {app}\n"
-            f"⏱️ {duration:.1f}s • 📝 {words} words / {chars} chars • ✨ {conf_str}\n"
-            f"{preview}"
-        )
-    
-    def _update_stats(self):
-        """Update the statistics card"""
-        if not self._history_items:
-            self.total_label.setText("0")
-            self.words_label.setText("0")
-            self.duration_label.setText("0s")
-            self.conf_label.setText("—")
-            return
-        
-        total = len(self._history_items)
-        total_words = sum(e.get("word_count", 0) for e in self._history_items)
-        total_duration = sum(e.get("audio_duration", 0) for e in self._history_items)
-        
-        confidences = [e.get("confidence") for e in self._history_items if e.get("confidence") is not None]
-        avg_conf = sum(confidences) / len(confidences) if confidences else None
-        
-        self.total_label.setText(str(total))
-        self.words_label.setText(f"{total_words:,}")
-        self.duration_label.setText(f"{total_duration:.0f}s")
-        
-        if avg_conf is not None:
-            self.conf_label.setText(f"{avg_conf*100:.0f}%")
-        else:
-            self.conf_label.setText("—")
-    
-    def _update_app_filter(self):
-        """Update the application filter dropdown with unique apps"""
-        current_apps = set(e.get("application", "Unknown") for e in self._history_items)
-        
-        # Save current selection
-        current_selection = self.app_filter.currentText()
-        
-        # Clear and rebuild
-        self.app_filter.clear()
-        self.app_filter.addItem("All Applications")
-        
-        for app in sorted(current_apps):
-            if app and app != "Unknown":
-                self.app_filter.addItem(app)
-        
-        # Restore selection if it still exists
-        if current_selection != "All Applications":
-            index = self.app_filter.findText(current_selection)
-            if index >= 0:
-                self.app_filter.setCurrentIndex(index)
-    
-    # ==================== Event Handlers ====================
-    
-    def _on_item_selected(self, item: QListWidgetItem):
-        """Handle list item selection"""
-        entry = item.data(Qt.ItemDataRole.UserRole)
-        if not entry:
-            return
-        
-        # Update detail view
-        text = entry.get("text", "No text available")
-        
-        timestamp = entry.get("timestamp")
-        if hasattr(timestamp, "strftime"):
-            time_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        else:
-            time_str = "Unknown time"
-        
-        app = entry.get("application") or "Unknown"
-        duration = entry.get("audio_duration", 0)
         words = entry.get("word_count", 0)
-        chars = entry.get("character_count", 0)
-        confidence = entry.get("confidence")
-        conf_str = f"{confidence*100:.0f}%" if confidence is not None else "—"
         
-        detail_html = f"""
-        <p><b>📅 Time:</b> {time_str}</p>
-        <p><b>💻 Application:</b> {app}</p>
-        <p><b>⏱️ Duration:</b> {duration:.1f}s &nbsp; | &nbsp; <b>📝 Words:</b> {words} &nbsp; | &nbsp; <b>🔤 Chars:</b> {chars} &nbsp; | &nbsp; <b>✨ Confidence:</b> {conf_str}</p>
-        <hr style="border: 1px solid #3F3F3F;">
-        <p><b>Transcription:</b></p>
-        <p>{text}</p>
-        """
-        
-        self.detail_text.setText(detail_html)
-        self.detail_text.setTextFormat(Qt.TextFormat.RichText)
-        
-        # Store selected entry for copy operation
-        self._selected_entry = entry
-        
-        # Emit signal
-        self.transcription_selected.emit(entry)
-    
-    def _on_search_changed(self, text: str):
-        """Handle search text change"""
-        search_term = text.lower().strip()
-        
-        if not search_term:
-            self._refresh_list()
-            return
-        
-        # Filter items by search term
-        filtered = [
-            entry for entry in self._history_items
-            if search_term in entry.get("text", "").lower()
-            or search_term in entry.get("application", "").lower()
-        ]
-        
-        self._refresh_list(filtered)
-    
-    def _on_filter_changed(self, app_name: str):
-        """Handle application filter change"""
-        if app_name == "All Applications":
-            self._refresh_list()
-            return
-        
-        # Filter by application
-        filtered = [
-            entry for entry in self._history_items
-            if entry.get("application") == app_name
-        ]
-        
-        self._refresh_list(filtered)
-    
-    def _clear_filters(self):
-        """Clear all filters and search"""
-        self.search_input.clear()
-        self.app_filter.setCurrentIndex(0)
-        self._refresh_list()
-    
-    def _copy_selected_text(self):
-        """Copy selected transcription to clipboard"""
-        if not hasattr(self, "_selected_entry") or not self._selected_entry:
-            InfoBar.warning(
-                title="No Selection",
-                content="Please select a transcription first",
-                orient=Qt.Orientation.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.TOP_RIGHT,
-                duration=2000,
-                parent=self
-            )
-            return
-        
-        text = self._selected_entry.get("text", "")
-        
-        if text:
-            from PyQt5.QtWidgets import QApplication
-            clipboard = QApplication.clipboard()
-            clipboard.setText(text)
-            
-            InfoBar.success(
-                title="Copied!",
-                content="Transcription text copied to clipboard",
-                orient=Qt.Orientation.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.TOP_RIGHT,
-                duration=1500,
-                parent=self
-            )
-    
-    # ==================== Public API ====================
-    
-    def clear_history(self):
-        """Clear all history"""
-        self._history_items.clear()
-        self._refresh_list()
-        self._update_stats()
-        self._update_app_filter()
-        self.detail_text.setText("Select a transcription to view details")
-    
-    def get_history(self) -> List[Dict[str, Any]]:
-        """Get all history items"""
-        return self._history_items.copy()
-    
-    def load_history(self, items: List[Dict[str, Any]]):
-        """Load history from saved data"""
-        self._history_items = items[:self._max_items]
-        self._refresh_list()
-        self._update_stats()
-        self._update_app_filter()
+        return f"{time_str} • {words}w\n{preview}"

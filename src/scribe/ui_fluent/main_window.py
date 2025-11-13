@@ -514,9 +514,13 @@ class ScribeMainWindow(MSFluentWindow):
         # Errors are already logged to console for debugging
 
     def update_transcription_summary(self, summary):
-        """Relay analytics summary to insights page."""
+        """Relay analytics summary to insights page and update home page metrics."""
         if hasattr(self.insights_page, 'update_summary'):
             self.insights_page.update_summary(summary)
+        
+        # Update home page metrics
+        if hasattr(self.home_page, 'update_metrics'):
+            self.home_page.update_metrics()
 
     def add_transcription_event(self, entry: dict):
         """Append a transcription history entry to the UI."""

@@ -2,7 +2,9 @@
 Scribe branding constants and colors
 """
 
-SCRIBE_VERSION = "2.0.0-alpha"
+from ...__version__ import __version__
+
+SCRIBE_VERSION = __version__  # Now imports from __version__.py
 SCRIBE_TAGLINE = "Voice Control for Your Workflow"
 SCRIBE_PURPLE = "#6751A1"
 SCRIBE_BLUE = "#4A90E2"

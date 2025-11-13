@@ -394,9 +394,40 @@ class SettingsPage(ScrollArea):
         compute_row.addWidget(self.compute_type_combo)
         compute_row.addStretch()
         
-        # Language hint
-        lang_hint = BodyLabel("💡 Tip: Specify language in config for 10-15% faster transcription")
-        lang_hint.setStyleSheet("color: #FF9800; font-size: 10px; font-style: italic;")
+        # Language selection
+        lang_section = SubtitleLabel("Language")
+        lang_section.setStyleSheet("font-size: 12px; font-weight: bold; margin-top: 8px;")
+        
+        lang_row = QHBoxLayout()
+        lang_label = BodyLabel("Transcription Language:")
+        lang_label.setFixedWidth(180)
+        
+        self.language_combo = ComboBox()
+        self.language_combo.addItem("Auto-detect", "auto")
+        self.language_combo.addItem("English", "en")
+        self.language_combo.addItem("Spanish", "es")
+        self.language_combo.addItem("French", "fr")
+        self.language_combo.addItem("German", "de")
+        self.language_combo.addItem("Italian", "it")
+        self.language_combo.addItem("Portuguese", "pt")
+        self.language_combo.addItem("Russian", "ru")
+        self.language_combo.addItem("Chinese", "zh")
+        self.language_combo.addItem("Japanese", "ja")
+        self.language_combo.addItem("Korean", "ko")
+        self.language_combo.addItem("Arabic", "ar")
+        self.language_combo.addItem("Hindi", "hi")
+        self.language_combo.addItem("Dutch", "nl")
+        self.language_combo.addItem("Polish", "pl")
+        self.language_combo.addItem("Turkish", "tr")
+        self.language_combo.setFixedWidth(200)
+        self.language_combo.currentTextChanged.connect(self._on_language_changed)
+        
+        lang_row.addWidget(lang_label)
+        lang_row.addWidget(self.language_combo)
+        lang_row.addStretch()
+        
+        lang_info = BodyLabel("💡 Specify your language for 10-15% faster transcription")
+        lang_info.setStyleSheet("color: #FF9800; font-size: 10px; font-style: italic;")
         
         # Add all to layout
         layout.addLayout(model_row)
@@ -409,7 +440,10 @@ class SettingsPage(ScrollArea):
         layout.addLayout(device_row)
         layout.addWidget(self.device_info_label)
         layout.addLayout(compute_row)
-        layout.addWidget(lang_hint)
+        layout.addSpacing(8)
+        layout.addWidget(lang_section)
+        layout.addLayout(lang_row)
+        layout.addWidget(lang_info)
         
         return card
     
@@ -637,6 +671,18 @@ class SettingsPage(ScrollArea):
             compute_idx = self.compute_type_combo.findData("int8")
             if compute_idx >= 0:
                 self.compute_type_combo.setCurrentIndex(compute_idx)
+    
+    def _on_language_changed(self):
+        """Update language setting when user changes selection."""
+        lang_code = self.language_combo.currentData()
+        
+        # Update config
+        if self.config_manager:
+            config = self.config_manager.config
+            # Note: This updates the in-memory config
+            # For now, just log it. Full save integration would require config schema update
+            logger.info(f"Language changed to: {lang_code}")
+            # TODO: Add language field to WhisperConfig in config/models.py and save here
     
     def _download_model(self):
         """Download the selected Whisper model."""
