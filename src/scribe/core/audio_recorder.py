@@ -224,8 +224,66 @@ class AudioRecorder(QObject):
             shutil.copy2(temp_path, latest_path)
             shutil.copy2(temp_path, history_path)
             logger.info(f"Saved last recording to {latest_path} (archived as {history_path.name})")
+            
+            # Clean up old recordings
+            self._cleanup_old_recordings()
         except Exception as e:
             logger.debug(f"Failed to save debug recording: {e}")
+    
+    def _cleanup_old_recordings(self, max_age_days: int = 5, max_size_mb: int = 100):
+        """
+        Clean up old recording files based on age and total size.
+        
+        Args:
+            max_age_days: Delete recordings older than this many days (default: 5)
+            max_size_mb: If folder exceeds this size, delete oldest files (default: 100MB)
+        """
+        try:
+            from datetime import timedelta
+            import time
+            
+            # Get all recording files (exclude latest_recording.wav)
+            recording_files = [
+                f for f in self.debug_audio_dir.glob("recording_*.wav")
+                if f.name != "latest_recording.wav"
+            ]
+            
+            if not recording_files:
+                return
+            
+            current_time = time.time()
+            cutoff_time = current_time - (max_age_days * 24 * 60 * 60)
+            
+            # Delete files older than max_age_days
+            deleted_count = 0
+            for file_path in recording_files[:]:
+                if file_path.stat().st_mtime < cutoff_time:
+                    file_path.unlink()
+                    recording_files.remove(file_path)
+                    deleted_count += 1
+            
+            if deleted_count > 0:
+                logger.info(f"Cleaned up {deleted_count} recordings older than {max_age_days} days")
+            
+            # Check total folder size
+            total_size = sum(f.stat().st_size for f in recording_files) / (1024 * 1024)  # MB
+            
+            if total_size > max_size_mb:
+                # Sort by modification time (oldest first)
+                recording_files.sort(key=lambda f: f.stat().st_mtime)
+                
+                # Delete oldest files until we're under the limit
+                while total_size > max_size_mb and recording_files:
+                    oldest_file = recording_files.pop(0)
+                    file_size = oldest_file.stat().st_size / (1024 * 1024)
+                    oldest_file.unlink()
+                    total_size -= file_size
+                    deleted_count += 1
+                
+                logger.info(f"Cleaned up {deleted_count} recordings to stay under {max_size_mb}MB limit")
+        
+        except Exception as e:
+            logger.warning(f"Failed to cleanup old recordings: {e}")
     
     def save_recording(self, audio_data: bytes, output_path: Path) -> bool:
         """

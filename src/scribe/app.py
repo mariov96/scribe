@@ -11,7 +11,7 @@ import logging
 import re
 from typing import Dict, Optional, Any, Tuple
 from pathlib import Path
-from typing import Optional, Dict, Any
+from datetime import datetime
 
 try:
     import win32gui  # type: ignore
@@ -532,6 +532,13 @@ class ScribeApp(QObject):
                 history_entry["raw_text"] = raw_text if ai_formatted else text
                 history_entry["ai_formatted"] = ai_formatted
                 history_entry["used_plugin"] = used_plugin
+                
+                # Add audio file path for playback
+                audio_file = Path("data/audio") / f"recording_{datetime.now().strftime('%Y%m%d_%H%M%S')}.wav"
+                latest_recording = Path("data/audio/latest_recording.wav")
+                if latest_recording.exists():
+                    history_entry["audio_file"] = str(latest_recording.absolute())
+                
                 self.main_window.add_transcription_event(history_entry)
 
             # Show complete status briefly

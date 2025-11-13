@@ -215,62 +215,76 @@ class HistoryPage(QWidget):
         panel = CardWidget()
         layout = QVBoxLayout(panel)
         layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(16)
+        layout.setSpacing(8)  # Reduced from 16
         
-        # Detail title
+        # Detail title with playback button
+        title_row = QHBoxLayout()
         self.detail_title = SubtitleLabel("Select a recording")
         self.detail_title.setStyleSheet("font-size: 14px; font-weight: bold;")
+        
+        self.play_btn = PushButton(FIF.PLAY, "Play Recording")
+        self.play_btn.setFixedWidth(140)
+        self.play_btn.clicked.connect(self._play_recording)
+        self.play_btn.setEnabled(False)
+        
+        title_row.addWidget(self.detail_title)
+        title_row.addStretch()
+        title_row.addWidget(self.play_btn)
         
         # Metrics grid - organized cards
         metrics_container = QWidget()
         metrics_layout = QGridLayout(metrics_container)
-        metrics_layout.setSpacing(8)
+        metrics_layout.setSpacing(6)  # Reduced from 8
         metrics_layout.setContentsMargins(0, 0, 0, 0)
         
         # Create metric labels
-        self.app_metric = self._create_metric_label("📱 Application", "—")
+        self.app_metric = self._create_metric_label("📱 App", "—")
         self.duration_metric = self._create_metric_label("⏱️ Duration", "—")
         self.confidence_metric = self._create_metric_label("✓ Confidence", "—")
         self.words_metric = self._create_metric_label("📝 Words", "—")
-        self.chars_metric = self._create_metric_label("🔤 Characters", "—")
+        self.chars_metric = self._create_metric_label("🔤 Chars", "—")
         self.plugin_metric = self._create_metric_label("🔌 Plugin", "—")
-        self.ai_metric = self._create_metric_label("🤖 AI Format", "—")
-        self.language_metric = self._create_metric_label("🌍 Language", "—")
+        self.ai_metric = self._create_metric_label("🤖 AI", "—")
+        self.language_metric = self._create_metric_label("🌍 Lang", "—")
         
-        # Add to grid (2 columns)
+        # Add to grid (4 columns for more compact display)
         metrics_layout.addWidget(self.app_metric, 0, 0)
         metrics_layout.addWidget(self.duration_metric, 0, 1)
+        metrics_layout.addWidget(self.words_metric, 0, 2)
+        metrics_layout.addWidget(self.chars_metric, 0, 3)
         metrics_layout.addWidget(self.confidence_metric, 1, 0)
-        metrics_layout.addWidget(self.words_metric, 1, 1)
-        metrics_layout.addWidget(self.chars_metric, 2, 0)
-        metrics_layout.addWidget(self.plugin_metric, 2, 1)
-        metrics_layout.addWidget(self.ai_metric, 3, 0)
-        metrics_layout.addWidget(self.language_metric, 3, 1)
+        metrics_layout.addWidget(self.language_metric, 1, 1)
+        metrics_layout.addWidget(self.plugin_metric, 1, 2)
+        metrics_layout.addWidget(self.ai_metric, 1, 3)
         
-        # Quality rating section
-        rating_card = CardWidget()
-        rating_layout = QVBoxLayout(rating_card)
-        rating_layout.setContentsMargins(12, 12, 12, 12)
-        rating_layout.setSpacing(8)
+        # Quality rating section - CONDENSED
+        rating_row = QHBoxLayout()
+        rating_row.setSpacing(8)
         
-        rating_header = QHBoxLayout()
-        rating_label = StrongBodyLabel("⭐ Quality Rating")
-        rating_label.setStyleSheet("font-size: 12px;")
-        rating_header.addWidget(rating_label)
-        rating_header.addStretch()
+        rating_label = BodyLabel("⭐ Rate:")
+        rating_label.setStyleSheet("font-size: 11px; color: #888;")
         
         self.rating_widget = StarRatingWidget()
         self.rating_widget.valueChanged.connect(self._on_rating_changed)
         
-        self.feedback_input = TextEdit()
-        self.feedback_input.setPlaceholderText("Optional: Add feedback about transcription quality...")
-        self.feedback_input.setFixedHeight(60)
+        self.feedback_input = LineEdit()
+        self.feedback_input.setPlaceholderText("Optional feedback about quality...")
         self.feedback_input.textChanged.connect(self._on_feedback_changed)
         
-        rating_layout.addLayout(rating_header)
-        rating_layout.addWidget(self.rating_widget)
-        rating_layout.addWidget(BodyLabel("Note any errors or issues:"))
-        rating_layout.addWidget(self.feedback_input)
+        rating_row.addWidget(rating_label)
+        rating_row.addWidget(self.rating_widget)
+        rating_row.addWidget(self.feedback_input, 1)
+        
+        rating_container = QWidget()
+        rating_container.setLayout(rating_row)
+        rating_container.setStyleSheet("""
+            QWidget {
+                background-color: #2A2A2A;
+                border: 1px solid #3F3F3F;
+                border-radius: 4px;
+                padding: 6px;
+            }
+        """)
         
         # Before/After comparison (if AI formatted)
         self.comparison_widget = QWidget()
@@ -349,9 +363,9 @@ class HistoryPage(QWidget):
         button_layout.addWidget(self.delete_btn)
         button_layout.addStretch()
         
-        layout.addWidget(self.detail_title)
+        layout.addLayout(title_row)
         layout.addWidget(metrics_container)
-        layout.addWidget(rating_card)
+        layout.addWidget(rating_container)
         layout.addWidget(self.comparison_widget)
         layout.addWidget(text_label)
         layout.addWidget(self.text_display, 1)
@@ -363,15 +377,15 @@ class HistoryPage(QWidget):
         """Create a metric display widget"""
         widget = QWidget()
         layout = QVBoxLayout(widget)
-        layout.setContentsMargins(8, 6, 8, 6)
-        layout.setSpacing(2)
+        layout.setContentsMargins(6, 4, 6, 4)  # Reduced padding
+        layout.setSpacing(1)  # Reduced spacing
         
         title_label = BodyLabel(title)
-        title_label.setStyleSheet("font-size: 10px; color: #888;")
+        title_label.setStyleSheet("font-size: 9px; color: #888;")  # Smaller font
         
         value_label = StrongBodyLabel(value)
         value_label.setObjectName("value")
-        value_label.setStyleSheet("font-size: 12px; color: #FFF;")
+        value_label.setStyleSheet("font-size: 11px; color: #FFF;")  # Smaller font
         
         layout.addWidget(title_label)
         layout.addWidget(value_label)
@@ -486,14 +500,68 @@ class HistoryPage(QWidget):
         
         # Feedback
         feedback = entry.get("quality_feedback", "")
-        self.feedback_input.setPlainText(feedback)
+        self.feedback_input.setText(feedback)
         
         # Update text display
         text = entry.get("text", "")
         self.text_display.setPlainText(text)
         
+        # Check if audio file exists
+        audio_file = entry.get("audio_file")
+        if audio_file and Path(audio_file).exists():
+            self.play_btn.setEnabled(True)
+        else:
+            self.play_btn.setEnabled(False)
+        
         # Enable buttons
         self.copy_btn.setEnabled(True)
+        self.delete_btn.setEnabled(True)
+    
+    def _play_recording(self):
+        """Play the audio recording"""
+        if not self._selected_item:
+            return
+        
+        audio_file = self._selected_item.get("audio_file")
+        if not audio_file or not Path(audio_file).exists():
+            InfoBar.warning(
+                title="Audio not available",
+                content="Recording file not found (may have been cleaned up)",
+                parent=self,
+                duration=3000,
+                position=InfoBarPosition.TOP
+            )
+            self.play_btn.setEnabled(False)
+            return
+        
+        try:
+            import subprocess
+            import sys
+            
+            # Use system's default audio player
+            if sys.platform == 'win32':
+                subprocess.run(['start', '', audio_file], shell=True)
+            elif sys.platform == 'darwin':
+                subprocess.run(['afplay', audio_file])
+            else:
+                subprocess.run(['xdg-open', audio_file])
+            
+            InfoBar.success(
+                title="Playing",
+                content="Opening recording in default audio player",
+                parent=self,
+                duration=2000,
+                position=InfoBarPosition.TOP
+            )
+        except Exception as e:
+            logger.error(f"Failed to play recording: {e}")
+            InfoBar.error(
+                title="Playback error",
+                content=f"Failed to play recording: {e}",
+                parent=self,
+                duration=3000,
+                position=InfoBarPosition.TOP
+            )
         self.delete_btn.setEnabled(True)
     
     def _update_metric_value(self, metric_widget: QWidget, value: str):
