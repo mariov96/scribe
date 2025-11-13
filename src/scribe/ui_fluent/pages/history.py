@@ -561,6 +561,20 @@ class HistoryPage(QWidget):
             
             InfoBar.success(
                 title="Playing",
+                content="Opening recording in default audio player",
+                parent=self,
+                duration=2000,
+                position=InfoBarPosition.TOP
+            )
+        except Exception as e:
+            logger.error(f"Failed to play recording: {e}")
+            InfoBar.error(
+                title="Playback error",
+                content=f"Failed to play recording: {e}",
+                parent=self,
+                duration=3000,
+                position=InfoBarPosition.TOP
+            )
     
     def _resize_text_edit(self, text_edit: QTextEdit, text: str):
         """Dynamically resize text edit based on content length"""
@@ -584,21 +598,6 @@ class HistoryPage(QWidget):
         # Clamp to range
         final_height = max(min_height, min(desired_height, max_height))
         text_edit.setFixedHeight(final_height)
-                content="Opening recording in default audio player",
-                parent=self,
-                duration=2000,
-                position=InfoBarPosition.TOP
-            )
-        except Exception as e:
-            logger.error(f"Failed to play recording: {e}")
-            InfoBar.error(
-                title="Playback error",
-                content=f"Failed to play recording: {e}",
-                parent=self,
-                duration=3000,
-                position=InfoBarPosition.TOP
-            )
-        self.delete_btn.setEnabled(True)
     
     def _update_metric_value(self, metric_widget: QWidget, value: str):
         """Update the value label inside a metric widget"""

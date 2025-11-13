@@ -32,7 +32,7 @@ post_processing:
   auto_insert_mode: paste
 plugins:
   enabled_plugins:
-  - window_manager
+    - window_manager
   plugin_config: {}
 ui:
   theme: auto
