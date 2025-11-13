@@ -123,9 +123,6 @@ class HistoryPage(QWidget):
         self._history_file = Path.home() / ".scribe" / "data" / "history.json"
         self._history_file.parent.mkdir(parents=True, exist_ok=True)
         
-        # Load existing history
-        self._load_history()
-        
         # Main layout
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(20, 20, 20, 20)
@@ -164,6 +161,9 @@ class HistoryPage(QWidget):
         main_layout.addLayout(header_layout)
         main_layout.addLayout(search_layout)
         main_layout.addWidget(self.splitter, 1)
+        
+        # Load existing history AFTER UI is created
+        self._load_history()
     
     def _create_list_panel(self):
         """Create left panel with transcription list"""
@@ -738,6 +738,10 @@ class HistoryPage(QWidget):
     
     def _refresh_list(self, filtered_items: Optional[List[Dict[str, Any]]] = None):
         """Refresh the list widget with current or filtered items"""
+        # Safety check - widgets might not be created yet
+        if not hasattr(self, 'history_list') or not self.history_list:
+            return
+        
         self.history_list.clear()
         
         items_to_show = filtered_items if filtered_items is not None else self._history_items
@@ -749,7 +753,8 @@ class HistoryPage(QWidget):
             self.history_list.addItem(item)
         
         # Update count
-        self.count_label.setText(f"{len(items_to_show)} recordings")
+        if hasattr(self, 'count_label') and self.count_label:
+            self.count_label.setText(f"{len(items_to_show)} recordings")
     
     def _format_list_item(self, entry: Dict[str, Any]) -> str:
         """Format a transcription entry for compact list display"""
