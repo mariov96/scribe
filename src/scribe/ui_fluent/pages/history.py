@@ -2,18 +2,23 @@
 History Page - View and manage transcription history with two-column layout
 """
 
+import json
+import logging
+from pathlib import Path
 from PyQt5.QtCore import pyqtSignal as Signal, Qt, QDateTime
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSplitter,
-    QListWidget, QListWidgetItem, QPushButton, QTextEdit
+    QListWidget, QListWidgetItem, QPushButton, QTextEdit, QGridLayout
 )
 from qfluentwidgets import (
     ScrollArea, TitleLabel, SubtitleLabel, BodyLabel, StrongBodyLabel,
     CardWidget, PrimaryPushButton, PushButton, LineEdit,
-    ComboBox, FluentIcon as FIF, InfoBar, InfoBarPosition
+    ComboBox, FluentIcon as FIF, InfoBar, InfoBarPosition, RatingWidget, TextEdit
 )
 from typing import Dict, Any, List, Optional
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 class HistoryPage(QWidget):
@@ -38,6 +43,13 @@ class HistoryPage(QWidget):
         self._history_items: List[Dict[str, Any]] = []
         self._max_items = 100
         self._selected_item = None
+        
+        # Persistence
+        self._history_file = Path.home() / ".scribe" / "data" / "history.json"
+        self._history_file.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Load existing history
+        self._load_history()
         
         # Main layout
         main_layout = QVBoxLayout(self)
@@ -128,36 +140,112 @@ class HistoryPage(QWidget):
         panel = CardWidget()
         layout = QVBoxLayout(panel)
         layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(12)
+        layout.setSpacing(16)
         
         # Detail title
         self.detail_title = SubtitleLabel("Select a recording")
         self.detail_title.setStyleSheet("font-size: 14px; font-weight: bold;")
         
-        # Metadata row
-        self.metadata_widget = QWidget()
-        meta_layout = QHBoxLayout(self.metadata_widget)
-        meta_layout.setContentsMargins(0, 0, 0, 0)
-        meta_layout.setSpacing(16)
+        # Metrics grid - organized cards
+        metrics_container = QWidget()
+        metrics_layout = QGridLayout(metrics_container)
+        metrics_layout.setSpacing(8)
+        metrics_layout.setContentsMargins(0, 0, 0, 0)
         
-        self.timestamp_label = BodyLabel("—")
-        self.app_label = BodyLabel("—")
-        self.duration_label = BodyLabel("—")
-        self.confidence_label = BodyLabel("—")
+        # Create metric labels
+        self.app_metric = self._create_metric_label("📱 Application", "—")
+        self.duration_metric = self._create_metric_label("⏱️ Duration", "—")
+        self.confidence_metric = self._create_metric_label("✓ Confidence", "—")
+        self.words_metric = self._create_metric_label("📝 Words", "—")
+        self.chars_metric = self._create_metric_label("🔤 Characters", "—")
+        self.plugin_metric = self._create_metric_label("🔌 Plugin", "—")
+        self.ai_metric = self._create_metric_label("🤖 AI Format", "—")
+        self.language_metric = self._create_metric_label("🌍 Language", "—")
         
-        meta_layout.addWidget(QLabel("🕐"))
-        meta_layout.addWidget(self.timestamp_label)
-        meta_layout.addWidget(QLabel("📱"))
-        meta_layout.addWidget(self.app_label)
-        meta_layout.addWidget(QLabel("⏱️"))
-        meta_layout.addWidget(self.duration_label)
-        meta_layout.addWidget(QLabel("✓"))
-        meta_layout.addWidget(self.confidence_label)
-        meta_layout.addStretch()
+        # Add to grid (2 columns)
+        metrics_layout.addWidget(self.app_metric, 0, 0)
+        metrics_layout.addWidget(self.duration_metric, 0, 1)
+        metrics_layout.addWidget(self.confidence_metric, 1, 0)
+        metrics_layout.addWidget(self.words_metric, 1, 1)
+        metrics_layout.addWidget(self.chars_metric, 2, 0)
+        metrics_layout.addWidget(self.plugin_metric, 2, 1)
+        metrics_layout.addWidget(self.ai_metric, 3, 0)
+        metrics_layout.addWidget(self.language_metric, 3, 1)
         
-        self.metadata_widget.setStyleSheet("font-size: 11px; color: #B0B0B0;")
+        # Quality rating section
+        rating_card = CardWidget()
+        rating_layout = QVBoxLayout(rating_card)
+        rating_layout.setContentsMargins(12, 12, 12, 12)
+        rating_layout.setSpacing(8)
         
-        # Transcription text area
+        rating_header = QHBoxLayout()
+        rating_label = StrongBodyLabel("⭐ Quality Rating")
+        rating_label.setStyleSheet("font-size: 12px;")
+        rating_header.addWidget(rating_label)
+        rating_header.addStretch()
+        
+        self.rating_widget = RatingWidget()
+        self.rating_widget.valueChanged.connect(self._on_rating_changed)
+        
+        self.feedback_input = TextEdit()
+        self.feedback_input.setPlaceholderText("Optional: Add feedback about transcription quality...")
+        self.feedback_input.setFixedHeight(60)
+        self.feedback_input.textChanged.connect(self._on_feedback_changed)
+        
+        rating_layout.addLayout(rating_header)
+        rating_layout.addWidget(self.rating_widget)
+        rating_layout.addWidget(BodyLabel("Note any errors or issues:"))
+        rating_layout.addWidget(self.feedback_input)
+        
+        # Before/After comparison (if AI formatted)
+        self.comparison_widget = QWidget()
+        comparison_layout = QVBoxLayout(self.comparison_widget)
+        comparison_layout.setContentsMargins(0, 0, 0, 0)
+        comparison_layout.setSpacing(8)
+        
+        comparison_label = StrongBodyLabel("🔄 Before/After AI Formatting")
+        comparison_label.setStyleSheet("font-size: 12px;")
+        
+        self.before_text = QTextEdit()
+        self.before_text.setReadOnly(True)
+        self.before_text.setFixedHeight(80)
+        self.before_text.setPlaceholderText("Original transcription...")
+        self.before_text.setStyleSheet("""
+            QTextEdit {
+                background-color: #2A2A2A;
+                border: 1px solid #3F3F3F;
+                border-radius: 4px;
+                padding: 8px;
+                font-size: 11px;
+            }
+        """)
+        
+        self.after_text = QTextEdit()
+        self.after_text.setReadOnly(True)
+        self.after_text.setFixedHeight(80)
+        self.after_text.setPlaceholderText("AI formatted text...")
+        self.after_text.setStyleSheet("""
+            QTextEdit {
+                background-color: #252525;
+                border: 1px solid #4CAF50;
+                border-radius: 4px;
+                padding: 8px;
+                font-size: 11px;
+            }
+        """)
+        
+        comparison_layout.addWidget(comparison_label)
+        comparison_layout.addWidget(BodyLabel("Before:"))
+        comparison_layout.addWidget(self.before_text)
+        comparison_layout.addWidget(BodyLabel("After:"))
+        comparison_layout.addWidget(self.after_text)
+        
+        self.comparison_widget.setVisible(False)  # Hidden by default
+        
+        # Main transcription text area
+        text_label = StrongBodyLabel("📄 Transcription")
+        text_label.setStyleSheet("font-size: 12px;")
+        
         self.text_display = QTextEdit()
         self.text_display.setReadOnly(True)
         self.text_display.setPlaceholderText("Select a recording to view transcription...")
@@ -187,11 +275,41 @@ class HistoryPage(QWidget):
         button_layout.addStretch()
         
         layout.addWidget(self.detail_title)
-        layout.addWidget(self.metadata_widget)
+        layout.addWidget(metrics_container)
+        layout.addWidget(rating_card)
+        layout.addWidget(self.comparison_widget)
+        layout.addWidget(text_label)
         layout.addWidget(self.text_display, 1)
         layout.addLayout(button_layout)
         
         return panel
+    
+    def _create_metric_label(self, title: str, value: str) -> QWidget:
+        """Create a metric display widget"""
+        widget = QWidget()
+        layout = QVBoxLayout(widget)
+        layout.setContentsMargins(8, 6, 8, 6)
+        layout.setSpacing(2)
+        
+        title_label = BodyLabel(title)
+        title_label.setStyleSheet("font-size: 10px; color: #888;")
+        
+        value_label = StrongBodyLabel(value)
+        value_label.setObjectName("value")
+        value_label.setStyleSheet("font-size: 12px; color: #FFF;")
+        
+        layout.addWidget(title_label)
+        layout.addWidget(value_label)
+        
+        widget.setStyleSheet("""
+            QWidget {
+                background-color: #2A2A2A;
+                border: 1px solid #3F3F3F;
+                border-radius: 4px;
+            }
+        """)
+        
+        return widget
     
     # ==================== Event Handlers ====================
     
@@ -205,22 +323,95 @@ class HistoryPage(QWidget):
         
         # Update detail title
         timestamp = entry.get("timestamp")
+        if isinstance(timestamp, str):
+            try:
+                timestamp = datetime.fromisoformat(timestamp)
+            except:
+                pass
+        
         if hasattr(timestamp, "strftime"):
             time_str = timestamp.strftime("%Y-%m-%d %H:%M:%S")
         else:
             time_str = "Unknown time"
         self.detail_title.setText(time_str)
         
-        # Update metadata
-        self.timestamp_label.setText(time_str)
-        self.app_label.setText(entry.get("application") or "Unknown")
-        self.duration_label.setText(f"{entry.get('audio_duration', 0):.1f}s")
+        # Update metrics - find value labels inside each metric widget
+        self._update_metric_value(self.app_metric, entry.get("application") or "Unknown")
+        self._update_metric_value(self.duration_metric, f"{entry.get('audio_duration', 0):.1f}s")
         
         confidence = entry.get("confidence")
         if confidence is not None:
-            self.confidence_label.setText(f"{confidence*100:.0f}%")
+            self._update_metric_value(self.confidence_metric, f"{confidence*100:.0f}%")
         else:
-            self.confidence_label.setText("—")
+            self._update_metric_value(self.confidence_metric, "—")
+        
+        self._update_metric_value(self.words_metric, str(entry.get("word_count", 0)))
+        self._update_metric_value(self.chars_metric, str(entry.get("character_count", 0)))
+        
+        # Plugin usage
+        used_plugin = entry.get("used_plugin")
+        if used_plugin:
+            self._update_metric_value(self.plugin_metric, used_plugin)
+            self.plugin_metric.setStyleSheet("""
+                QWidget {
+                    background-color: #2A4A2A;
+                    border: 1px solid #4CAF50;
+                    border-radius: 4px;
+                }
+            """)
+        else:
+            self._update_metric_value(self.plugin_metric, "None")
+            self.plugin_metric.setStyleSheet("""
+                QWidget {
+                    background-color: #2A2A2A;
+                    border: 1px solid #3F3F3F;
+                    border-radius: 4px;
+                }
+            """)
+        
+        # AI formatting
+        ai_formatted = entry.get("ai_formatted", False)
+        if ai_formatted:
+            self._update_metric_value(self.ai_metric, "✓ Applied")
+            self.ai_metric.setStyleSheet("""
+                QWidget {
+                    background-color: #2A3A4A;
+                    border: 1px solid #4A9EEA;
+                    border-radius: 4px;
+                }
+            """)
+            
+            # Show before/after comparison
+            raw_text = entry.get("raw_text", "")
+            final_text = entry.get("text", "")
+            if raw_text and raw_text != final_text:
+                self.before_text.setPlainText(raw_text)
+                self.after_text.setPlainText(final_text)
+                self.comparison_widget.setVisible(True)
+            else:
+                self.comparison_widget.setVisible(False)
+        else:
+            self._update_metric_value(self.ai_metric, "—")
+            self.ai_metric.setStyleSheet("""
+                QWidget {
+                    background-color: #2A2A2A;
+                    border: 1px solid #3F3F3F;
+                    border-radius: 4px;
+                }
+            """)
+            self.comparison_widget.setVisible(False)
+        
+        # Language
+        language = entry.get("language", "Unknown")
+        self._update_metric_value(self.language_metric, language.upper() if language else "—")
+        
+        # Quality rating
+        rating = entry.get("quality_rating", 0)
+        self.rating_widget.setValue(rating)
+        
+        # Feedback
+        feedback = entry.get("quality_feedback", "")
+        self.feedback_input.setPlainText(feedback)
         
         # Update text display
         text = entry.get("text", "")
@@ -229,6 +420,34 @@ class HistoryPage(QWidget):
         # Enable buttons
         self.copy_btn.setEnabled(True)
         self.delete_btn.setEnabled(True)
+    
+    def _update_metric_value(self, metric_widget: QWidget, value: str):
+        """Update the value label inside a metric widget"""
+        value_label = metric_widget.findChild(StrongBodyLabel, "value")
+        if value_label:
+            value_label.setText(value)
+    
+    def _on_rating_changed(self):
+        """Handle quality rating change"""
+        if not self._selected_item:
+            return
+        
+        rating = self.rating_widget.value()
+        self._selected_item["quality_rating"] = rating
+        self._save_history()
+        
+        logger.info(f"Rating updated to {rating} stars for transcription")
+    
+    def _on_feedback_changed(self):
+        """Handle quality feedback change"""
+        if not self._selected_item:
+            return
+        
+        feedback = self.feedback_input.toPlainText()
+        self._selected_item["quality_feedback"] = feedback
+        self._save_history()
+        
+        logger.debug("Feedback updated for transcription")
     
     def _on_search_changed(self, text: str):
         """Filter list by search text"""
@@ -307,7 +526,16 @@ class HistoryPage(QWidget):
                 - word_count: int
                 - character_count: int
                 - confidence: float (optional)
+                - used_plugin: str (optional)
+                - ai_formatted: bool (optional)
+                - raw_text: str (optional)
         """
+        # Initialize new fields if not present
+        if "quality_rating" not in entry:
+            entry["quality_rating"] = 0
+        if "quality_feedback" not in entry:
+            entry["quality_feedback"] = ""
+        
         # Add to internal list
         self._history_items.insert(0, entry)  # Most recent first
         
@@ -317,6 +545,53 @@ class HistoryPage(QWidget):
         
         # Update list widget
         self._refresh_list()
+        
+        # Save to disk
+        self._save_history()
+    
+    def _save_history(self):
+        """Save history to JSON file"""
+        try:
+            # Convert datetime objects to ISO strings for JSON serialization
+            serializable_history = []
+            for entry in self._history_items:
+                entry_copy = entry.copy()
+                if isinstance(entry_copy.get("timestamp"), datetime):
+                    entry_copy["timestamp"] = entry_copy["timestamp"].isoformat()
+                serializable_history.append(entry_copy)
+            
+            with open(self._history_file, 'w', encoding='utf-8') as f:
+                json.dump(serializable_history, f, indent=2, ensure_ascii=False)
+            
+            logger.debug(f"History saved: {len(serializable_history)} items")
+        except Exception as e:
+            logger.error(f"Failed to save history: {e}")
+    
+    def _load_history(self):
+        """Load history from JSON file"""
+        if not self._history_file.exists():
+            logger.info("No history file found, starting fresh")
+            return
+        
+        try:
+            with open(self._history_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # Convert ISO strings back to datetime objects
+            for entry in data:
+                if isinstance(entry.get("timestamp"), str):
+                    try:
+                        entry["timestamp"] = datetime.fromisoformat(entry["timestamp"])
+                    except:
+                        entry["timestamp"] = datetime.now()
+            
+            self._history_items = data[:self._max_items]
+            self._refresh_list()
+            
+            logger.info(f"History loaded: {len(self._history_items)} items")
+        except Exception as e:
+            logger.error(f"Failed to load history: {e}")
+            self._history_items = []
     
     def _refresh_list(self, filtered_items: Optional[List[Dict[str, Any]]] = None):
         """Refresh the list widget with current or filtered items"""

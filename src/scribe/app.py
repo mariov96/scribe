@@ -478,10 +478,13 @@ class ScribeApp(QObject):
             
             raw_text = result.text.strip()
             formatted_text = self._format_transcription(raw_text)
+            ai_formatted = bool(formatted_text and formatted_text != raw_text)
             text = formatted_text or raw_text
             word_count = len(text.split())
             
             logger.debug(f"[RAW] Transcription: '{raw_text}'")
+            if ai_formatted:
+                logger.debug(f"[AI] Formatted to: '{text}'")
             logger.info(f"[OK] Transcription: '{text}' ({word_count} words)")
             print(f"\n{'='*60}")
             print(f"[OK] TRANSCRIPTION RESULT:")
@@ -490,7 +493,7 @@ class ScribeApp(QObject):
             print(f"{'='*60}\n")
 
             # Check if this is a voice command
-            is_command = self._process_as_command(text)
+            is_command, used_plugin = self._process_as_command(text)
 
             context = self._current_context or {}
 
@@ -526,6 +529,9 @@ class ScribeApp(QObject):
                 self.main_window.update_transcription_summary(summary)
                 history_entry = self._build_history_entry(metrics)
                 history_entry["text"] = text
+                history_entry["raw_text"] = raw_text if ai_formatted else text
+                history_entry["ai_formatted"] = ai_formatted
+                history_entry["used_plugin"] = used_plugin
                 self.main_window.add_transcription_event(history_entry)
 
             # Show complete status briefly
@@ -855,7 +861,7 @@ class ScribeApp(QObject):
         for metrics in recent:
             self.main_window.add_transcription_event(self._build_history_entry(metrics))
 
-    def _process_as_command(self, text: str) -> bool:
+    def _process_as_command(self, text: str) -> Tuple[bool, Optional[str]]:
         """
         Check if text is a voice command and execute it.
 
@@ -863,7 +869,7 @@ class ScribeApp(QObject):
             text: Transcribed text
 
         Returns:
-            True if text was processed as command
+            Tuple of (is_command: bool, plugin_name: Optional[str])
         """
         # Simple command detection: Check if text matches any registered pattern
         # TODO: Improve with intent classification
@@ -877,13 +883,14 @@ class ScribeApp(QObject):
             
             if matched:
                 command = commands[0]  # Use first matching command
+                plugin_name = command.plugin.name
 
                 try:
                     import time
                     start_time = time.time()
 
                     # Execute command with extracted parameters
-                    logger.info(f"Executing command: {pattern} via {command.plugin.name} with params: {params}")
+                    logger.info(f"Executing command: {pattern} via {plugin_name} with params: {params}")
                     
                     # Call handler with extracted parameters as keyword arguments
                     result = command.handler(**params)
@@ -892,29 +899,29 @@ class ScribeApp(QObject):
                     # Track analytics
                     self.value_calculator.record_command(
                         command_pattern=pattern,
-                        plugin=command.plugin.name,
+                        plugin=plugin_name,
                         execution_time=execution_time,
                         success=True
                     )
 
                     # Emit to UI
-                    self.plugin_command_executed.emit(command.plugin.name, str(result))
+                    self.plugin_command_executed.emit(plugin_name, str(result))
 
                     logger.info(f"Command executed successfully: {result}")
-                    return True
+                    return True, plugin_name
 
                 except Exception as e:
                     logger.error(f"Command execution failed: {e}")
                     self.value_calculator.record_command(
                         command_pattern=pattern,
-                        plugin=command.plugin.name,
+                        plugin=plugin_name,
                         execution_time=0,
                         success=False,
                         error_message=str(e)
                     )
-                    return False
+                    return False, plugin_name
 
-        return False
+        return False, None
 
     def _pattern_matches(self, text: str, pattern: str) -> Tuple[bool, Dict[str, str]]:
         """
