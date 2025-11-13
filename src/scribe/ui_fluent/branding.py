@@ -2,7 +2,7 @@
 Scribe branding constants and colors
 """
 
-from ...__version__ import __version__
+from scribe.__version__ import __version__
 
 SCRIBE_VERSION = __version__  # Now imports from __version__.py
 SCRIBE_TAGLINE = "Voice Control for Your Workflow"
