@@ -51,9 +51,8 @@ class InsightsPage(ScrollArea):
         """Handle new transcription event for real-time insights"""
         self.event_count += 1
         
-        # Regenerate insights every 2 new transcriptions
-        if self.event_count % 2 == 0:
-            self._regenerate_insights()
+        # Regenerate insights every new transcription for live updates
+        self._regenerate_insights()
     
     def update_summary(self, summary):
         """Update insights with new summary data"""
@@ -81,16 +80,27 @@ class InsightsPage(ScrollArea):
         if self.value_calculator:
             summary = self.value_calculator.get_session_summary()
             
+            # Session activity insight
+            if summary.total_transcriptions > 0:
+                insights.append(InsightCard(
+                    "📊",
+                    "Session Activity",
+                    f"You've completed {summary.total_transcriptions} transcription{'' if summary.total_transcriptions == 1 else 's'} "
+                    f"with {summary.total_words:,} words captured. Keep going!",
+                    f"{summary.total_transcriptions} transcription{'' if summary.total_transcriptions == 1 else 's'}"
+                ))
+            
             # Typing saved insight
             if summary.total_words > 0:
                 time_saved_min = int(summary.time_saved_vs_typing / 60)
-                insights.append(InsightCard(
-                    "⚡",
-                    "Typing Saved",
-                    f"Based on average typing speed (40 wpm), you've saved the equivalent "
-                    f"of typing {summary.total_words:,} words this session. That's {time_saved_min} minutes saved!",
-                    f"{summary.total_words:,} words saved"
-                ))
+                if time_saved_min > 0:
+                    insights.append(InsightCard(
+                        "⚡",
+                        "Typing Saved",
+                        f"Based on average typing speed (40 wpm), you've saved the equivalent "
+                        f"of typing {summary.total_words:,} words this session. That's {time_saved_min} minute{'s' if time_saved_min != 1 else ''} saved!",
+                        f"{summary.total_words:,} words saved"
+                    ))
             
             # Productivity multiplier
             if summary.productivity_multiplier > 1.0:
@@ -118,9 +128,9 @@ class InsightsPage(ScrollArea):
                 insights.append(InsightCard(
                     "💡",
                     "Voice Commands",
-                    f"You've used {summary.total_commands} voice commands with a {success_rate:.0f}% success rate. "
+                    f"You've used {summary.total_commands} voice command{'s' if summary.total_commands != 1 else ''} with a {success_rate:.0f}% success rate. "
                     f"Voice commands save 3x more time than typing!",
-                    f"{summary.total_commands} commands"
+                    f"{summary.total_commands} command{'s' if summary.total_commands != 1 else ''}"
                 ))
         
         # Add sample insights if no data yet

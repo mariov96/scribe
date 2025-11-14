@@ -397,15 +397,74 @@ class ScribeApp(QObject):
         if not self.transcription_engine:
             return
         logger.info("Reloading transcription engine with new configuration...")
-        try:
-            new_engine = TranscriptionEngine(self.config)
-            if not new_engine.initialize():
-                logger.error("Failed to reinitialize transcription engine with new config")
-                return
-            self.transcription_engine = new_engine
-            logger.info("Transcription engine reloaded successfully")
-        except Exception as e:
-            logger.error(f"Unable to reload transcription engine: {e}", exc_info=True)
+        
+        # Check if model is already downloaded
+        model_name = self.config.config.whisper.model
+        from pathlib import Path
+        model_dir = Path("models") / f"models--Systran--faster-whisper-{model_name}"
+        is_cached = model_dir.exists() and (model_dir / "snapshots").exists()
+        
+        # Show loading indicator with appropriate message
+        from qfluentwidgets import StateToolTip
+        if is_cached:
+            message = f"Loading {model_name} model from cache..."
+            logger.info(f"Model {model_name} found in cache")
+        else:
+            message = f"Downloading {model_name} model (first time)..."
+            logger.info(f"Model {model_name} not cached, will download")
+        
+        self.model_loading_tip = StateToolTip("Switching Model", message, self.main_window)
+        self.model_loading_tip.move(self.model_loading_tip.getSuitablePos())
+        self.model_loading_tip.show()
+        
+        # Load model in background thread to avoid blocking UI
+        def load_model_background():
+            try:
+                new_engine = TranscriptionEngine(self.config)
+                success = new_engine.initialize()
+                
+                # Update UI on main thread
+                from PyQt5.QtCore import QTimer
+                if success:
+                    QTimer.singleShot(0, lambda: self._on_model_loaded(new_engine, model_name, is_cached))
+                else:
+                    QTimer.singleShot(0, lambda: self._on_model_load_failed("Initialization failed"))
+            except Exception as e:
+                logger.error(f"Unable to reload transcription engine: {e}", exc_info=True)
+                QTimer.singleShot(0, lambda: self._on_model_load_failed(str(e)))
+        
+        import threading
+        thread = threading.Thread(target=load_model_background, daemon=True)
+        thread.start()
+    
+    def _on_model_loaded(self, new_engine, model_name: str, was_cached: bool):
+        """Called when model loading completes successfully."""
+        self.transcription_engine = new_engine
+        
+        if was_cached:
+            logger.info(f"Model '{model_name}' loaded from cache successfully")
+            success_msg = f"✅ Model '{model_name}' ready (from cache)"
+        else:
+            logger.info(f"Model '{model_name}' downloaded and loaded successfully")
+            success_msg = f"✅ Model '{model_name}' downloaded and ready"
+        
+        # Hide loading indicator and show success
+        if hasattr(self, 'model_loading_tip'):
+            self.model_loading_tip.setContent(success_msg)
+            self.model_loading_tip.setState(True)
+            from PyQt5.QtCore import QTimer
+            QTimer.singleShot(2000, self.model_loading_tip.close)
+    
+    def _on_model_load_failed(self, error_msg: str):
+        """Called when model loading fails."""
+        logger.error(f"Failed to reload transcription engine: {error_msg}")
+        
+        # Hide loading indicator and show error
+        if hasattr(self, 'model_loading_tip'):
+            self.model_loading_tip.setContent(f"❌ Model load failed: {error_msg}")
+            self.model_loading_tip.setState(False)
+            from PyQt5.QtCore import QTimer
+            QTimer.singleShot(3000, self.model_loading_tip.close)
 
     def _on_recording_started(self):
         """Callback when recording starts."""

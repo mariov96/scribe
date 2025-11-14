@@ -456,22 +456,20 @@ class ScribeMainWindow(MSFluentWindow):
     
     def closeEvent(self, event):
         """Minimize to tray on close button, hold Shift to actually quit"""
-        from PyQt5.QtWidgets import QMessageBox
+        from qfluentwidgets import MessageBox
         from PyQt5.QtCore import Qt as QtCore
         
         # Check if Shift key is held
         modifiers = QApplication.keyboardModifiers()
         if modifiers == QtCore.ShiftModifier:
-            # Shift held - actually quit
-            reply = QMessageBox.question(
-                self, 
-                'Quit Scribe?',
-                'Are you sure you want to quit Scribe?\n\n(Close without Shift to minimize to system tray)',
-                QMessageBox.Yes | QMessageBox.No,
-                QMessageBox.No
-            )
+            # Shift held - actually quit with Fluent-styled dialog
+            title = 'Quit Scribe?'
+            content = 'Are you sure you want to quit Scribe?\n\n(Close without Shift to minimize to system tray)'
             
-            if reply == QMessageBox.Yes:
+            dialog = MessageBox(title, content, self)
+            reply = dialog.exec_()
+            
+            if reply == MessageBox.StandardButton.Yes:
                 if hasattr(self, 'tray_icon'):
                     self.tray_icon.hide()
                 event.accept()

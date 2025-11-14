@@ -46,11 +46,6 @@ class SettingsPage(ScrollArea):
         appearance_card = self._create_appearance_settings()
         logs_card = self._create_logs_settings()
         
-        # Save button
-        save_btn = PrimaryPushButton(FIF.SAVE, "Save Configuration")
-        save_btn.setFixedWidth(200)
-        save_btn.clicked.connect(self._save_config)
-        
         self.vBoxLayout.addWidget(title)
         self.vBoxLayout.addWidget(SubtitleLabel("General"))
         self.vBoxLayout.addWidget(general_card)
@@ -66,18 +61,14 @@ class SettingsPage(ScrollArea):
         self.vBoxLayout.addSpacing(12)
         self.vBoxLayout.addWidget(SubtitleLabel("Logs & Debugging"))
         self.vBoxLayout.addWidget(logs_card)
-        self.vBoxLayout.addSpacing(20)
-        
-        save_row = QHBoxLayout()
-        save_row.addStretch()
-        save_row.addWidget(save_btn)
-        save_row.addStretch()
-        self.vBoxLayout.addLayout(save_row)
         
         self.vBoxLayout.addStretch(1)
         
         # Load initial values from config
         self._load_from_config()
+        
+        # Connect auto-save handlers (after loading to avoid spurious saves)
+        self._connect_auto_save_handlers()
     
     def _create_general_settings(self):
         from qfluentwidgets import LineEdit, StrongBodyLabel
@@ -556,13 +547,17 @@ class SettingsPage(ScrollArea):
         info_label.setStyleSheet("color: #888;")
         layout.addWidget(info_label)
         
-        # Log file path display
+        # Log file path display - find most recent log
         log_dir = Path.home() / ".scribe" / "logs"
-        log_file = log_dir / "scribe.log"
+        try:
+            log_files = sorted(log_dir.glob("scribe_*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
+            log_file = log_files[0] if log_files else log_dir / "scribe.log"
+        except Exception:
+            log_file = log_dir / "scribe.log"
         
         path_row = QHBoxLayout()
-        path_label = BodyLabel("Log file:")
-        path_value = BodyLabel(str(log_file))
+        path_label = BodyLabel("Current log:")
+        path_value = BodyLabel(str(log_file.name))
         path_value.setStyleSheet("color: #4CAF50; font-family: monospace;")
         path_row.addWidget(path_label)
         path_row.addWidget(path_value, 1)
@@ -571,23 +566,23 @@ class SettingsPage(ScrollArea):
         # Buttons row
         buttons_row = QHBoxLayout()
         
-        view_log_btn = PrimaryPushButton(FIF.DOCUMENT, "View Log")
-        view_log_btn.setFixedWidth(140)
+        view_log_btn = PrimaryPushButton(FIF.DOCUMENT, "View Current Log")
+        view_log_btn.setFixedWidth(160)
         view_log_btn.clicked.connect(self._view_log)
         
         open_folder_btn = PushButton(FIF.FOLDER, "Open Log Folder")
         open_folder_btn.setFixedWidth(160)
         open_folder_btn.clicked.connect(self._open_log_folder)
         
-        clear_log_btn = PushButton(FIF.DELETE, "Clear Log")
-        clear_log_btn.setFixedWidth(130)
-        clear_log_btn.clicked.connect(self._clear_log)
+        clear_old_logs_btn = PushButton(FIF.DELETE, "Clear Old Logs")
+        clear_old_logs_btn.setFixedWidth(150)
+        clear_old_logs_btn.clicked.connect(self._clear_old_logs)
         
         buttons_row.addWidget(view_log_btn)
         buttons_row.addSpacing(8)
         buttons_row.addWidget(open_folder_btn)
         buttons_row.addSpacing(8)
-        buttons_row.addWidget(clear_log_btn)
+        buttons_row.addWidget(clear_old_logs_btn)
         buttons_row.addStretch()
         
         layout.addLayout(buttons_row)
@@ -600,7 +595,13 @@ class SettingsPage(ScrollArea):
         from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QDialogButtonBox
         from PyQt5.QtCore import Qt
         
-        log_file = Path.home() / ".scribe" / "logs" / "scribe.log"
+        # Find most recent log file
+        log_dir = Path.home() / ".scribe" / "logs"
+        try:
+            log_files = sorted(log_dir.glob("scribe_*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
+            log_file = log_files[0] if log_files else log_dir / "scribe.log"
+        except Exception:
+            log_file = log_dir / "scribe.log"
         
         # Check if log file exists
         if not log_file.exists():
@@ -615,7 +616,7 @@ class SettingsPage(ScrollArea):
         
         # Create dialog
         dialog = QDialog(self)
-        dialog.setWindowTitle("Scribe Log Viewer")
+        dialog.setWindowTitle(f"Scribe Log Viewer - {log_file.name}")
         dialog.setMinimumSize(900, 600)
         
         layout = QVBoxLayout(dialog)
@@ -692,38 +693,55 @@ class SettingsPage(ScrollArea):
                 position=InfoBarPosition.TOP_RIGHT
             )
     
-    def _clear_log(self):
-        """Clear the log file after confirmation."""
+    def _clear_old_logs(self):
+        """Clear old log files, keeping only the most recent ones."""
         from pathlib import Path
         
         # Confirmation dialog
         result = MessageBox(
-            "Clear Log File?",
-            "This will delete all log entries. This action cannot be undone.",
+            "Clear Old Log Files?",
+            "This will delete all log files except the 3 most recent. This action cannot be undone.",
             self
         ).exec_()
         
         if result != MessageBox.StandardButton.Yes:
             return
         
-        log_file = Path.home() / ".scribe" / "logs" / "scribe.log"
+        log_dir = Path.home() / ".scribe" / "logs"
         
         try:
-            if log_file.exists():
-                log_file.unlink()
-                log_file.touch()  # Create empty file
+            # Get all log files sorted by modification time
+            log_files = sorted(log_dir.glob("scribe_*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
             
-            InfoBar.success(
-                title="Log cleared",
-                content="Log file has been cleared successfully",
-                parent=self,
-                duration=2000,
-                position=InfoBarPosition.TOP_RIGHT
-            )
+            # Delete all except the 3 most recent
+            deleted_count = 0
+            for old_log in log_files[3:]:
+                try:
+                    old_log.unlink()
+                    deleted_count += 1
+                except Exception:
+                    pass
+            
+            if deleted_count > 0:
+                InfoBar.success(
+                    title="Logs Cleaned",
+                    content=f"Deleted {deleted_count} old log file{'s' if deleted_count != 1 else ''}",
+                    parent=self,
+                    duration=2000,
+                    position=InfoBarPosition.TOP_RIGHT
+                )
+            else:
+                InfoBar.info(
+                    title="No Old Logs",
+                    content="Only recent log files found, nothing to delete",
+                    parent=self,
+                    duration=2000,
+                    position=InfoBarPosition.TOP_RIGHT
+                )
         except Exception as e:
             InfoBar.error(
                 title="Error",
-                content=f"Failed to clear log: {e}",
+                content=f"Failed to clear old logs: {e}",
                 parent=self,
                 duration=3000,
                 position=InfoBarPosition.TOP_RIGHT
@@ -870,13 +888,42 @@ class SettingsPage(ScrollArea):
         """Update language setting when user changes selection."""
         lang_code = self.language_combo.currentData()
         
-        # Update config
+        # Update config and auto-save
         if self.config_manager:
-            config = self.config_manager.config
-            # Note: This updates the in-memory config
-            # For now, just log it. Full save integration would require config schema update
-            logger.info(f"Language changed to: {lang_code}")
-            # TODO: Add language field to WhisperConfig in config/models.py and save here
+            try:
+                config = self.config_manager.config
+                # Update whisper config with language
+                self.config_manager.set('whisper', 'language', lang_code if lang_code != "auto" else None)
+                
+                # Auto-save like modern apps
+                saved_path = self.config_manager.save()
+                logger.info(f"Language changed to: {lang_code}, auto-saved to {saved_path}")
+                
+                # Show brief confirmation
+                InfoBar.success(
+                    title="Language Updated",
+                    content=f"Language set to {lang_code or 'auto-detect'}",
+                    orient=Qt.Orientation.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=1500,
+                    parent=self
+                )
+                
+                # Language change doesn't require model reload - just config update
+                # Don't emit config_changed signal for language
+                
+            except Exception as e:
+                logger.error(f"Failed to save language setting: {e}", exc_info=True)
+                InfoBar.error(
+                    title="Save Failed",
+                    content=f"Failed to save language setting: {str(e)}",
+                    orient=Qt.Orientation.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=3000,
+                    parent=self
+                )
     
     def _download_model(self):
         """Download the selected Whisper model."""
@@ -987,7 +1034,7 @@ Continue?"""
             if hotkey_text:
                 # Convert windows to meta for storage
                 storage_key = hotkey_text.replace('windows', 'meta')
-                self.config_manager.set('recording_options', 'activation_key', storage_key)
+                self.config_manager.set('hotkey', 'activation_key', storage_key)
 
             # UI settings
             self.config_manager.set('ui', 'minimize_to_tray', self.minimize_tray_switch.isChecked())
@@ -1005,8 +1052,14 @@ Continue?"""
             self.config_manager.set('whisper', 'device', self.compute_device_combo.currentData())
             self.config_manager.set('whisper', 'compute_type', self.compute_type_combo.currentData())
             
+            # Language setting (if user changed it)
+            lang_code = self.language_combo.currentData()
+            if lang_code:
+                self.config_manager.set('whisper', 'language', lang_code if lang_code != "auto" else None)
+            
             # Save to file
             saved_path = self.config_manager.save()
+            logger.info(f"Configuration saved successfully to {saved_path}")
             
             InfoBar.success(
                 title="Settings Saved",
@@ -1021,6 +1074,7 @@ Continue?"""
             self.config_changed.emit("all")
             
         except Exception as e:
+            logger.error(f"Failed to save configuration: {e}", exc_info=True)
             InfoBar.error(
                 title="Save Failed",
                 content=str(e),
@@ -1031,10 +1085,71 @@ Continue?"""
                 parent=self
             )
     
+    def _connect_auto_save_handlers(self):
+        """Connect all controls to auto-save their changes."""
+        # UI switches
+        self.minimize_tray_switch.checkedChanged.connect(self._auto_save_ui_setting)
+        self.show_tray_switch.checkedChanged.connect(self._auto_save_ui_setting)
+        self.start_minimized_switch.checkedChanged.connect(self._auto_save_ui_setting)
+        
+        # Audio settings
+        self.device_combo.currentIndexChanged.connect(self._auto_save_audio_setting)
+        self.rate_combo.currentIndexChanged.connect(self._auto_save_audio_setting)
+        
+        # Whisper settings
+        self.model_combo.currentIndexChanged.connect(self._auto_save_whisper_setting)
+        self.compute_device_combo.currentIndexChanged.connect(self._auto_save_whisper_setting)
+        self.compute_type_combo.currentIndexChanged.connect(self._auto_save_whisper_setting)
+    
+    def _auto_save_ui_setting(self):
+        """Auto-save UI settings when changed."""
+        try:
+            self.config_manager.set('ui', 'minimize_to_tray', self.minimize_tray_switch.isChecked())
+            self.config_manager.set('ui', 'show_system_tray', self.show_tray_switch.isChecked())
+            self.config_manager.set('ui', 'start_minimized', self.start_minimized_switch.isChecked())
+            self.config_manager.save()
+            logger.info("UI settings auto-saved")
+        except Exception as e:
+            logger.error(f"Failed to auto-save UI setting: {e}", exc_info=True)
+    
+    def _auto_save_audio_setting(self):
+        """Auto-save audio settings when changed."""
+        try:
+            device_id = self.device_combo.currentData()
+            self.config_manager.set('audio', 'device_id', device_id)
+            self.config_manager.set('audio', 'sample_rate', self.rate_combo.currentData())
+            self.config_manager.save()
+            logger.info("Audio settings auto-saved")
+        except Exception as e:
+            logger.error(f"Failed to auto-save audio setting: {e}", exc_info=True)
+    
+    def _auto_save_whisper_setting(self):
+        """Auto-save Whisper settings when changed."""
+        try:
+            self.config_manager.set('whisper', 'model', self.model_combo.currentData())
+            self.config_manager.set('whisper', 'device', self.compute_device_combo.currentData())
+            self.config_manager.set('whisper', 'compute_type', self.compute_type_combo.currentData())
+            self.config_manager.save()
+            logger.info("Whisper settings auto-saved")
+            
+            # Reload transcription engine with new settings
+            self.config_changed.emit("whisper")
+        except Exception as e:
+            logger.error(f"Failed to auto-save Whisper setting: {e}", exc_info=True)
+    
     def _on_theme_changed(self, theme_name: str):
-        """Apply theme change immediately."""
+        """Apply theme change immediately and save."""
         theme_map = {"Auto": Theme.AUTO, "Light": Theme.LIGHT, "Dark": Theme.DARK}
         setTheme(theme_map.get(theme_name, Theme.AUTO))
+        
+        # Auto-save theme preference
+        try:
+            theme_key = theme_name.lower()
+            self.config_manager.set('ui', 'theme', theme_key)
+            self.config_manager.save()
+            logger.info(f"Theme changed to: {theme_name}, auto-saved")
+        except Exception as e:
+            logger.error(f"Failed to save theme setting: {e}", exc_info=True)
     
     def _on_accent_changed(self, color_name: str):
         """Apply accent color change immediately."""

@@ -8,18 +8,33 @@ import sys
 import os
 import logging
 from pathlib import Path
+from datetime import datetime
 
-# Setup logging - both file and console
+# Setup logging - both file and console with timestamp
 log_dir = Path.home() / ".scribe" / "logs"
 log_dir.mkdir(parents=True, exist_ok=True)
-log_file = log_dir / "scribe.log"
+
+# Create timestamped log file
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+log_file = log_dir / f"scribe_{timestamp}.log"
+
+# Clean up old log files (keep only last 10)
+try:
+    log_files = sorted(log_dir.glob("scribe_*.log"), key=lambda p: p.stat().st_mtime, reverse=True)
+    for old_log in log_files[10:]:  # Keep 10 most recent
+        try:
+            old_log.unlink()
+        except Exception:
+            pass  # Ignore errors deleting old logs
+except Exception:
+    pass  # Ignore errors during cleanup
 
 # Configure root logger
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(log_file, mode='a', encoding='utf-8'),
+        logging.FileHandler(log_file, mode='w', encoding='utf-8'),  # mode='w' for new file each run
         logging.StreamHandler()  # Also log to console
     ]
 )

@@ -11,10 +11,10 @@ hotkey:
   recording_mode: voice_activity_detection
 whisper:
   use_api: false
-  model: base
+  model: small
   language: null
   device: auto
-  compute_type: auto
+  compute_type: int8
   temperature: 0.0
   api_key: null
   api_base_url: https://api.openai.com/v1
@@ -32,7 +32,7 @@ post_processing:
   auto_insert_mode: paste
 plugins:
   enabled_plugins:
-    - window_manager
+  - window_manager
   plugin_config: {}
 ui:
   theme: auto
