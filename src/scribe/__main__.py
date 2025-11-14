@@ -24,7 +24,7 @@ logging.basicConfig(
     ]
 )
 
-from scribe.__version__ import __version__
+from scribe.__version__ import __version__, BUILD_TIMESTAMP
 from scribe.app import ScribeApp
 from scribe.core.single_instance import SingleInstanceManager
 
@@ -35,13 +35,12 @@ def main():
     print("Modern voice automation - Phoenix rising!")
     print()
 
-    # Single instance check
-    instance_manager = SingleInstanceManager("scribe", __version__)
+    # Single instance check with version-aware upgrade
+    instance_manager = SingleInstanceManager("scribe", __version__, BUILD_TIMESTAMP)
     
     if not instance_manager.acquire():
         print("❌ Another instance of Scribe is already running.")
         print("   Only one instance can run at a time.")
-        print("   If you're trying to upgrade, the newer version should auto-start.")
         input("\nPress Enter to exit...")
         sys.exit(1)
 

@@ -1,8 +1,8 @@
 """
 Single Instance Manager - Ensures only one Scribe instance runs at a time.
 
-Uses a lock file with PID and version info. If a newer version starts,
-it can terminate older instances gracefully.
+Uses a lock file with PID, version, and build timestamp info. If a newer version 
+or build starts, it can terminate older instances gracefully.
 """
 
 import os
@@ -11,31 +11,35 @@ import psutil
 import logging
 from pathlib import Path
 from typing import Optional, Tuple
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 
 class SingleInstanceManager:
     """
-    Manages single instance enforcement with version-aware upgrades.
+    Manages single instance enforcement with version and build-time aware upgrades.
     
     Features:
-    - Lock file with PID and version
+    - Lock file with PID, version, and build timestamp
     - Detects stale locks (process not running)
-    - Allows newer versions to replace older ones
+    - Allows newer versions or builds to replace older ones
     - Graceful termination of old instances
+    - User warnings when trying to start older builds
     """
     
-    def __init__(self, app_name: str = "scribe", version: str = "unknown"):
+    def __init__(self, app_name: str = "scribe", version: str = "unknown", build_timestamp: int = 0):
         """
         Initialize single instance manager.
         
         Args:
             app_name: Name of the application
             version: Current version string
+            build_timestamp: Unix timestamp of when this build was created
         """
         self.app_name = app_name
         self.version = version
+        self.build_timestamp = build_timestamp
         self.lock_file = self._get_lock_path()
         self.acquired = False
     
@@ -50,12 +54,12 @@ class SingleInstanceManager:
         
         return temp_dir / f".{self.app_name}.lock"
     
-    def _read_lock_info(self) -> Optional[Tuple[int, str]]:
+    def _read_lock_info(self) -> Optional[Tuple[int, str, int]]:
         """
-        Read PID and version from lock file.
+        Read PID, version, and build timestamp from lock file.
         
         Returns:
-            (pid, version) tuple or None if lock doesn't exist/invalid
+            (pid, version, build_timestamp) tuple or None if lock doesn't exist/invalid
         """
         try:
             if not self.lock_file.exists():
@@ -66,24 +70,33 @@ class SingleInstanceManager:
                 return None
             
             parts = content.split('|')
-            if len(parts) != 2:
+            if len(parts) < 2:
                 return None
             
             pid = int(parts[0])
             version = parts[1]
-            return (pid, version)
+            
+            # Build timestamp is optional (for backwards compatibility)
+            build_timestamp = 0
+            if len(parts) >= 3:
+                try:
+                    build_timestamp = int(parts[2])
+                except ValueError:
+                    pass
+            
+            return (pid, version, build_timestamp)
         except Exception as e:
             logger.warning(f"Failed to read lock file: {e}")
             return None
     
     def _write_lock_info(self):
-        """Write current PID and version to lock file."""
+        """Write current PID, version, and build timestamp to lock file."""
         try:
             pid = os.getpid()
-            content = f"{pid}|{self.version}"
+            content = f"{pid}|{self.version}|{self.build_timestamp}"
             self.lock_file.write_text(content)
             self.acquired = True
-            logger.info(f"Acquired instance lock: PID={pid}, version={self.version}")
+            logger.info(f"Acquired instance lock: PID={pid}, version={self.version}, build={self.build_timestamp}")
         except Exception as e:
             logger.error(f"Failed to write lock file: {e}")
             raise
@@ -187,12 +200,22 @@ class SingleInstanceManager:
             # If version parsing fails, treat as equal
             return 0
     
+    def _format_build_time(self, timestamp: int) -> str:
+        """Format build timestamp as human-readable string."""
+        if timestamp == 0:
+            return "unknown"
+        try:
+            dt = datetime.fromtimestamp(timestamp)
+            return dt.strftime("%Y-%m-%d %H:%M:%S")
+        except Exception:
+            return "unknown"
+    
     def acquire(self) -> bool:
         """
         Acquire single instance lock.
         
         Returns:
-            True if lock acquired (either new or upgraded from old version)
+            True if lock acquired (either new or upgraded from old version/build)
             False if another instance is running and cannot be replaced
         """
         lock_info = self._read_lock_info()
@@ -203,7 +226,7 @@ class SingleInstanceManager:
             self._write_lock_info()
             return True
         
-        old_pid, old_version = lock_info
+        old_pid, old_version, old_build = lock_info
         
         # Check if old process is still running
         if not self._is_process_running(old_pid):
@@ -211,28 +234,77 @@ class SingleInstanceManager:
             self._write_lock_info()
             return True
         
-        # Old process is running - compare versions
+        # Old process is running - compare versions and build timestamps
         version_cmp = self._compare_versions(self.version, old_version)
         
+        # First, check version numbers
         if version_cmp > 0:
-            # We're newer - terminate old instance
+            # We're a newer version - terminate old instance
+            print(f"🔄 Upgrading from v{old_version} → v{self.version}")
+            print(f"   Closing older instance (PID={old_pid})...")
             logger.info(f"Newer version detected (old={old_version}, new={self.version})")
+            
             if self._terminate_process(old_pid):
+                print("✅ Upgrade successful! Starting new version...")
                 self._write_lock_info()
                 return True
             else:
+                print("❌ Failed to close old instance")
                 logger.error("Failed to terminate old instance")
                 return False
         
-        elif version_cmp == 0:
-            # Same version already running
-            logger.warning(f"Scribe v{old_version} is already running (PID={old_pid})")
+        elif version_cmp < 0:
+            # Older version trying to start - don't allow
+            old_build_str = self._format_build_time(old_build)
+            logger.warning(f"Newer version already running (current={old_version}, attempted={self.version})")
+            print(f"\n⚠️  Cannot start older version!")
+            print(f"   Currently running: v{old_version} (built {old_build_str})")
+            print(f"   Attempting to start: v{self.version}")
+            print(f"\n   Please close the running instance first if you need to downgrade.")
             return False
         
         else:
-            # Older version trying to start - don't allow
-            logger.warning(f"Newer version already running (current={old_version}, attempted={self.version})")
-            return False
+            # Same version - compare build timestamps
+            if self.build_timestamp > old_build:
+                # Newer build of same version
+                old_build_str = self._format_build_time(old_build)
+                new_build_str = self._format_build_time(self.build_timestamp)
+                
+                print(f"🔄 Upgrading to newer build of v{self.version}")
+                print(f"   Old build: {old_build_str}")
+                print(f"   New build: {new_build_str}")
+                print(f"   Closing older instance (PID={old_pid})...")
+                logger.info(f"Newer build detected (old={old_build}, new={self.build_timestamp})")
+                
+                if self._terminate_process(old_pid):
+                    print("✅ Upgrade successful! Starting new build...")
+                    self._write_lock_info()
+                    return True
+                else:
+                    print("❌ Failed to close old instance")
+                    logger.error("Failed to terminate old instance")
+                    return False
+            
+            elif self.build_timestamp < old_build:
+                # Older build of same version
+                old_build_str = self._format_build_time(old_build)
+                new_build_str = self._format_build_time(self.build_timestamp)
+                
+                logger.warning(f"Newer build already running (old={old_build}, attempted={self.build_timestamp})")
+                print(f"\n⚠️  Cannot start older build!")
+                print(f"   Currently running: v{old_version} (built {old_build_str})")
+                print(f"   Attempting to start: v{self.version} (built {new_build_str})")
+                print(f"\n   Please close the running instance first if you need to run this older build.")
+                return False
+            
+            else:
+                # Same version and build already running
+                build_str = self._format_build_time(old_build)
+                logger.warning(f"Scribe v{old_version} is already running (PID={old_pid}, build={old_build})")
+                print(f"\n⚠️  Scribe v{old_version} is already running")
+                print(f"   PID: {old_pid}")
+                print(f"   Build: {build_str}")
+                return False
     
     def release(self):
         """Release the instance lock."""

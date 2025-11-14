@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
+- **Build Timestamp System** - Added build timestamp tracking to enable intelligent version checking and auto-upgrades.
+  - `BUILD_TIMESTAMP` field in `__version__.py` tracks when each build was created
+  - Auto-upgrade system compares both version numbers and build timestamps
+  - Newer versions/builds automatically close older running instances
+  - Downgrade protection prevents accidentally starting older versions/builds
+  - Clear user messaging shows which version/build is running and why upgrade/downgrade failed
+  - New tool: `tools/update_build_timestamp.py` to update timestamps before releases
+  - New test suite: `tools/test_version_checking.py` to validate upgrade scenarios
+  - Documentation: `docs/BUILD_TIMESTAMP.md` and `tools/README.md`
 - New settings window to configure WhisperWriter.
 - New main window to either start the keyboard listener or open the settings window.
 - New continuous recording mode ([Issue #40](https://github.com/savbell/whisper-writer/issues/40)).

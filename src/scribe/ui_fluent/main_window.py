@@ -393,9 +393,23 @@ class ScribeMainWindow(MSFluentWindow):
         self.settings_page = SettingsPage(self.config_manager, self)
         self.about_page = AboutPage(self)
         
+        # Initialize Meeting Plugin
+        try:
+            from scribe.plugins.meeting import MeetingNoteTakerPlugin
+            self.meeting_plugin = MeetingNoteTakerPlugin(self)
+            self.meeting_page = self.meeting_plugin.get_page()
+            logger.info("✅ Meeting Note Taker plugin loaded")
+        except Exception as e:
+            logger.error(f"Failed to load Meeting plugin: {e}", exc_info=True)
+            self.meeting_page = None
+        
         # Add fade animations to all pages
-        for page in [self.home_page, self.insights_page, self.history_page, 
-                     self.plugins_page, self.settings_page, self.about_page]:
+        pages_to_animate = [self.home_page, self.insights_page, self.history_page, 
+                           self.plugins_page, self.settings_page, self.about_page]
+        if self.meeting_page:
+            pages_to_animate.append(self.meeting_page)
+        
+        for page in pages_to_animate:
             self._add_page_animation(page)
 
         # Connect home page signals
@@ -407,6 +421,11 @@ class ScribeMainWindow(MSFluentWindow):
         self.addSubInterface(self.home_page, FIF.HOME, "Home")
         self.addSubInterface(self.insights_page, FIF.PIE_SINGLE, "Insights")
         self.addSubInterface(self.history_page, FIF.HISTORY, "History")
+        
+        # Add Meeting page if loaded
+        if self.meeting_page:
+            self.addSubInterface(self.meeting_page, FIF.MICROPHONE, "Meetings")
+        
         self.addSubInterface(self.plugins_page, FIF.GAME, "Plugins")
         
         # Bottom navigation
