@@ -31,14 +31,16 @@ class StatusPopup(QWidget):
 
     def initUI(self):
         """Initialize the minimal status popup UI"""
-        # Frameless, always on top
+        # Frameless, always on top, does not accept focus
         self.setWindowFlags(
             Qt.FramelessWindowHint |
             Qt.WindowStaysOnTopHint |
             Qt.Tool |
+            Qt.WindowDoesNotAcceptFocus |  # Prevents stealing focus
             Qt.X11BypassWindowManagerHint
         )
         self.setAttribute(Qt.WA_TranslucentBackground)
+        self.setAttribute(Qt.WA_ShowWithoutActivating)  # Show without activating
 
         # Wider to accommodate full error messages like "No speech detected"
         self.setFixedSize(280, 50)
