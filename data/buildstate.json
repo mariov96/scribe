@@ -1,0 +1,220 @@
+{
+  "_scf_header": {
+    "framework": "Session Continuity Framework",
+    "repository": "https://github.com/mariov96/session-continuity-framework",
+    "creator": "Mario Vaccari",
+    "description": "This file uses Session Continuity Framework to maintain perfect context across AI sessions. SCF transforms AI from order-taker to informed project partner."
+  },
+  "meta": {
+    "spec": "v0.1-technical",
+    "companion": "buildstate.md v0.1-strategic",
+    "repo": "new-project",
+    "purpose": "Technical implementation, debugging, feature development",
+    "last_sync": "2025-01-19T12:00:00Z",
+    "rebalance_trigger": "major_feature_completion | arch_change | performance_milestone"
+  },
+  "project": {
+    "name": "Scribe - The Open Voice Platform",
+    "version": "2.0.0",
+    "versioning": {
+      "scheme": "Semantic Versioning (MAJOR.MINOR.PATCH)",
+      "rules": {
+        "major": "Breaking changes, major architecture rewrites, API incompatibility",
+        "minor": "New features, significant enhancements, backward-compatible additions",
+        "patch": "Bug fixes, small improvements, documentation updates, performance tweaks"
+      },
+      "examples": {
+        "major": "3.0.0 - Complete UI framework change, plugin API v2",
+        "minor": "2.1.0 - Add video transcription, new AI model support",
+        "patch": "2.0.1 - Fix hotkey bug, improve recording quality"
+      },
+      "current_increment": "patch",
+      "next_planned": "2.0.1 - Fix any critical bugs from v2.0.0 release"
+    },
+    "type": "Desktop Application - Voice Dictation",
+    "stakeholder": "Open Source Community",
+    "phase": "public_release"
+  },
+  "current_state": {
+    "implemented": [],
+    "in_progress": [],
+    "blocked": [],
+    "performance_metrics": {}
+  },
+  "bugs": [
+    {
+      "id": "BUG-001",
+      "severity": "critical",
+      "title": "Hotkey Recording Crash - Qt Threading Issue",
+      "status": "investigating",
+      "discovered": "2025-11-17",
+      "description": "App crashes/hangs immediately when hotkey pressed to start recording. Process enters stopped state (SIGSTOP) without Python exception.",
+      "symptoms": [
+        "Hotkey detected successfully by keyboard library",
+        "Qt signal emitted and slot called correctly",
+        "Log shows '▶️ Starting recording...' then immediate crash/hang",
+        "Process status becomes 'T' (stopped/traced), not crashed",
+        "No Python traceback - suggests native code deadlock or Qt issue"
+      ],
+      "investigation_summary": {
+        "root_cause_hypothesis": "Qt threading deadlock in UI update code called from hotkey signal handler",
+        "evidence": [
+          "Crash occurs after 'Starting recording...' logged at line 310 in app.py",
+          "Crash happens BEFORE audio_recorder.start_recording() is called",
+          "Crash is during main_window.update_recording_status(True) at line 317",
+          "Hotkey handler runs via Qt.QueuedConnection from keyboard library thread",
+          "UI update methods may not be safe to call from queued cross-thread signal"
+        ],
+        "fixes_attempted": [
+          {
+            "attempt": "Fixed audio callback Qt threading (removed signal emission from PortAudio thread)",
+            "result": "Fixed original crash, but revealed new UI threading issue",
+            "commit": "3efa366"
+          },
+          {
+            "attempt": "Added callback wrapper to isolate audio thread",
+            "result": "No change - crash still occurs before audio code runs"
+          },
+          {
+            "attempt": "Changed latency parameter from 'low' to None",
+            "result": "No change - not related to audio configuration"
+          },
+          {
+            "attempt": "Used QTimer.singleShot to defer audio start to next event loop",
+            "result": "No change - crash happens before deferred call executes"
+          },
+          {
+            "attempt": "Removed debug logging that might cause I/O blocking",
+            "result": "No change - logging not the issue"
+          }
+        ],
+        "what_works": [
+          "App startup and initialization",
+          "Hotkey detection via keyboard library",
+          "Signal/slot connections with Qt.QueuedConnection",
+          "All 49 unit tests pass (including integration tests with real hardware)",
+          "Audio recorder thread safety fixes validated"
+        ],
+        "what_fails": [
+          "Any attempt to call main_window.update_recording_status() from hotkey handler",
+          "Process deadlocks/stops instead of crashing with exception",
+          "UI becomes unresponsive (suggests Qt event loop blocked)"
+        ]
+      },
+      "next_steps": [
+        "Test recording WITHOUT any UI updates to confirm audio recorder works",
+        "Investigate recording_widget.start_recording() and home_page.update_status() for blocking calls",
+        "Consider moving ALL recording operations to separate QThread worker",
+        "Use QMetaObject.invokeMethod with Qt.QueuedConnection for UI updates",
+        "Check if recording_widget or status_popup have Qt::DirectConnection signals",
+        "Profile with Qt debugger to identify exact blocking call"
+      ],
+      "affected_files": [
+        "src/scribe/app.py (line 317 - UI update call)",
+        "src/scribe/core/hotkey_manager.py (signal emission from keyboard thread)",
+        "src/scribe/ui_fluent/main_window.py (update_recording_status method)",
+        "src/scribe/ui_fluent/widgets/recording_widget.py (start_recording method)"
+      ],
+      "workaround": "None - recording completely non-functional",
+      "technical_notes": {
+        "qt_threading_rules": [
+          "Qt UI methods MUST be called from main/GUI thread only",
+          "QueuedConnection should defer to main thread but may not be sufficient",
+          "Qt objects created in one thread cannot safely call methods from another",
+          "Some Qt widgets have internal DirectConnection signals that bypass queuing"
+        ],
+        "keyboard_library_behavior": "Global hotkey callbacks run in separate thread created by keyboard library, NOT Qt thread",
+        "process_stopped_state": "SIGSTOP signal suggests debugger-like pause, possibly Qt's deadlock detection or thread waiting on mutex"
+      },
+      "priority": "P0 - Blocks all recording functionality",
+      "impact": "Complete loss of core feature - users cannot record audio via hotkey"
+    }
+  ],
+  "tech_stack": {
+    "frontend": [],
+    "backend": [],
+    "database": [],
+    "deployment": [],
+    "testing": []
+  },
+  "architecture": {
+    "components": [],
+    "services": [],
+    "data_flow": "",
+    "state_management": "",
+    "error_strategy": ""
+  },
+  "requirements": {
+    "functional": [],
+    "non_functional": [],
+    "constraints": [],
+    "assumptions": []
+  },
+  "user_stories": [],
+  "acceptance_criteria": [],
+  "next_immediate": [],
+  "development": {
+    "env_vars": [],
+    "commands": {},
+    "setup_notes": []
+  },
+  "performance": {
+    "requirements": [],
+    "constraints": [],
+    "targets": []
+  },
+  "coding_standards": {
+    "languages": [],
+    "frameworks": [],
+    "patterns": [],
+    "conventions": {}
+  },
+  "session_log": [
+    {
+      "date": "2025-11-17",
+      "type": "critical_bug_investigation",
+      "changes": [
+        "Fixed Qt thread safety in audio_recorder.py (removed signal emission from PortAudio callback)",
+        "Added QTimer-based cross-thread signal emission (50ms intervals)",
+        "Fixed PyQt5/PySide6 mixing issue (reverted all to PyQt5)",
+        "Fixed Qt.QueuedConnection syntax for PyQt5 (type= keyword argument)",
+        "Created comprehensive test suite (49 tests, all passing)",
+        "Added detailed logging to trace crash point",
+        "Identified new Qt threading issue in UI update code"
+      ],
+      "notes": "Started with silent crash on recording. Fixed audio thread safety but uncovered deeper Qt UI threading issue. Hotkey works but UI update causes deadlock. Multiple fix attempts unsuccessful. Need different architectural approach."
+    },
+    {
+      "date": "2025-11-13",
+      "type": "ux_improvements",
+      "changes": [
+        "Implemented timestamped log files with auto-rotation",
+        "Fixed language change incorrectly triggering model reload",
+        "Enhanced model loading feedback (cached vs downloading)",
+        "Improved Insights page with Session Activity card",
+        "Updated Settings log viewer to show current file"
+      ],
+      "notes": "Quality of life improvements completed before critical crash was discovered"
+    },
+    {
+      "date": "2025-01-19",
+      "type": "initialization",
+      "changes": [
+        "created_fresh_buildstate_system"
+      ],
+      "notes": "established dual-file architecture for new project ideation"
+    }
+  ],
+  "ai_context": {
+    "conversation_tracking": true,
+    "capacity_monitoring": true,
+    "alert_threshold": "80%",
+    "rebalance_suggestions": "automated_on_triggers",
+    "sync_automation": "sync_buildstate.py framework ready",
+    "scf_commands": {
+      "time": "Intelligent token usage estimate with capacity warnings",
+      "rules": "List active rules and behavioral guidelines",
+      "closeout": "Provide updated buildstate file for session end"
+    }
+  }
+}
