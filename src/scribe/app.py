@@ -298,25 +298,49 @@ class ScribeApp(QObject):
         if not self.audio_recorder or self.is_recording:
             return
 
-        self._current_context = self._capture_context()
+        try:
+            self._current_context = self._capture_context()
 
-        if source == "manual":
-            self._recording_mode = "manual"
-        self._recording_source = source
+            if source == "manual":
+                self._recording_mode = "manual"
+            self._recording_source = source
 
-        logger.info("[MIC] Starting recording...")
-        print("[MIC] Starting recording...")
-        self.is_recording = True
+            logger.info("[MIC] Starting recording...")
+            print("[MIC] Starting recording...")
+            self.is_recording = True
 
-        # Update UI
-        if self.main_window:
-            self.main_window.update_recording_status(True)
+            # Update UI
+            if self.main_window:
+                self.main_window.update_recording_status(True)
 
-        # Show status popup
-        if self.status_popup:
-            self.status_popup.show_recording()
+            # Show status popup
+            if self.status_popup:
+                self.status_popup.show_recording()
 
-        self.audio_recorder.start_recording()
+            self.audio_recorder.start_recording()
+            
+        except Exception as e:
+            # Catch any errors during recording start
+            logger.error(f"Failed to start recording: {e}", exc_info=True)
+            self.is_recording = False
+            self._recording_mode = "idle"
+            
+            # Update UI to reflect error
+            if self.main_window:
+                self.main_window.update_recording_status(False)
+            if self.status_popup:
+                self.status_popup.hide()
+            
+            # Show error to user
+            from qfluentwidgets import InfoBar, InfoBarPosition
+            if self.main_window:
+                InfoBar.error(
+                    title="Recording Failed",
+                    content=f"Failed to start recording: {str(e)}",
+                    parent=self.main_window,
+                    duration=5000,
+                    position=InfoBarPosition.TOP_RIGHT
+                )
 
     def _stop_recording(self):
         """Stop audio recording and trigger transcription."""

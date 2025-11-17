@@ -122,20 +122,36 @@ class AudioRecorder(QObject):
             return
         
         try:
+            # Validate device before starting
+            if self.device_id is not None:
+                try:
+                    device_info = sd.query_devices(self.device_id)
+                    if device_info['max_input_channels'] < 1:
+                        raise ValueError(f"Device {self.device_id} has no input channels")
+                    logger.info(f"Validated device: {device_info['name']}")
+                except Exception as e:
+                    logger.error(f"Invalid device {self.device_id}: {e}. Falling back to default.")
+                    self.device_id = None
+            
             self.audio_data = []
             self.is_recording = True
             
             logger.info(f"Starting recording (device={self.device_id}, rate={self.sample_rate}Hz)")
             
-            # Start input stream
-            self.stream = sd.InputStream(
-                device=self.device_id,
-                channels=self.channels,
-                samplerate=self.sample_rate,
-                dtype=self.dtype,
-                callback=self._audio_callback
-            )
-            self.stream.start()
+            # Start input stream with additional error handling
+            try:
+                self.stream = sd.InputStream(
+                    device=self.device_id,
+                    channels=self.channels,
+                    samplerate=self.sample_rate,
+                    dtype=self.dtype,
+                    callback=self._audio_callback,
+                    blocksize=0,  # Use default block size for stability
+                    latency='low'  # Request low latency
+                )
+                self.stream.start()
+            except sd.PortAudioError as e:
+                raise RuntimeError(f"PortAudio error: {e}. Device may be in use or unavailable.") from e
             
             self.recording_started.emit()
             logger.info("Recording started successfully")
@@ -143,25 +159,33 @@ class AudioRecorder(QObject):
         except Exception as e:
             self.is_recording = False
             error_msg = f"Failed to start recording: {e}"
-            logger.error(error_msg)
+            logger.error(error_msg, exc_info=True)
             self.error_occurred.emit(error_msg)
     
     def _audio_callback(self, indata, frames, time, status):
         """Callback for audio input stream."""
-        if status:
-            logger.warning(f"Audio callback status: {status}")
-        
-        # Store audio data
-        if self.is_recording:
-            chunk = indata.copy()
-            self.audio_data.append(chunk)
-            try:
-                rms = float(np.sqrt(np.mean(chunk.astype(np.float32) ** 2)))
-                normalized = min(1.0, rms / np.iinfo(np.int16).max * 4.0)
-                self._last_level = normalized
-                self.level_changed.emit(normalized)
-            except Exception:
-                pass
+        try:
+            if status:
+                logger.warning(f"Audio callback status: {status}")
+            
+            # Store audio data
+            if self.is_recording:
+                chunk = indata.copy()
+                self.audio_data.append(chunk)
+                try:
+                    rms = float(np.sqrt(np.mean(chunk.astype(np.float32) ** 2)))
+                    normalized = min(1.0, rms / np.iinfo(np.int16).max * 4.0)
+                    self._last_level = normalized
+                    self.level_changed.emit(normalized)
+                except Exception as e:
+                    # Don't log every callback error, just first one
+                    if not hasattr(self, '_callback_error_logged'):
+                        logger.error(f"Audio callback error: {e}", exc_info=True)
+                        self._callback_error_logged = True
+        except Exception as e:
+            # Catch any unhandled callback errors to prevent crashes
+            logger.error(f"Critical audio callback error: {e}", exc_info=True)
+            self.is_recording = False
     
     def stop_recording(self) -> bytes:
         """
@@ -177,11 +201,16 @@ class AudioRecorder(QObject):
         try:
             self.is_recording = False
             
-            # Stop stream
+            # Stop stream with error handling
             if hasattr(self, 'stream'):
-                self.stream.stop()
-                self.stream.close()
-                del self.stream  # Ensure complete cleanup
+                try:
+                    self.stream.stop()
+                    self.stream.close()
+                except Exception as e:
+                    logger.error(f"Error stopping audio stream: {e}", exc_info=True)
+                finally:
+                    if hasattr(self, 'stream'):
+                        del self.stream  # Ensure complete cleanup
             # Concatenate all audio chunks
             if not self.audio_data:
                 logger.warning("No audio data captured")

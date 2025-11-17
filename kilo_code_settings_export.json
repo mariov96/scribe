@@ -1,0 +1,23 @@
+{
+    "note": "Export of all Kilo Code settings found in VS Code configuration",
+    "export_timestamp": "2025-11-15T00:37:19.870Z",
+    "export_location": "c:/code/scribe/kilo_code_settings_export.json",
+    "settings": {
+        "user_settings": {
+            "file_path": "C:/Users/User/AppData/Roaming/Code/User/settings.json",
+            "kilo_code_settings": {
+                "kilo-code.allowedCommands": [
+                    "git log",
+                    "git diff",
+                    "git show"
+                ],
+                "kilo-code.deniedCommands": []
+            }
+        },
+        "workspace_settings": {
+            "file_path": ".vscode/settings.json",
+            "kilo_code_settings": {},
+            "note": "No Kilo Code settings found in workspace settings"
+        }
+    }
+}
