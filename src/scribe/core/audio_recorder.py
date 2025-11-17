@@ -154,7 +154,7 @@ class AudioRecorder(QObject):
                 raise RuntimeError(f"PortAudio error: {e}. Device may be in use or unavailable.") from e
             
             # Start timer to emit level changes from main thread (not audio thread)
-            self._level_timer = QTimer()
+            self._level_timer = QTimer(self)  # Pass self as parent
             self._level_timer.timeout.connect(self._emit_level)
             self._level_timer.start(50)  # Update 20 times per second
             
