@@ -152,7 +152,7 @@ class ScribeApp(QObject):
 
             # Initialize audio recorder
             logger.info("Initializing audio recorder...")
-            self.audio_recorder = AudioRecorder(self.config, parent=self)
+            self.audio_recorder = AudioRecorder(self.config)
             self.audio_recorder.recording_started.connect(self._on_recording_started)
             self.audio_recorder.recording_stopped.connect(self._on_recording_stopped)
             self.audio_recorder.level_changed.connect(self._on_audio_level)
