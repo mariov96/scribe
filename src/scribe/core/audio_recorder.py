@@ -33,8 +33,8 @@ class AudioRecorder(QObject):
     error_occurred = Signal(str)  # error message
     level_changed = Signal(float)  # normalized level for VU meter
     
-    def __init__(self, config=None):
-        super().__init__()
+    def __init__(self, config=None, parent=None):
+        super().__init__(parent)
         self.config = config
         
         # Recording parameters
