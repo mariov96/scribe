@@ -11,7 +11,7 @@ import soundfile as sf
 from pathlib import Path
 from typing import Optional, List, Dict
 from datetime import datetime
-from PySide6.QtCore import QObject, Signal, QTimer
+from PySide6.QtCore import QObject, Signal, QTimer, QThread
 
 logger = logging.getLogger(__name__)
 
@@ -136,10 +136,18 @@ class AudioRecorder(QObject):
             self.audio_data = []
             self.is_recording = True
             
+            # Check we're on the main thread
+            current_thread = QThread.currentThread()
+            main_thread = QThread.currentThread().parent() if hasattr(QThread.currentThread(), 'parent') else None
+            logger.info(f"start_recording called from thread: {current_thread}")
+            logger.info(f"This QObject thread: {self.thread()}")
+            
             logger.info(f"Starting recording (device={self.device_id}, rate={self.sample_rate}Hz)")
+            logger.info(f"About to create InputStream...")
             
             # Start input stream with additional error handling
             try:
+                logger.info(f"Creating stream with device={self.device_id}, channels={self.channels}, rate={self.sample_rate}")
                 self.stream = sd.InputStream(
                     device=self.device_id,
                     channels=self.channels,
@@ -149,15 +157,20 @@ class AudioRecorder(QObject):
                     blocksize=0,  # Use default block size for stability
                     latency='low'  # Request low latency
                 )
+                logger.info(f"Stream created, about to start...")
                 self.stream.start()
+                logger.info(f"Stream started successfully!")
             except sd.PortAudioError as e:
                 raise RuntimeError(f"PortAudio error: {e}. Device may be in use or unavailable.") from e
             
+            logger.info("Creating QTimer...")
             # Start timer to emit level changes from main thread (not audio thread)
             self._level_timer = QTimer(self)  # Pass self as parent
             self._level_timer.timeout.connect(self._emit_level)
             self._level_timer.start(50)  # Update 20 times per second
+            logger.info("QTimer started")
             
+            logger.info("Emitting recording_started signal...")
             self.recording_started.emit()
             logger.info("Recording started successfully")
             
