@@ -307,11 +307,15 @@ class HotkeyManager(QObject):
         self._handle_hotkey_released()
 
     def _handle_hotkey_pressed(self):
+        logger.info("[HOTKEY] _handle_hotkey_pressed called!")
         if self._combo_active:
+            logger.info("[HOTKEY] Combo already active, ignoring")
             return
         self._combo_active = True
         self._hold_start_time = time.time()
+        logger.info("[HOTKEY] Emitting hotkey_pressed signal")
         self.hotkey_pressed.emit()
+        logger.info("[HOTKEY] Signal emitted")
 
     def _handle_hotkey_released(self):
         if not self._combo_active:

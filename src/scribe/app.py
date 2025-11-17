@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover - optional dependency
     win32gui = None
     win32con = None
 
-from PyQt5.QtCore import QObject, QTimer, Qt, pyqtSignal as Signal
+from PyQt5.QtCore import QObject, QTimer, QThread, Qt, pyqtSignal as Signal
 from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5.QtGui import QIcon
 
@@ -237,6 +237,7 @@ class ScribeApp(QObject):
     def _on_hotkey_down(self):
         """Handle hotkey press (keys down)."""
         logger.info("[MIC] HOTKEY HANDLER CALLED!")
+        logger.info(f"[MIC] Thread: {QThread.currentThread()}")
         print("[MIC] HOTKEY HANDLER CALLED!")
 
         if self.main_window:
