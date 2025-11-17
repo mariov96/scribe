@@ -11,7 +11,7 @@ import soundfile as sf
 from pathlib import Path
 from typing import Optional, List, Dict
 from datetime import datetime
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal, QTimer
 
 logger = logging.getLogger(__name__)
 
@@ -153,6 +153,11 @@ class AudioRecorder(QObject):
             except sd.PortAudioError as e:
                 raise RuntimeError(f"PortAudio error: {e}. Device may be in use or unavailable.") from e
             
+            # Start timer to emit level changes from main thread (not audio thread)
+            self._level_timer = QTimer()
+            self._level_timer.timeout.connect(self._emit_level)
+            self._level_timer.start(50)  # Update 20 times per second
+            
             self.recording_started.emit()
             logger.info("Recording started successfully")
             
@@ -162,8 +167,13 @@ class AudioRecorder(QObject):
             logger.error(error_msg, exc_info=True)
             self.error_occurred.emit(error_msg)
     
+    def _emit_level(self):
+        """Emit level change from main thread (called by timer)."""
+        if self.is_recording and hasattr(self, '_last_level'):
+            self.level_changed.emit(self._last_level)
+    
     def _audio_callback(self, indata, frames, time, status):
-        """Callback for audio input stream."""
+        """Callback for audio input stream - runs in audio thread!"""
         try:
             if status:
                 logger.warning(f"Audio callback status: {status}")
@@ -176,7 +186,8 @@ class AudioRecorder(QObject):
                     rms = float(np.sqrt(np.mean(chunk.astype(np.float32) ** 2)))
                     normalized = min(1.0, rms / np.iinfo(np.int16).max * 4.0)
                     self._last_level = normalized
-                    self.level_changed.emit(normalized)
+                    # DON'T emit Qt signals from audio thread - causes segfault!
+                    # Signal will be emitted from main thread via timer
                 except Exception as e:
                     # Don't log every callback error, just first one
                     if not hasattr(self, '_callback_error_logged'):
@@ -200,6 +211,12 @@ class AudioRecorder(QObject):
         
         try:
             self.is_recording = False
+            
+            # Stop level timer
+            if hasattr(self, '_level_timer'):
+                self._level_timer.stop()
+                self._level_timer.deleteLater()
+                del self._level_timer
             
             # Stop stream with error handling
             if hasattr(self, 'stream'):
