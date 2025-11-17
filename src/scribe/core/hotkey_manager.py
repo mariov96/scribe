@@ -8,7 +8,7 @@ import time
 import os
 import subprocess
 from threading import Thread
-from PySide6.QtCore import QObject, Signal
+from PyQt5.QtCore import QObject, pyqtSignal as Signal
 import keyboard
 
 logger = logging.getLogger(__name__)

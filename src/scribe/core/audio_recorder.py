@@ -11,7 +11,7 @@ import soundfile as sf
 from pathlib import Path
 from typing import Optional, List, Dict
 from datetime import datetime
-from PySide6.QtCore import QObject, Signal, QTimer, QThread
+from PyQt5.QtCore import QObject, pyqtSignal as Signal, QTimer
 
 logger = logging.getLogger(__name__)
 
