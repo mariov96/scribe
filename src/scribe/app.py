@@ -160,8 +160,10 @@ class ScribeApp(QObject):
             # Initialize hotkey manager
             logger.info("Initializing hotkey manager...")
             self.hotkey_manager = HotkeyManager(self.config)
-            self.hotkey_manager.hotkey_pressed.connect(self._on_hotkey_down)
-            self.hotkey_manager.hotkey_released.connect(self._on_hotkey_up)
+            # Use QueuedConnection to ensure slots execute in main thread, not hotkey thread
+            from PySide6.QtCore import Qt
+            self.hotkey_manager.hotkey_pressed.connect(self._on_hotkey_down, Qt.ConnectionType.QueuedConnection)
+            self.hotkey_manager.hotkey_released.connect(self._on_hotkey_up, Qt.ConnectionType.QueuedConnection)
             self.hotkey_manager.start()
 
             # Load plugins

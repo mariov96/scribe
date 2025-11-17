@@ -136,12 +136,7 @@ class AudioRecorder(QObject):
             self.audio_data = []
             self.is_recording = True
             
-            # Check we're on the main thread
-            current_thread = QThread.currentThread()
-            main_thread = QThread.currentThread().parent() if hasattr(QThread.currentThread(), 'parent') else None
-            logger.info(f"start_recording called from thread: {current_thread}")
-            logger.info(f"This QObject thread: {self.thread()}")
-            
+            logger.info(f"=== START_RECORDING CALLED ===")
             logger.info(f"Starting recording (device={self.device_id}, rate={self.sample_rate}Hz)")
             logger.info(f"About to create InputStream...")
             
