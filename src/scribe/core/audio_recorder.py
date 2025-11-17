@@ -142,19 +142,34 @@ class AudioRecorder(QObject):
             
             # Start input stream with additional error handling
             try:
-                logger.info(f"Creating stream with device={self.device_id}, channels={self.channels}, rate={self.sample_rate}")
+                logger.info(f"[STREAM] Creating stream with device={self.device_id}, channels={self.channels}, rate={self.sample_rate}")
+                logger.info(f"[STREAM] About to define callback wrapper...")
+                
+                # Create callback wrapper to avoid Qt issues
+                def audio_callback_wrapper(indata, frames, time_info, status):
+                    """Wrapper to call the instance method safely."""
+                    try:
+                        self._audio_callback(indata, frames, time_info, status)
+                    except Exception as e:
+                        # Silently catch errors to prevent stream crash
+                        pass
+                
+                logger.info(f"[STREAM] Callback wrapper defined")
+                logger.info(f"[STREAM] About to call sd.InputStream()...")
+                
                 self.stream = sd.InputStream(
                     device=self.device_id,
                     channels=self.channels,
                     samplerate=self.sample_rate,
                     dtype=self.dtype,
-                    callback=self._audio_callback,
+                    callback=audio_callback_wrapper,
                     blocksize=0,  # Use default block size for stability
-                    latency='low'  # Request low latency
+                    latency=None  # Let PortAudio decide latency
                 )
-                logger.info(f"Stream created, about to start...")
+                logger.info(f"[STREAM] sd.InputStream() returned successfully")
+                logger.info(f"[STREAM] About to call stream.start()...")
                 self.stream.start()
-                logger.info(f"Stream started successfully!")
+                logger.info(f"[STREAM] stream.start() completed successfully!")
             except sd.PortAudioError as e:
                 raise RuntimeError(f"PortAudio error: {e}. Device may be in use or unavailable.") from e
             

@@ -307,8 +307,8 @@ class ScribeApp(QObject):
                 self._recording_mode = "manual"
             self._recording_source = source
 
-            logger.info("[MIC] Starting recording...")
-            print("[MIC] Starting recording...")
+            logger.info("▶️  Starting recording...")
+            print("▶️  Starting recording...")
             self.is_recording = True
 
             # Update UI
@@ -322,7 +322,7 @@ class ScribeApp(QObject):
             self.audio_recorder.start_recording()
             
         except Exception as e:
-            # Catch any errors during recording start
+            # Catch any errors during recording start setup
             logger.error(f"Failed to start recording: {e}", exc_info=True)
             self.is_recording = False
             self._recording_mode = "idle"
@@ -338,12 +338,44 @@ class ScribeApp(QObject):
             if self.main_window:
                 InfoBar.error(
                     title="Recording Failed",
-                    content=f"Failed to start recording: {str(e)}",
-                    parent=self.main_window,
+                    content=str(e),
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP,
                     duration=5000,
-                    position=InfoBarPosition.TOP_RIGHT
+                    parent=self.main_window
                 )
-
+    
+    def _do_start_recording(self):
+        """Actually start the audio recording (deferred to avoid blocking)."""
+        try:
+            logger.info("[MIC] _do_start_recording called")
+            self.audio_recorder.start_recording()
+            logger.info("[MIC] audio_recorder.start_recording() completed")
+        except Exception as e:
+            logger.error(f"Error in _do_start_recording: {e}", exc_info=True)
+            self.is_recording = False
+            self._recording_mode = "idle"
+            
+            # Update UI to reflect error
+            if self.main_window:
+                self.main_window.update_recording_status(False)
+            if self.status_popup:
+                self.status_popup.hide()
+            
+            # Show error to user
+            from qfluentwidgets import InfoBar, InfoBarPosition
+            if self.main_window:
+                InfoBar.error(
+                    title="Recording Failed",
+                    content=str(e),
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP,
+                    duration=5000,
+                    parent=self.main_window
+                )
+    
     def _stop_recording(self):
         """Stop audio recording and trigger transcription."""
         if not self.audio_recorder or not self.is_recording:
