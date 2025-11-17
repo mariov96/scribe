@@ -8,7 +8,7 @@ import time
 import os
 import subprocess
 from threading import Thread
-from PyQt5.QtCore import QObject, pyqtSignal
+from PySide6.QtCore import QObject, Signal
 import keyboard
 
 logger = logging.getLogger(__name__)
@@ -19,8 +19,8 @@ class HotkeyManager(QObject):
     Hotkey manager using keyboard/pynput for global hotkey detection.
     """
 
-    hotkey_pressed = pyqtSignal()
-    hotkey_released = pyqtSignal(float)
+    hotkey_pressed = Signal()
+    hotkey_released = Signal(float)
 
     def __init__(self, config=None):
         """Initialize hotkey manager."""
