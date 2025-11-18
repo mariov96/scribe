@@ -1,0 +1,486 @@
+2025-11-17 16:39:08,325 - scribe.core.single_instance - INFO - Stale lock found (PID=41256), replacing it
+2025-11-17 16:39:08,327 - scribe.core.single_instance - INFO - Acquired instance lock: PID=13984, version=2.0.1, build=1763067100
+2025-11-17 16:39:08,327 - scribe.app - INFO - Initializing Scribe v2.0.1
+2025-11-17 16:39:08,371 - scribe.analytics.value_calculator - INFO - ValueCalculator initialized. Data dir: data\analytics
+2025-11-17 16:39:08,375 - scribe.app - INFO - Initializing transcription engine...
+2025-11-17 16:39:08,375 - scribe.core.transcription_engine - INFO - Initializing Whisper transcription engine...
+C:\Users\User\AppData\Roaming\Python\Python313\site-packages\ctranslate2\__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+2025-11-17 16:39:08,745 - scribe.core.transcription_engine - INFO - \u26a0\ufe0f  PyTorch not installed, defaulting to CPU
+2025-11-17 16:39:08,745 - scribe.core.transcription_engine - INFO - \U0001f680 Using device: cpu with compute type: int8
+2025-11-17 16:39:08,745 - scribe.core.transcription_engine - INFO - \U0001f4e6 Loading Whisper model: small
+2025-11-17 16:39:09,921 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-small/revision/main "HTTP/1.1 200 OK"
+2025-11-17 16:39:11,643 - scribe.core.transcription_engine - INFO - \u2705 Whisper model 'small' loaded successfully on cpu
+2025-11-17 16:39:11,643 - scribe.app - INFO - Initializing audio recorder...
+2025-11-17 16:39:11,644 - scribe.core.audio_recorder - INFO - Found 13 input devices
+2025-11-17 16:39:11,644 - scribe.core.audio_recorder - INFO - AudioRecorder initialized (sample_rate=16000, channels=1)
+2025-11-17 16:39:11,644 - scribe.app - INFO - Initializing hotkey manager...
+2025-11-17 16:39:11,644 - scribe.core.hotkey_manager - INFO - Hotkey configured: ctrl+alt
+2025-11-17 16:39:11,644 - scribe.core.hotkey_manager - INFO - Starting hotkey listener for: ctrl+alt
+2025-11-17 16:39:11,870 - scribe.core.hotkey_manager - INFO - keyboard library hotkey registered
+2025-11-17 16:39:11,907 - scribe.core.hotkey_manager - INFO - pynput listener started for hotkey detection
+2025-11-17 16:39:11,907 - scribe.core.hotkey_manager - INFO - Hotkey listener started successfully
+2025-11-17 16:39:11,907 - scribe.app - INFO - Loading plugins...
+2025-11-17 16:39:11,970 - scribe.plugins.window_manager.plugin - INFO - WindowManager initialized with 0 app shortcuts
+2025-11-17 16:39:11,971 - scribe.plugins.registry - INFO - \u2705 Registered plugin: window_manager v1.0.0
+2025-11-17 16:39:11,971 - scribe.app - INFO - WindowManager plugin loaded
+2025-11-17 16:39:11,971 - scribe.app - INFO - Loaded 1 plugins
+2025-11-17 16:39:11,971 - scribe.app - INFO - Initializing UI...
+2025-11-17 16:39:12,611 - scribe.ui_fluent.main_window - INFO - Active screen: 1280x800 @ 3.0x DPI
+2025-11-17 16:39:12,611 - scribe.ui_fluent.main_window - INFO - Physical size: 427x267
+2025-11-17 16:39:12,611 - scribe.ui_fluent.main_window - INFO - Setting window size: 768x480
+2025-11-17 16:39:12,612 - scribe.ui_fluent.main_window - INFO - Window centered at: PyQt5.QtCore.QPoint(256, 160)
+2025-11-17 16:39:13,289 - scribe.ui_fluent.pages.history - INFO - History loaded: 45 items
+2025-11-17 16:39:13,364 - scribe.core.audio_recorder - INFO - Found 13 input devices
+2025-11-17 16:39:13,672 - scribe.plugins.meeting.plugin - INFO - Loaded 0 meetings
+2025-11-17 16:39:13,672 - scribe.plugins.meeting.plugin - INFO - \u2705 Meeting Note Taker plugin initialized
+2025-11-17 16:39:13,673 - scribe.ui_fluent.main_window - INFO - \u2705 Meeting Note Taker plugin loaded
+2025-11-17 16:39:13,898 - scribe.app - INFO - Connecting recording_status_changed signal...
+2025-11-17 16:39:13,898 - scribe.app - INFO - recording_status_changed signal connected
+2025-11-17 16:39:13,898 - scribe.app - INFO - Connecting hotkey_status_changed signal...
+2025-11-17 16:39:13,899 - scribe.app - INFO - hotkey_status_changed signal connected
+2025-11-17 16:39:13,899 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=False
+2025-11-17 16:39:13,899 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:39:13,899 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:39:13,899 - scribe.ui_fluent.main_window - INFO - [UI] Finishing recording widget...
+2025-11-17 16:39:13,899 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget finished
+2025-11-17 16:39:13,899 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:39:13,907 - scribe.app - INFO - Scribe initialized successfully
+2025-11-17 16:39:13,907 - scribe.app - INFO - [OK] Ready! Use 'Start Listening' button or Ctrl+Alt hotkey (global hooks may require admin privileges)
+2025-11-17 16:39:13,907 - scribe.app - INFO - [INFO] Transcribed text will appear in console and as typed output
+2025-11-17 16:39:13,908 - scribe.app - INFO - Showing main window...
+2025-11-17 16:39:14,760 - scribe.app - INFO - Window visible: True
+2025-11-17 16:39:14,760 - scribe.app - INFO - Window geometry: PyQt5.QtCore.QRect(256, 160, 768, 480)
+2025-11-17 16:39:14,760 - scribe.app - INFO - Scribe running...
+2025-11-17 16:39:49,318 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:49,319 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:49,320 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:49,321 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:49,321 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:49,327 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:49,328 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126DEFA8200>
+
+[1;33m Tips:[0m QFluentWidgets Pro is now released. Click [1;96mhttps://qfluentwidgets.com/pages/pro[0m to learn more about it.
+
+Scribe v2.0.1 - The Open Voice Platform
+Modern voice automation - Phoenix rising!
+
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:49,329 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:49,329 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:49,877 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:49,878 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:49,878 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:49,880 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:49,880 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF90>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:49,881 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:49,882 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:49,883 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:49,883 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:50,624 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:50,625 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:50,625 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:50,627 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:50,628 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:50,628 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:50,629 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF00>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:50,630 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:50,630 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:51,112 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,113 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,114 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,115 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,145 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,146 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,147 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,148 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,179 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,179 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,180 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,180 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,211 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,211 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,212 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,212 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,839 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,839 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:51,840 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:51,842 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:51,842 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF90>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:51,843 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:51,844 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:51,844 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:51,845 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:52,329 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,329 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:52,330 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,330 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:52,362 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,362 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:52,362 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,363 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:52,394 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,395 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:52,395 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,395 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:52,674 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,675 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:52,676 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:52,681 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,681 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:52,688 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:52,689 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF00>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:52,689 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:52,690 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:52,882 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,882 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:52,883 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:52,884 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:52,885 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:52,885 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF90>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:52,885 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:52,886 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:52,886 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:53,105 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:53,106 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:53,106 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:53,109 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:53,109 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:53,110 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:53,110 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DB0B0>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:53,111 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:53,111 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:55,944 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:55,944 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:55,945 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:55,946 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:55,947 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:55,947 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:55,948 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF00>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:55,948 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:55,949 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:56,430 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:56,430 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:56,431 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:56,431 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:56,431 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DB0B0>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:56,431 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:56,431 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:56,431 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:56,432 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:58,377 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:58,377 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:58,378 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:58,379 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:58,379 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:58,383 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:58,383 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF00>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:58,383 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:58,383 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:59,080 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:59,081 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:39:59,081 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:39:59,083 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:59,083 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DB0B0>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:39:59,084 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:59,084 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:59,085 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:39:59,085 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:39:59,571 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:59,571 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:59,573 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:59,573 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:59,603 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:59,604 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:39:59,605 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:39:59,606 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:40:01,060 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:40:01,060 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:40:01,061 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:40:01,063 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:40:01,064 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:40:01,064 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:40:01,065 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DB0B0>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:40:01,065 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:40:01,066 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:40:01,662 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:40:01,663 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:40:01,664 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:40:01,669 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:40:01,669 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:40:01,681 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:40:01,682 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF90>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:40:01,682 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:40:01,683 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:40:04,886 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:40:04,886 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:40:04,886 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:40:04,888 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:40:04,888 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:40:04,893 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:40:04,894 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DB0B0>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:40:04,894 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:40:04,894 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+2025-11-17 16:40:05,596 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:40:05,597 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:40:05,598 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:40:05,603 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:40:05,604 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:40:05,612 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:40:05,613 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x00000126E72DAF90>
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:40:05,614 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:40:05,614 - scribe.app - ERROR - [HOTKEY] CRITICAL ERROR in _on_hotkey_down: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\app.py", line 293, in _on_hotkey_down
+    print("\u25b6\ufe0f  Starting recording...", flush=True)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 0-1: character maps to <undefined>

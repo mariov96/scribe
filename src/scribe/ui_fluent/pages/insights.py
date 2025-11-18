@@ -28,7 +28,7 @@ class InsightsPage(ScrollArea):
         self.vBoxLayout.setSpacing(8)  # Tighter spacing (was 12)
         
         # Title
-        self.title = TitleLabel("💡 Insights")
+        self.title = TitleLabel("Insights")
         self.subtitle = BodyLabel("AI-powered insights based on your usage patterns • More usage = Better insights")
         is_dark = isDarkTheme()
         self.subtitle.setTextColor(get_secondary_color(is_dark), get_secondary_color(is_dark))
@@ -83,7 +83,7 @@ class InsightsPage(ScrollArea):
             # Session activity insight
             if summary.total_transcriptions > 0:
                 insights.append(InsightCard(
-                    "📊",
+                    "📈",
                     "Session Activity",
                     f"You've completed {summary.total_transcriptions} transcription{'' if summary.total_transcriptions == 1 else 's'} "
                     f"with {summary.total_words:,} words captured. Keep going!",
@@ -95,7 +95,7 @@ class InsightsPage(ScrollArea):
                 time_saved_min = int(summary.time_saved_vs_typing / 60)
                 if time_saved_min > 0:
                     insights.append(InsightCard(
-                        "⚡",
+                        "⏱",
                         "Typing Saved",
                         f"Based on average typing speed (40 wpm), you've saved the equivalent "
                         f"of typing {summary.total_words:,} words this session. That's {time_saved_min} minute{'s' if time_saved_min != 1 else ''} saved!",
@@ -105,7 +105,7 @@ class InsightsPage(ScrollArea):
             # Productivity multiplier
             if summary.productivity_multiplier > 1.0:
                 insights.append(InsightCard(
-                    "🔥",
+                    "🚀",
                     "Productivity Boost",
                     f"You're {summary.productivity_multiplier:.1f}x faster with Scribe than typing. "
                     f"That's a {int((summary.productivity_multiplier - 1) * 100)}% productivity gain!",
@@ -115,7 +115,7 @@ class InsightsPage(ScrollArea):
             # Accuracy insight
             if summary.accuracy_score > 0:
                 insights.append(InsightCard(
-                    "🎯",
+                    "✓",
                     "Transcription Quality",
                     f"Your transcription accuracy is {summary.accuracy_score * 100:.1f}%. "
                     f"Scribe is learning your voice patterns and vocabulary.",
@@ -126,7 +126,7 @@ class InsightsPage(ScrollArea):
             if summary.total_commands > 0:
                 success_rate = (summary.successful_commands / summary.total_commands * 100) if summary.total_commands > 0 else 0
                 insights.append(InsightCard(
-                    "💡",
+                    "🎤",
                     "Voice Commands",
                     f"You've used {summary.total_commands} voice command{'s' if summary.total_commands != 1 else ''} with a {success_rate:.0f}% success rate. "
                     f"Voice commands save 3x more time than typing!",
@@ -137,14 +137,14 @@ class InsightsPage(ScrollArea):
         if not insights:
             insights = [
                 InsightCard(
-                    "🎙️",
+                    "▶",
                     "Getting Started",
                     "Start using Scribe to see personalized insights about your productivity gains, "
                     "time saved, and transcription accuracy!",
                     "No data yet"
                 ),
                 InsightCard(
-                    "⚡",
+                    "i",
                     "Did You Know?",
                     "The average person types at 40 words per minute but speaks at 150 words per minute. "
                     "Scribe helps you work at the speed of thought!",

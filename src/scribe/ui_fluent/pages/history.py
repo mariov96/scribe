@@ -238,14 +238,14 @@ class HistoryPage(QWidget):
         metrics_layout.setContentsMargins(0, 0, 0, 0)
         
         # Create metric labels
-        self.app_metric = self._create_metric_label("📱 App", "—")
-        self.duration_metric = self._create_metric_label("⏱️ Duration", "—")
-        self.confidence_metric = self._create_metric_label("✓ Confidence", "—")
-        self.words_metric = self._create_metric_label("📝 Words", "—")
-        self.chars_metric = self._create_metric_label("🔤 Chars", "—")
-        self.plugin_metric = self._create_metric_label("🔌 Plugin", "—")
-        self.ai_metric = self._create_metric_label("🤖 AI", "—")
-        self.language_metric = self._create_metric_label("🌍 Lang", "—")
+        self.app_metric = self._create_metric_label("App", "—")
+        self.duration_metric = self._create_metric_label("Duration", "—")
+        self.confidence_metric = self._create_metric_label("Confidence", "—")
+        self.words_metric = self._create_metric_label("Words", "—")
+        self.chars_metric = self._create_metric_label("Chars", "—")
+        self.plugin_metric = self._create_metric_label("Plugin", "—")
+        self.ai_metric = self._create_metric_label("AI", "—")
+        self.language_metric = self._create_metric_label("Lang", "—")
         
         # Add to grid (4 columns for more compact display)
         metrics_layout.addWidget(self.app_metric, 0, 0)
@@ -529,6 +529,23 @@ class HistoryPage(QWidget):
         # Enable buttons
         self.copy_btn.setEnabled(True)
         self.delete_btn.setEnabled(True)
+    
+    def select_transcription(self, index: int):
+        """Select a transcription by index in history list"""
+        if index is None or not isinstance(index, int):
+            return
+        if 0 <= index < len(self._history_items):
+            # Find the corresponding list item
+            for i in range(self.history_list.count()):
+                item = self.history_list.item(i)
+                entry = item.data(Qt.ItemDataRole.UserRole)
+                try:
+                    if self._history_items.index(entry) == index:
+                        self.history_list.setCurrentItem(item)
+                        self._on_item_selected(item)
+                        break
+                except (ValueError, AttributeError):
+                    continue
     
     def _play_recording(self):
         """Play the audio recording"""

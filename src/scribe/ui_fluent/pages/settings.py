@@ -14,6 +14,15 @@ from qfluentwidgets import (
 )
 
 from scribe.config import ConfigManager
+from ..branding import (
+    SPACING_XS, SPACING_SM, SPACING_MD, SPACING_LG,
+    CARD_PADDING, SECTION_SPACING, PAGE_MARGIN,
+    FONT_SIZE_H2, FONT_SIZE_BODY, FONT_SIZE_SMALL, FONT_SIZE_CAPTION,
+    FONT_WEIGHT_BOLD, FONT_WEIGHT_SEMIBOLD, FONT_WEIGHT_NORMAL,
+    COLOR_SUCCESS, COLOR_WARNING, COLOR_ERROR, COLOR_INFO,
+    COLOR_TEXT_PRIMARY, COLOR_TEXT_SECONDARY,
+    RADIUS_MD, SCRIBE_PURPLE
+)
 
 logger = logging.getLogger(__name__)
 
@@ -116,9 +125,9 @@ class SettingsPage(ScrollArea):
         hotkey_row.addSpacing(8)
         hotkey_row.addWidget(reset_hotkey_btn)
 
-        # Hotkey help text (10% smaller: 10px->9px)
-        hotkey_help = BodyLabel("💡 Click the button above and press your desired key combination.\n⚠️ Global hotkeys require Administrator privileges on Windows.")
-        hotkey_help.setStyleSheet("color: #FF9800; font-size: 9px; margin-left: 8px; margin-top: 5px;")
+        # Hotkey help text
+        hotkey_help = BodyLabel("Click the button above and press your desired key combination.\nNote: Global hotkeys require Administrator privileges on Windows.")
+        hotkey_help.setStyleSheet(f"color: {COLOR_WARNING}; font-size: {FONT_SIZE_CAPTION}px; margin-left: 8px; margin-top: 5px;")
         hotkey_help.setWordWrap(True)
 
         # Current hotkey display with dark background for readability
@@ -180,15 +189,15 @@ class SettingsPage(ScrollArea):
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(12)
         
-        # Device - Populate with real devices
+        # Device - Populate with valid devices only
         device_row = QHBoxLayout()
         device_label = BodyLabel("Audio Device")
         self.device_combo = ComboBox()
         
-        # Load available devices
+        # Load available devices (filtered by health check)
         try:
             from scribe.core.audio_recorder import AudioRecorder
-            devices = AudioRecorder.list_devices()
+            devices = AudioRecorder.list_valid_input_devices(sample_rate=16000)
             
             if devices:
                 for device in devices:
@@ -205,6 +214,25 @@ class SettingsPage(ScrollArea):
         device_row.addWidget(device_label)
         device_row.addStretch()
         device_row.addWidget(self.device_combo)
+
+        # Quick actions: Refresh, System Default, Next Mic
+        quick_row = QHBoxLayout()
+        refresh_btn = PushButton(FIF.SYNC, "Refresh")
+        refresh_btn.setFixedWidth(110)
+        refresh_btn.clicked.connect(self._refresh_devices)
+        default_btn = PushButton(FIF.RESTORE, "System Default")
+        default_btn.setFixedWidth(130)
+        default_btn.clicked.connect(lambda: self._set_device_default())
+        next_btn = PushButton(FIF.NEXT, "Next Mic")
+        next_btn.setFixedWidth(110)
+        next_btn.clicked.connect(self._cycle_next_device)
+        quick_row.addStretch()
+        quick_row.addWidget(refresh_btn)
+        quick_row.addSpacing(6)
+        quick_row.addWidget(default_btn)
+        quick_row.addSpacing(6)
+        quick_row.addWidget(next_btn)
+        quick_row.addStretch()
         
         # Sample rate
         rate_row = QHBoxLayout()
@@ -228,6 +256,7 @@ class SettingsPage(ScrollArea):
         test_row.addStretch()
         
         layout.addLayout(device_row)
+        layout.addLayout(quick_row)
         layout.addLayout(rate_row)
         layout.addLayout(test_row)
         
@@ -509,6 +538,41 @@ class SettingsPage(ScrollArea):
                 duration=3000,
                 parent=self
             )
+
+    def _refresh_devices(self):
+        """Rescan and repopulate the device list with valid inputs."""
+        try:
+            from scribe.core.audio_recorder import AudioRecorder
+            self.device_combo.clear()
+            devices = AudioRecorder.list_valid_input_devices(sample_rate=16000)
+            if devices:
+                for device in devices:
+                    label = f"{device['name']}" + (" (Default)" if device['is_default'] else "")
+                    self.device_combo.addItem(label, userData=device['id'])
+            else:
+                self.device_combo.addItem("No devices found", userData=None)
+        except Exception as e:
+            self.device_combo.clear()
+            self.device_combo.addItem(f"Error: {e}", userData=None)
+
+    def _set_device_default(self):
+        from scribe.core.audio_recorder import AudioRecorder
+        default = AudioRecorder.get_default_device()
+        if default:
+            idx = self.device_combo.findData(default['id'])
+            if idx >= 0:
+                self.device_combo.setCurrentIndex(idx)
+            else:
+                # Insert and select
+                self.device_combo.addItem(default['name'] + " (Default)", userData=default['id'])
+                self.device_combo.setCurrentIndex(self.device_combo.count()-1)
+
+    def _cycle_next_device(self):
+        count = self.device_combo.count()
+        if count <= 1:
+            return
+        cur = self.device_combo.currentIndex()
+        self.device_combo.setCurrentIndex((cur + 1) % count)
     
     def _create_appearance_settings(self):
         card = CardWidget()
@@ -828,16 +892,16 @@ class SettingsPage(ScrollArea):
         
         # Show relevant timing based on GPU availability
         if has_gpu and device in ["auto", "cuda"]:
-            time_info = f"⏱️ <b>Time (GPU):</b> {info['time_gpu']} &nbsp; <span style='color: #888;'>CPU: {info['time_cpu']}</span>"
+            time_info = f"<b>Time (GPU):</b> {info['time_gpu']} &nbsp; <span style='color: #888;'>CPU: {info['time_cpu']}</span>"
         else:
-            time_info = f"⏱️ <b>Time (CPU):</b> {info['time_cpu']}" + (f" &nbsp; <span style='color: #888;'>GPU: {info['time_gpu']}</span>" if has_gpu else "")
+            time_info = f"<b>Time (CPU):</b> {info['time_cpu']}" + (f" &nbsp; <span style='color: #888;'>GPU: {info['time_gpu']}</span>" if has_gpu else "")
         
         # Build info text with formatting
-        info_text = f"""<b>📦 Size:</b> {info['size']} &nbsp;&nbsp; <b>⚡ Speed:</b> {info['speed']} &nbsp;&nbsp; <b>✨ Quality:</b> {info['quality']}
+        info_text = f"""<b>Size:</b> {info['size']} &nbsp;&nbsp; <b>Speed:</b> {info['speed']} &nbsp;&nbsp; <b>Quality:</b> {info['quality']}
 <br>{time_info}
-<br><br><b style="color: #4CAF50;">✅ Pros:</b> {info['pros']}
-<br><b style="color: #F44336;">❌ Cons:</b> {info['cons']}
-<br><br><b>🎯 Best For:</b> {info['best_for']}"""
+<br><br><b style="color: {COLOR_SUCCESS};">Pros:</b> {info['pros']}
+<br><b style="color: {COLOR_ERROR};">Cons:</b> {info['cons']}
+<br><br><b>Best For:</b> {info['best_for']}"""
         
         self.model_info_label.setText(info_text)
         
@@ -854,10 +918,10 @@ class SettingsPage(ScrollArea):
         
         if model_dir.exists() and any(model_dir.iterdir()):
             self.download_model_btn.setVisible(False)
-            self.download_model_btn.setText("✅ Model Downloaded")
+            self.download_model_btn.setText("Model Downloaded")
         else:
             self.download_model_btn.setVisible(True)
-            self.download_model_btn.setText(f"📥 Download {model.title()} Model")
+            self.download_model_btn.setText(f"Download {model.title()} Model")
     
     def _on_device_changed(self):
         """Update device information when compute device changes."""
@@ -1116,6 +1180,20 @@ Continue?"""
         """Auto-save audio settings when changed."""
         try:
             device_id = self.device_combo.currentData()
+            # Health check before saving
+            from scribe.core.audio_recorder import AudioRecorder
+            if device_id is not None and not AudioRecorder.can_open(device_id, self.rate_combo.currentData()):
+                InfoBar.error(
+                    title="Invalid Device",
+                    content="Selected device cannot open at the chosen sample rate.",
+                    orient=Qt.Orientation.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=3000,
+                    parent=self
+                )
+                return
+
             self.config_manager.set('audio', 'device_id', device_id)
             self.config_manager.set('audio', 'sample_rate', self.rate_combo.currentData())
             self.config_manager.save()

@@ -1,44 +1,70 @@
 """
-Recording Widget - Floating status indicator with waveform animation
+Recording Widget - Floating status indicator with waveform animation and timer
 
 Inspired by whisper-flow's elegant design
 """
 
+from datetime import datetime, timedelta
 from PyQt5.QtCore import Qt, QTimer, QPropertyAnimation, QEasingCurve, pyqtSignal
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QVBoxLayout, QGraphicsOpacityEffect, QApplication
-from PyQt5.QtGui import QPainter, QPen, QColor, QPainterPath
+from PyQt5.QtGui import QPainter, QPen, QColor, QPainterPath, QFont
+from qfluentwidgets import IconWidget, FluentIcon as FIF, BodyLabel, CaptionLabel
 import math
 import random
 
+from ..branding import (
+    COLOR_RECORDING, COLOR_PROCESSING, COLOR_READY,
+    FONT_SIZE_SMALL, FONT_SIZE_CAPTION,
+    FONT_WEIGHT_BOLD, FONT_WEIGHT_NORMAL,
+    RADIUS_MD, SPACING_XS,
+    ICON_MICROPHONE
+)
+
 
 class WaveformWidget(QWidget):
-    """Animated waveform display - fills widget center"""
+    """Animated waveform display with real audio level input"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        # No fixed size - will expand to fill parent
         self.setMinimumHeight(30)
         
-        # Waveform bars
-        self.num_bars = 16  # More bars for better visual
-        self.bar_heights = [0.3] * self.num_bars  # Start with low amplitude
-        self.target_heights = [0.3] * self.num_bars
+        # Waveform bars - store recent audio levels
+        self.num_bars = 32  # More bars for smoother visual
+        self.bar_heights = [0.2] * self.num_bars
+        self.target_heights = [0.2] * self.num_bars
+        self.audio_levels = []  # Recent audio levels for display
         
         # Animation state
         self.recording = False
         self.transcribing = False
-        self.frame_count = 0  # Frame counter for animation
+        self.frame_count = 0
         
         # Animation timer
         self.timer = QTimer(self)
         self.timer.timeout.connect(self._update_waveform)
         self.timer.setInterval(50)  # 20 FPS
     
+    def update_audio_level(self, level: float):
+        """Update with real audio level from recording (0.0 to 1.0)"""
+        if self.recording:
+            # Store level
+            self.audio_levels.append(level)
+            if len(self.audio_levels) > self.num_bars:
+                self.audio_levels.pop(0)
+            
+            # Update bars based on audio level
+            for i in range(len(self.audio_levels)):
+                idx = self.num_bars - len(self.audio_levels) + i
+                if idx >= 0:
+                    # Scale audio level for visual effect
+                    self.target_heights[idx] = 0.1 + self.audio_levels[i] * 0.8
+    
     def start_recording(self):
         """Start recording animation with active waveform"""
         self.recording = True
         self.transcribing = False
         self.frame_count = 0
+        self.audio_levels = []
         if not self.timer.isActive():
             self.timer.start()
     
@@ -55,30 +81,27 @@ class WaveformWidget(QWidget):
         self.recording = False
         self.transcribing = False
         self.timer.stop()
+        self.audio_levels = []
         # Smooth fade to baseline
         for i in range(self.num_bars):
-            self.target_heights[i] = 0.2
+            self.target_heights[i] = 0.1
         self.update()
     
     def _update_waveform(self):
         """Update waveform animation"""
         self.frame_count += 1
         
-        if self.recording:
-            # Simulate audio input with wave pattern
-            for i in range(self.num_bars):
-                # Create smooth wave pattern
-                wave = math.sin((i / self.num_bars) * math.pi * 4 + self.frame_count * 0.1)
-                # Add randomness for natural look
-                self.target_heights[i] = 0.35 + (wave + 1) * 0.25 + random.random() * 0.15
-        
-        elif self.transcribing:
+        if self.transcribing:
             # Pulsing animation for transcription
             pulse = (math.sin(self.frame_count * 0.05) + 1) / 2
             for i in range(self.num_bars):
                 # Center bars pulse more
                 center_weight = 1 - abs(i - self.num_bars / 2) / (self.num_bars / 2)
-                self.target_heights[i] = 0.2 + pulse * center_weight * 0.5
+                self.target_heights[i] = 0.1 + pulse * center_weight * 0.5
+        elif not self.recording:
+            # Idle state - gentle baseline
+            for i in range(self.num_bars):
+                self.target_heights[i] = 0.1
         
         # Smooth interpolation
         for i in range(self.num_bars):
@@ -87,7 +110,7 @@ class WaveformWidget(QWidget):
         self.update()
     
     def paintEvent(self, event):
-        """Draw waveform bars - centered and visible"""
+        """Draw waveform bars"""
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
         
@@ -165,38 +188,48 @@ class RecordingWidget(QWidget):
         self.hide()
     
     def _setup_ui(self):
-        """Setup the widget UI - simplified without waveform"""
-        self.setFixedSize(140, 40)  # Smaller height without waveform
-        
+        """Setup the widget UI with modern design system"""
+        self.setFixedSize(160, 44)
+
         # Main layout
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(10, 8, 10, 8)
-        layout.setSpacing(6)
-        
+        layout.setContentsMargins(12, 10, 12, 10)
+        layout.setSpacing(8)
+
         # Status icon
-        self.status_icon = QLabel("🔴")
-        self.status_icon.setStyleSheet("font-size: 16px; background: transparent;")
-        
+        self.status_icon = IconWidget(ICON_MICROPHONE, self)
+        self.status_icon.setFixedSize(20, 20)
+
         # Status label
         self.status_label = QLabel("Recording")
-        self.status_label.setStyleSheet("font-size: 11px; font-weight: bold; color: #FFFFFF; background: transparent;")
-        
+        self.status_label.setStyleSheet(f"""
+            font-size: {FONT_SIZE_SMALL}px;
+            font-weight: {FONT_WEIGHT_BOLD};
+            color: #FFFFFF;
+            background: transparent;
+        """)
+
         # Timer label
         self.timer_label = QLabel("0.0s")
-        self.timer_label.setStyleSheet("font-size: 10px; color: #CCCCCC; background: transparent;")
-        
+        self.timer_label.setStyleSheet(f"""
+            font-size: {FONT_SIZE_CAPTION}px;
+            font-weight: {FONT_WEIGHT_NORMAL};
+            color: #CCCCCC;
+            background: transparent;
+        """)
+
         layout.addWidget(self.status_icon)
         layout.addWidget(self.status_label)
         layout.addStretch()
         layout.addWidget(self.timer_label)
-        
-        # Enhanced background with semi-transparent grey and border for readability
-        self.setStyleSheet("""
-            RecordingWidget {
-                background: rgba(60, 60, 60, 220);
-                border-radius: 10px;
-                border: 2px solid rgba(120, 120, 120, 180);
-            }
+
+        # Modern background with design system
+        self.setStyleSheet(f"""
+            RecordingWidget {{
+                background: rgba(45, 45, 45, 240);
+                border-radius: {RADIUS_MD}px;
+                border: 1px solid rgba(103, 81, 161, 150);
+            }}
         """)
     
     def start_recording(self):
@@ -204,17 +237,21 @@ class RecordingWidget(QWidget):
         self.is_recording = True
         self.is_transcribing = False
         self.recording_time = 0
-        
+
         # Update UI
-        self.status_icon.setText("🔴")
         self.status_label.setText("Recording")
-        self.status_label.setStyleSheet("font-size: 11px; font-weight: bold; color: #FF5252; background: transparent;")
+        self.status_label.setStyleSheet(f"""
+            font-size: {FONT_SIZE_SMALL}px;
+            font-weight: {FONT_WEIGHT_BOLD};
+            color: {COLOR_RECORDING};
+            background: transparent;
+        """)
         self.timer_label.setText("0.0s")
-        
+
         # Start duration timer
         if not self.duration_timer.isActive():
             self.duration_timer.start()
-        
+
         # Fade in
         self._fade_in()
     
@@ -222,15 +259,19 @@ class RecordingWidget(QWidget):
         """Start transcribing state"""
         self.is_recording = False
         self.is_transcribing = True
-        
+
         # Stop duration timer if active
         if self.duration_timer.isActive():
             self.duration_timer.stop()
-        
+
         # Update UI
-        self.status_icon.setText("⚙️")
         self.status_label.setText("Processing")
-        self.status_label.setStyleSheet("font-size: 11px; font-weight: bold; color: #00BCD4; background: transparent;")
+        self.status_label.setStyleSheet(f"""
+            font-size: {FONT_SIZE_SMALL}px;
+            font-weight: {FONT_WEIGHT_BOLD};
+            color: {COLOR_PROCESSING};
+            background: transparent;
+        """)
         self.timer_label.setText(f"{self.recording_time:.1f}s")
     
     def finish(self):
@@ -269,7 +310,16 @@ class RecordingWidget(QWidget):
     def position_at_bottom_right(self, parent_widget):
         """Position widget at bottom-right of parent"""
         # Use screen geometry instead of parent geometry for floating widget
-        screen_rect = QApplication.desktop().availableGeometry(parent_widget)
+        try:
+            # Try modern Qt API first (Qt 5.10+)
+            screen = QApplication.screenAt(parent_widget.geometry().center())
+            if not screen:
+                screen = QApplication.primaryScreen()
+            screen_rect = screen.availableGeometry()
+        except AttributeError:
+            # Fallback to deprecated API for older Qt versions
+            screen_rect = QApplication.desktop().availableGeometry(parent_widget)
+
         x = screen_rect.right() - self.width() - 20
         y = screen_rect.bottom() - self.height() - 80  # Above taskbar
         self.move(x, y)

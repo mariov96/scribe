@@ -1,0 +1,1378 @@
+2025-11-17 16:44:33,597 - scribe.core.single_instance - INFO - No existing instance found, acquiring lock
+2025-11-17 16:44:33,598 - scribe.core.single_instance - INFO - Acquired instance lock: PID=5240, version=2.0.1, build=1763067100
+2025-11-17 16:44:33,598 - scribe.app - INFO - Initializing Scribe v2.0.1
+2025-11-17 16:44:33,636 - scribe.analytics.value_calculator - INFO - ValueCalculator initialized. Data dir: data\analytics
+2025-11-17 16:44:33,642 - scribe.app - INFO - Initializing transcription engine...
+2025-11-17 16:44:33,642 - scribe.core.transcription_engine - INFO - Initializing Whisper transcription engine...
+C:\Users\User\AppData\Roaming\Python\Python313\site-packages\ctranslate2\__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+2025-11-17 16:44:33,999 - scribe.core.transcription_engine - INFO - \u26a0\ufe0f  PyTorch not installed, defaulting to CPU
+2025-11-17 16:44:33,999 - scribe.core.transcription_engine - INFO - \U0001f680 Using device: cpu with compute type: int8
+2025-11-17 16:44:33,999 - scribe.core.transcription_engine - INFO - \U0001f4e6 Loading Whisper model: small
+2025-11-17 16:44:35,491 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-small/revision/main "HTTP/1.1 200 OK"
+2025-11-17 16:44:37,288 - scribe.core.transcription_engine - INFO - \u2705 Whisper model 'small' loaded successfully on cpu
+2025-11-17 16:44:37,288 - scribe.app - INFO - Initializing audio recorder...
+2025-11-17 16:44:37,289 - scribe.core.audio_recorder - INFO - Found 13 input devices
+2025-11-17 16:44:37,289 - scribe.core.audio_recorder - INFO - AudioRecorder initialized (sample_rate=16000, channels=1)
+2025-11-17 16:44:37,289 - scribe.app - INFO - Initializing hotkey manager...
+2025-11-17 16:44:37,289 - scribe.core.hotkey_manager - INFO - Hotkey configured: ctrl+alt
+2025-11-17 16:44:37,289 - scribe.core.hotkey_manager - INFO - Starting hotkey listener for: ctrl+alt
+2025-11-17 16:44:37,482 - scribe.core.hotkey_manager - INFO - keyboard library hotkey registered
+2025-11-17 16:44:37,514 - scribe.core.hotkey_manager - INFO - pynput listener started for hotkey detection
+2025-11-17 16:44:37,514 - scribe.core.hotkey_manager - INFO - Hotkey listener started successfully
+2025-11-17 16:44:37,515 - scribe.app - INFO - Loading plugins...
+2025-11-17 16:44:37,581 - scribe.plugins.window_manager.plugin - INFO - WindowManager initialized with 0 app shortcuts
+2025-11-17 16:44:37,581 - scribe.plugins.registry - INFO - \u2705 Registered plugin: window_manager v1.0.0
+2025-11-17 16:44:37,581 - scribe.app - INFO - WindowManager plugin loaded
+2025-11-17 16:44:37,581 - scribe.app - INFO - Loaded 1 plugins
+2025-11-17 16:44:37,581 - scribe.app - INFO - Initializing UI...
+2025-11-17 16:44:38,218 - scribe.ui_fluent.main_window - INFO - Active screen: 1280x800 @ 3.0x DPI
+2025-11-17 16:44:38,218 - scribe.ui_fluent.main_window - INFO - Physical size: 427x267
+2025-11-17 16:44:38,218 - scribe.ui_fluent.main_window - INFO - Setting window size: 768x480
+2025-11-17 16:44:38,218 - scribe.ui_fluent.main_window - INFO - Window centered at: PyQt5.QtCore.QPoint(256, 160)
+2025-11-17 16:44:38,895 - scribe.ui_fluent.pages.history - INFO - History loaded: 45 items
+2025-11-17 16:44:38,967 - scribe.core.audio_recorder - INFO - Found 13 input devices
+2025-11-17 16:44:39,280 - scribe.plugins.meeting.plugin - INFO - Loaded 0 meetings
+2025-11-17 16:44:39,280 - scribe.plugins.meeting.plugin - INFO - \u2705 Meeting Note Taker plugin initialized
+2025-11-17 16:44:39,281 - scribe.ui_fluent.main_window - INFO - \u2705 Meeting Note Taker plugin loaded
+2025-11-17 16:44:39,484 - scribe.app - INFO - Connecting recording_status_changed signal...
+2025-11-17 16:44:39,484 - scribe.app - INFO - recording_status_changed signal connected
+2025-11-17 16:44:39,484 - scribe.app - INFO - Connecting hotkey_status_changed signal...
+2025-11-17 16:44:39,484 - scribe.app - INFO - hotkey_status_changed signal connected
+2025-11-17 16:44:39,484 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=False
+2025-11-17 16:44:39,484 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:44:39,484 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:44:39,484 - scribe.ui_fluent.main_window - INFO - [UI] Finishing recording widget...
+2025-11-17 16:44:39,485 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget finished
+2025-11-17 16:44:39,485 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:44:39,492 - scribe.app - INFO - Scribe initialized successfully
+2025-11-17 16:44:39,493 - scribe.app - INFO - [OK] Ready! Use 'Start Listening' button or Ctrl+Alt hotkey (global hooks may require admin privileges)
+2025-11-17 16:44:39,493 - scribe.app - INFO - [INFO] Transcribed text will appear in console and as typed output
+2025-11-17 16:44:39,493 - scribe.app - INFO - Showing main window...
+2025-11-17 16:44:40,281 - scribe.app - INFO - Window visible: True
+2025-11-17 16:44:40,281 - scribe.app - INFO - Window geometry: PyQt5.QtCore.QRect(256, 160, 768, 480)
+2025-11-17 16:44:40,282 - scribe.app - INFO - Scribe running...
+2025-11-17 16:44:45,241 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,241 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:44:45,242 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:44:45,242 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,243 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,277 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:44:45,277 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x0000017D03988320>
+
+[1;33m Tips:[0m QFluentWidgets Pro is now released. Click [1;96mhttps://qfluentwidgets.com/pages/pro[0m to learn more about it.
+
+Scribe v2.0.1 - The Open Voice Platform
+Modern voice automation - Phoenix rising!
+
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:44:45,277 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+[RECORDING] Starting recording...
+2025-11-17 16:44:45,277 - scribe.app - INFO - [HOTKEY] Deferred _start_recording() to QTimer
+2025-11-17 16:44:45,279 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:44:45,305 - scribe.core.audio_recorder - INFO - Validated device: Microphone (Realtek(R) Audio)
+2025-11-17 16:44:45,305 - scribe.core.audio_recorder - INFO - === START_RECORDING CALLED ===
+2025-11-17 16:44:45,305 - scribe.core.audio_recorder - INFO - Starting recording (device=1, rate=16000Hz)
+2025-11-17 16:44:45,306 - scribe.core.audio_recorder - INFO - About to create InputStream...
+2025-11-17 16:44:45,306 - scribe.core.audio_recorder - INFO - [STREAM] Creating stream with device=1, channels=1, rate=16000
+2025-11-17 16:44:45,306 - scribe.core.audio_recorder - INFO - [STREAM] About to define callback wrapper...
+2025-11-17 16:44:45,306 - scribe.core.audio_recorder - INFO - [STREAM] Callback wrapper defined
+2025-11-17 16:44:45,306 - scribe.core.audio_recorder - INFO - [STREAM] About to call sd.InputStream()...
+2025-11-17 16:44:45,489 - scribe.core.audio_recorder - INFO - [STREAM] sd.InputStream() returned successfully
+2025-11-17 16:44:45,489 - scribe.core.audio_recorder - INFO - [STREAM] About to call stream.start()...
+2025-11-17 16:44:45,490 - scribe.core.audio_recorder - INFO - [STREAM] stream.start() completed successfully!
+2025-11-17 16:44:45,490 - scribe.core.audio_recorder - INFO - Creating QTimer...
+2025-11-17 16:44:45,490 - scribe.core.audio_recorder - INFO - QTimer started
+2025-11-17 16:44:45,490 - scribe.core.audio_recorder - INFO - Emitting recording_started signal...
+2025-11-17 16:44:45,490 - scribe.core.audio_recorder - INFO - Recording started successfully
+2025-11-17 16:44:45,490 - scribe.app - INFO - \u2705 Recording started successfully!
+2025-11-17 16:44:45,495 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=True
+2025-11-17 16:44:45,495 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:44:45,495 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:44:45,495 - scribe.ui_fluent.main_window - INFO - [UI] Starting recording widget...
+2025-11-17 16:44:45,521 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget started, positioning...
+2025-11-17 16:44:45,524 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget positioned
+2025-11-17 16:44:45,524 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:44:45,731 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,731 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,732 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,732 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,764 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,764 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,765 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,765 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,797 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,797 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,798 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,798 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,831 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,832 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,832 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,832 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,864 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,864 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,864 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,864 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,897 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,897 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,898 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,898 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,929 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,930 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,930 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,930 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,963 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,963 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,964 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,964 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,996 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,996 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:45,997 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:45,997 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,029 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,029 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,030 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,030 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,062 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,062 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,062 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,063 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,095 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,095 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,095 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,095 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,127 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,128 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,128 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,129 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,161 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,161 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,162 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,162 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,194 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,194 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,198 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,199 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,228 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,228 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,230 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,230 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,259 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,259 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,260 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,260 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,293 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,294 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,298 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,298 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,325 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,326 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,327 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,327 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,359 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,359 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,359 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,359 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,391 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,391 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,392 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,392 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,425 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,425 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,426 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,426 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,458 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,458 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,459 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,459 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,491 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,491 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,492 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,492 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,524 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,524 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,524 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,524 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,557 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,557 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,558 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,558 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,590 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,590 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,591 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,591 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,622 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,623 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,623 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,623 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,655 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,655 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,656 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,656 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,688 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,689 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,689 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:44:46,689 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:44:46,762 - scribe.app - INFO - \u23f9\ufe0f  Stopping recording (hold release)...
+[RECORDING] Stopping recording (hold release)...
+2025-11-17 16:44:46,764 - scribe.app - INFO - \u23f9\ufe0f  Stopping recording...
+[RECORDING] Stopping recording...
+2025-11-17 16:44:46,827 - scribe.core.audio_recorder - INFO - Recording stopped: 1.25s, 19968 samples
+2025-11-17 16:44:46,836 - scribe.core.audio_recorder - INFO - Saved last recording to data\audio\latest_recording.wav (archived as recording_20251117_164446.wav)
+2025-11-17 16:44:46,855 - scribe.core.audio_recorder - INFO - Cleaned up 6 recordings older than 5 days
+2025-11-17 16:44:46,857 - scribe.app - INFO - [TRANSCRIBING] Starting transcription in background...
+2025-11-17 16:44:46,859 - scribe.app - INFO - \u2705 Transcription worker started - UI remains responsive!
+2025-11-17 16:44:46,860 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=False
+2025-11-17 16:44:46,860 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:44:46,861 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:44:46,861 - scribe.ui_fluent.main_window - INFO - [UI] Finishing recording widget...
+2025-11-17 16:44:46,861 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget finished
+2025-11-17 16:44:46,861 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:44:46,903 - scribe.core.transcription_engine - INFO - \U0001f3a4 Transcribing audio file: C:\Users\User\AppData\Local\Temp\tmpcl9lg_ow.wav
+2025-11-17 16:44:47,102 - faster_whisper - INFO - Processing audio with duration 00:01.248
+2025-11-17 16:44:50,197 - scribe.core.transcription_engine - INFO - \u2705 Transcription complete: 16 chars, 2.0s, conf: 71.38%
+2025-11-17 16:44:50,199 - scribe.app - INFO - [OK] Transcription: 'Can you hear me?' (4 words)
+2025-11-17 16:44:50,205 - scribe.ui_fluent.pages.history - INFO - Added transcription to history: Can you hear me?... (Total: 46 items)
+2025-11-17 16:44:50,226 - scribe.app - INFO - Attempting to paste transcription back to originating app...
+2025-11-17 16:44:50,226 - scribe.app - INFO - Target window is Scribe itself - skipping auto-paste (text available in History tab)
+2025-11-17 16:44:50,309 - scribe.app - INFO - \u2705 Text copied to clipboard (paste manually with Ctrl+V)
+2025-11-17 16:44:50,340 - scribe.ui_fluent.pages.history - INFO - Added transcription to history: Can you hear me?... (Total: 47 items)
+2025-11-17 16:44:53,780 - scribe.ui_fluent.pages.history - INFO - Rating updated to 0 stars for transcription
+2025-11-17 16:47:23,516 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:23,517 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:47:23,517 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:47:23,518 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:47:23,518 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x0000017D0470BEC0>
+[TRANSCRIBING] Transcribing audio...
+
+============================================================
+[OK] TRANSCRIPTION RESULT:
+============================================================
+Can you hear me?
+============================================================
+
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:47:23,519 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+[RECORDING] Starting recording...
+2025-11-17 16:47:23,519 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:23,519 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:23,519 - scribe.app - INFO - [HOTKEY] Deferred _start_recording() to QTimer
+2025-11-17 16:47:23,521 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:47:23,530 - scribe.core.audio_recorder - INFO - Validated device: Microphone (Realtek(R) Audio)
+2025-11-17 16:47:23,530 - scribe.core.audio_recorder - INFO - === START_RECORDING CALLED ===
+2025-11-17 16:47:23,530 - scribe.core.audio_recorder - INFO - Starting recording (device=1, rate=16000Hz)
+2025-11-17 16:47:23,530 - scribe.core.audio_recorder - INFO - About to create InputStream...
+2025-11-17 16:47:23,530 - scribe.core.audio_recorder - INFO - [STREAM] Creating stream with device=1, channels=1, rate=16000
+2025-11-17 16:47:23,531 - scribe.core.audio_recorder - INFO - [STREAM] About to define callback wrapper...
+2025-11-17 16:47:23,531 - scribe.core.audio_recorder - INFO - [STREAM] Callback wrapper defined
+2025-11-17 16:47:23,531 - scribe.core.audio_recorder - INFO - [STREAM] About to call sd.InputStream()...
+2025-11-17 16:47:23,696 - scribe.core.audio_recorder - INFO - [STREAM] sd.InputStream() returned successfully
+2025-11-17 16:47:23,697 - scribe.core.audio_recorder - INFO - [STREAM] About to call stream.start()...
+2025-11-17 16:47:23,697 - scribe.core.audio_recorder - INFO - [STREAM] stream.start() completed successfully!
+2025-11-17 16:47:23,697 - scribe.core.audio_recorder - INFO - Creating QTimer...
+2025-11-17 16:47:23,698 - scribe.core.audio_recorder - INFO - QTimer started
+2025-11-17 16:47:23,698 - scribe.core.audio_recorder - INFO - Emitting recording_started signal...
+2025-11-17 16:47:23,698 - scribe.core.audio_recorder - INFO - Recording started successfully
+2025-11-17 16:47:23,698 - scribe.app - INFO - \u2705 Recording started successfully!
+2025-11-17 16:47:23,699 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=True
+2025-11-17 16:47:23,700 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:47:23,700 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:47:23,700 - scribe.ui_fluent.main_window - INFO - [UI] Starting recording widget...
+2025-11-17 16:47:23,707 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget started, positioning...
+2025-11-17 16:47:23,707 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget positioned
+2025-11-17 16:47:23,707 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:47:24,006 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,007 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,007 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,008 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,040 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,040 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,041 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,041 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,072 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,073 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,074 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,074 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,105 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,106 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,106 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,107 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,138 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,138 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,139 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,139 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,171 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,171 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,172 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,172 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,204 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,204 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,204 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,205 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,237 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,237 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,238 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,238 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,272 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,272 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,273 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,273 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,303 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,303 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,304 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,304 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,336 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,336 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,337 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,337 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,368 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,369 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,369 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,370 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,402 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,402 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,403 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,403 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,435 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,435 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,436 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,436 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,468 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,468 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,469 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,469 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,500 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,501 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,501 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,502 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,534 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,534 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,535 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,535 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,568 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,568 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,569 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,569 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,599 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,599 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,600 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,600 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,633 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,633 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,634 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,634 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,665 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,666 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,666 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,666 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,698 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,699 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,699 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,699 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,731 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,731 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,732 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,732 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,764 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,764 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,765 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,765 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,797 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,797 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,798 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,798 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,830 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,830 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,831 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,831 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,863 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,864 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,864 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,865 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,896 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,897 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,897 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,898 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,929 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,929 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,930 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,930 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,962 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,962 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,963 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,963 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,995 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,995 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:24,996 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:24,996 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,028 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,028 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,028 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,029 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,061 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,061 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,062 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,062 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,093 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,094 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,094 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,095 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,127 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,127 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,128 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,128 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,159 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,159 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,160 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,160 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,192 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,192 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,193 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,193 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,225 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,225 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,226 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,226 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,258 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,258 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,259 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,259 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,291 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,291 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,292 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,292 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,324 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,324 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,325 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,325 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,357 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,358 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,358 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,359 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,385 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,385 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,386 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,386 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,418 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,418 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,419 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,419 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,453 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,453 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,454 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,455 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,484 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,484 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,485 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,485 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,518 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,518 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,519 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,519 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,550 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,551 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,551 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,551 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,584 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,585 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,587 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,587 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,617 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,617 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,617 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,617 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,649 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,650 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,650 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,650 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,682 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,683 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,683 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,683 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,715 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,715 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,716 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,716 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,748 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,749 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,749 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,749 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,781 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,781 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,782 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,782 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,814 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,815 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,816 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,816 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,847 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,848 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,849 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,849 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,881 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,881 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,881 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,881 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,913 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,913 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,914 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,914 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,946 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,946 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,948 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,948 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,979 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,979 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:25,980 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:25,980 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,012 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,012 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,013 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,013 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,045 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,045 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,046 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,046 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,078 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,078 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,079 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,080 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,111 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,111 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,112 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,112 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,143 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,144 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,144 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,145 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,176 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,176 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,177 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,177 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,210 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,210 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,211 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,211 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,242 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,243 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,244 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,244 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,275 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,275 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,276 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,276 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,308 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,308 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,308 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,309 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,341 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,341 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,342 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,342 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,374 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,374 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,375 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,375 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,407 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,407 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,407 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,407 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,439 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,440 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,440 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,440 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,468 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,468 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,469 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,469 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,501 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,501 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,502 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,502 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,535 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,535 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,536 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,536 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,567 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,568 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,569 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,569 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,596 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,596 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,599 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,599 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,629 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,629 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,630 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,630 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,662 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,662 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,663 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,664 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,695 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,696 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,697 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,697 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,728 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,728 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,728 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,729 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,761 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,761 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,762 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,762 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,794 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,794 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,795 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,795 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,827 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,827 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,828 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,828 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,860 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,860 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,861 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,861 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,893 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,893 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,894 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,894 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,926 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,926 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,926 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,927 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,959 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,959 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,960 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,960 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,992 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,992 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:26,993 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:26,993 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,025 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,025 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,026 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,026 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,058 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,058 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,059 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,059 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,090 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,091 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,091 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,091 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,123 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,124 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,124 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,124 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,156 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,156 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,157 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,157 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,189 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,190 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,190 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,190 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,222 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,223 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,223 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,224 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,255 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,255 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,256 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,256 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,288 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,288 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,289 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,289 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,321 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,322 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,323 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,323 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,354 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,354 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,355 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,355 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,388 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,388 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,390 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,390 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,421 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,421 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,422 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,422 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,453 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,453 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,454 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,454 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,486 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,486 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,487 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,487 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,519 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,520 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,521 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,521 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,552 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,553 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,553 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,553 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,585 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,586 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,586 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,587 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,618 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,618 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,619 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,619 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,651 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,651 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,652 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,653 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,685 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,685 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,685 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,685 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,717 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,717 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,718 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,718 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,750 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,751 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,751 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,751 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,783 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,783 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,784 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,784 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,816 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,816 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,817 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,817 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,849 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,849 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,849 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,850 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,882 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,882 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,883 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,883 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,914 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,915 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,916 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,916 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,949 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,949 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,950 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,950 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,980 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,981 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:27,982 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:27,982 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,013 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,014 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,014 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,014 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,046 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,046 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,047 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,047 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,079 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,080 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,080 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,081 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,112 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,113 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,114 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,114 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,145 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,145 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,146 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,146 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,178 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,178 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,179 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,179 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,211 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,211 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,212 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,212 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,244 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,244 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,245 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,245 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,277 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,277 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,278 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,278 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,306 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,306 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,307 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,307 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,338 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,338 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,339 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,339 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,371 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,371 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,371 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:47:28,371 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:47:28,454 - scribe.app - INFO - \u23f9\ufe0f  Stopping recording (hold release)...
+[RECORDING] Stopping recording (hold release)...
+2025-11-17 16:47:28,455 - scribe.app - INFO - \u23f9\ufe0f  Stopping recording...
+[RECORDING] Stopping recording...
+2025-11-17 16:47:28,514 - scribe.core.audio_recorder - INFO - Recording stopped: 4.73s, 75712 samples
+2025-11-17 16:47:28,524 - scribe.core.audio_recorder - INFO - Saved last recording to data\audio\latest_recording.wav (archived as recording_20251117_164728.wav)
+2025-11-17 16:47:28,529 - scribe.core.audio_recorder - INFO - Cleaned up 4 recordings older than 5 days
+2025-11-17 16:47:28,532 - scribe.app - INFO - [TRANSCRIBING] Starting transcription in background...
+2025-11-17 16:47:28,535 - scribe.app - INFO - \u2705 Transcription worker started - UI remains responsive!
+2025-11-17 16:47:28,535 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=False
+2025-11-17 16:47:28,536 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:47:28,536 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:47:28,536 - scribe.ui_fluent.main_window - INFO - [UI] Finishing recording widget...
+2025-11-17 16:47:28,537 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget finished
+2025-11-17 16:47:28,537 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:47:28,538 - scribe.core.transcription_engine - INFO - \U0001f3a4 Transcribing audio file: C:\Users\User\AppData\Local\Temp\tmpbd9p1ylw.wav
+2025-11-17 16:47:28,610 - faster_whisper - INFO - Processing audio with duration 00:04.732
+2025-11-17 16:47:31,618 - scribe.core.transcription_engine - INFO - \u2705 Transcription complete: 43 chars, 4.0s, conf: 62.23%
+2025-11-17 16:47:31,619 - scribe.app - INFO - [OK] Transcription: 'Fantastic news, the recording is workening.' (6 words)
+2025-11-17 16:47:31,624 - scribe.ui_fluent.pages.history - INFO - Added transcription to history: Fantastic news, the recording ... (Total: 48 items)
+2025-11-17 16:47:31,644 - scribe.app - INFO - Attempting to paste transcription back to originating app...
+2025-11-17 16:47:31,644 - scribe.app - INFO - Attempting to return text to: title='\u2733 Complete App Implementation', handle=333762
+2025-11-17 16:47:31,644 - scribe.app - INFO - \u2705 Window activated via handle
+2025-11-17 16:47:31,644 - scribe.app - INFO - Refocused target window title='\u2733 Complete App Implementation' handle=333762
+2025-11-17 16:47:33,259 - scribe.app - INFO - Attempting to insert text via mode='paste'
+2025-11-17 16:47:33,785 - scribe.app - INFO - \u2705 Inserted text via clipboard paste (text remains in clipboard for re-paste)
+2025-11-17 16:47:33,785 - scribe.app - INFO - \u2705 Text successfully returned to application!
+2025-11-17 16:47:33,805 - scribe.ui_fluent.pages.history - INFO - Added transcription to history: Fantastic news, the recording ... (Total: 49 items)
+2025-11-17 16:52:56,256 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,257 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:52:56,257 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:52:56,258 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:52:56,258 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x0000017D04778CB0>
+[TRANSCRIBING] Transcribing audio...
+
+============================================================
+[OK] TRANSCRIPTION RESULT:
+============================================================
+Fantastic news, the recording is workening.
+============================================================
+
+[MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:52:56,258 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+[RECORDING] Starting recording...
+2025-11-17 16:52:56,259 - scribe.app - INFO - [HOTKEY] Deferred _start_recording() to QTimer
+2025-11-17 16:52:56,259 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...
+2025-11-17 16:52:56,262 - scribe.core.audio_recorder - INFO - Validated device: Microphone (Realtek(R) Audio)
+2025-11-17 16:52:56,262 - scribe.core.audio_recorder - INFO - === START_RECORDING CALLED ===
+2025-11-17 16:52:56,262 - scribe.core.audio_recorder - INFO - Starting recording (device=1, rate=16000Hz)
+2025-11-17 16:52:56,262 - scribe.core.audio_recorder - INFO - About to create InputStream...
+2025-11-17 16:52:56,262 - scribe.core.audio_recorder - INFO - [STREAM] Creating stream with device=1, channels=1, rate=16000
+2025-11-17 16:52:56,262 - scribe.core.audio_recorder - INFO - [STREAM] About to define callback wrapper...
+2025-11-17 16:52:56,262 - scribe.core.audio_recorder - INFO - [STREAM] Callback wrapper defined
+2025-11-17 16:52:56,263 - scribe.core.audio_recorder - INFO - [STREAM] About to call sd.InputStream()...
+2025-11-17 16:52:56,314 - scribe.core.audio_recorder - INFO - [STREAM] sd.InputStream() returned successfully
+2025-11-17 16:52:56,314 - scribe.core.audio_recorder - INFO - [STREAM] About to call stream.start()...
+2025-11-17 16:52:56,314 - scribe.core.audio_recorder - INFO - [STREAM] stream.start() completed successfully!
+2025-11-17 16:52:56,314 - scribe.core.audio_recorder - INFO - Creating QTimer...
+2025-11-17 16:52:56,314 - scribe.core.audio_recorder - INFO - QTimer started
+2025-11-17 16:52:56,315 - scribe.core.audio_recorder - INFO - Emitting recording_started signal...
+2025-11-17 16:52:56,315 - scribe.core.audio_recorder - INFO - Recording started successfully
+2025-11-17 16:52:56,315 - scribe.app - INFO - \u2705 Recording started successfully!
+2025-11-17 16:52:56,316 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=True
+2025-11-17 16:52:56,316 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:52:56,316 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:52:56,316 - scribe.ui_fluent.main_window - INFO - [UI] Starting recording widget...
+2025-11-17 16:52:56,324 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget started, positioning...
+2025-11-17 16:52:56,324 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget positioned
+2025-11-17 16:52:56,324 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:52:56,763 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,763 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:56,792 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,792 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:56,826 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,826 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:56,871 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,871 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:56,903 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,903 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:56,933 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,933 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:56,966 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,966 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:56,996 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:56,996 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,026 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,026 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,057 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,057 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,089 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,089 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,120 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,120 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,166 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,166 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,197 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,198 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,228 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,228 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,257 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,258 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,289 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,289 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,319 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,319 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,363 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,363 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,398 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,399 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,428 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,428 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,458 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,458 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,487 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,487 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,521 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,522 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,549 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,549 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,595 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,595 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,626 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,626 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,657 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,657 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,688 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,688 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,717 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,718 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,749 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,750 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,797 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,797 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,825 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,825 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,855 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,855 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,887 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,888 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,916 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,916 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,949 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,950 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:57,978 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:57,979 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,026 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,026 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,056 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,056 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,087 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,087 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,118 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,118 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,149 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,150 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,187 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,188 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,213 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,213 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,243 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,244 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,288 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,289 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,320 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,321 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,349 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,349 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,380 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,380 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,413 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,413 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,445 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,445 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,475 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,475 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,508 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,509 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,554 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,554 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,585 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,585 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,616 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,616 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,647 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,648 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,676 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,676 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,709 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,709 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,738 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,739 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,771 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,771 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,817 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,818 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,849 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,850 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,879 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,879 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,912 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,912 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,943 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,943 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:58,972 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:58,972 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,004 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,005 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,039 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,039 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,067 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,067 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,112 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,113 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,145 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,145 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,175 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,175 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,206 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,206 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,236 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,236 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,268 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,268 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,297 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,297 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,346 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,346 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,376 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,376 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,410 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,410 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,440 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,440 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,468 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,468 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,501 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,502 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,531 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,531 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,564 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,565 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,610 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,611 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,641 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,641 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,672 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,672 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,702 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,703 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,732 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,732 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,766 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,766 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,795 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,795 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,840 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,840 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,871 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,872 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,905 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,905 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,932 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,932 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,964 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,964 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:52:59,994 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:52:59,994 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,025 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,025 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,071 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,071 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,101 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,101 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,132 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,132 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,167 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,167 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,194 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,195 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,224 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,224 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,256 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,257 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,304 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,304 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,335 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,335 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,365 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,365 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,396 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,396 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,427 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,427 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,460 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,460 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,488 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,488 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,520 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,520 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,565 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,565 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,596 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,597 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,628 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,628 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,658 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,659 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,690 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,691 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,721 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,721 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,752 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,752 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,798 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,798 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,830 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,830 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,858 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,858 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,891 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,892 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,922 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,922 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,953 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,953 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:00,987 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:00,987 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,016 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,017 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,046 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,046 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,092 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,093 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,124 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,124 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,155 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,155 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,184 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,185 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,216 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,216 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,248 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,248 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,294 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,294 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,329 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,330 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,356 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,356 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,388 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,388 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,417 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,417 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,449 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,449 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,477 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,478 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,523 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,523 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,553 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,553 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,588 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,588 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,617 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,617 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,648 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,649 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,679 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,679 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,709 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,710 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,755 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,755 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,785 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,785 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,817 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,817 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,848 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,848 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,878 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,878 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,910 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,910 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,941 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,941 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:01,971 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:01,972 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,019 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,019 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,051 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,052 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,082 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,082 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,111 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,111 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,146 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,146 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,172 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,172 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,203 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,203 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,249 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,249 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,280 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,280 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,309 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,309 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,340 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,340 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,373 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,373 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,402 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,402 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,436 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,436 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,478 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,478 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,513 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,513 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,542 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,542 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,574 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,574 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,605 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,605 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,637 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,637 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,667 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,667 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,701 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,701 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,730 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,731 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,776 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,777 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,809 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,809 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,840 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,840 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,869 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,870 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,899 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,899 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,932 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,932 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,962 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,963 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:02,995 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:02,995 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,028 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,028 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,075 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,075 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,105 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,105 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,136 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,136 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,165 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,165 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,197 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,198 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,227 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,227 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,258 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,258 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,305 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,305 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,337 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,337 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,367 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,367 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,398 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,398 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,430 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,430 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,462 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,462 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,494 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:53:03,495 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:53:03,523 - scribe.app - INFO - \u23f9\ufe0f  Stopping recording (hold release)...
+[RECORDING] Stopping recording (hold release)...
+2025-11-17 16:53:03,523 - scribe.app - INFO - \u23f9\ufe0f  Stopping recording...
+[RECORDING] Stopping recording...
+2025-11-17 16:53:03,560 - scribe.core.audio_recorder - INFO - Recording stopped: 7.18s, 114816 samples
+2025-11-17 16:53:03,573 - scribe.core.audio_recorder - INFO - Saved last recording to data\audio\latest_recording.wav (archived as recording_20251117_165303.wav)
+2025-11-17 16:53:03,578 - scribe.app - INFO - [TRANSCRIBING] Starting transcription in background...
+2025-11-17 16:53:03,581 - scribe.app - INFO - \u2705 Transcription worker started - UI remains responsive!
+2025-11-17 16:53:03,582 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=False
+2025-11-17 16:53:03,582 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:53:03,583 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:53:03,583 - scribe.ui_fluent.main_window - INFO - [UI] Finishing recording widget...
+2025-11-17 16:53:03,584 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget finished
+2025-11-17 16:53:03,584 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:53:03,584 - scribe.core.transcription_engine - INFO - \U0001f3a4 Transcribing audio file: C:\Users\User\AppData\Local\Temp\tmpcr2em8kd.wav
+2025-11-17 16:53:03,655 - faster_whisper - INFO - Processing audio with duration 00:07.176
+2025-11-17 16:53:06,464 - scribe.core.transcription_engine - INFO - \u2705 Transcription complete: 94 chars, 7.0s, conf: 83.22%
+2025-11-17 16:53:06,467 - scribe.app - INFO - [OK] Transcription: 'I wonder if the new microphone is being picked up here or if it's using the laptop microphone.' (18 words)
+2025-11-17 16:53:06,471 - scribe.ui_fluent.pages.history - INFO - Added transcription to history: I wonder if the new microphone... (Total: 50 items)
+2025-11-17 16:53:06,491 - scribe.app - INFO - Attempting to paste transcription back to originating app...
+2025-11-17 16:53:06,491 - scribe.app - INFO - Attempting to return text to: title='*new 12 - Notepad++', handle=987044
+2025-11-17 16:53:06,492 - scribe.app - INFO - \u2705 Window activated via handle
+2025-11-17 16:53:06,492 - scribe.app - INFO - Refocused target window title='*new 12 - Notepad++' handle=987044
+2025-11-17 16:53:07,527 - scribe.app - INFO - Attempting to insert text via mode='paste'
+2025-11-17 16:53:08,015 - scribe.app - INFO - \u2705 Inserted text via clipboard paste (text remains in clipboard for re-paste)
+2025-11-17 16:53:08,015 - scribe.app - INFO - \u2705 Text successfully returned to application!
+2025-11-17 16:53:08,035 - scribe.ui_fluent.pages.history - INFO - Added transcription to history: I wonder if the new microphone... (Total: 51 items)
+2025-11-17 16:53:11,045 - scribe.ui_fluent.pages.history - INFO - Rating updated to 0 stars for transcription
+2025-11-17 16:53:28,388 - scribe.core.audio_recorder - INFO - Found 13 input devices
+2025-11-17 16:53:28,388 - scribe.core.audio_recorder - INFO - AudioRecorder initialized (sample_rate=16000, channels=1)
+2025-11-17 16:53:28,388 - scribe.core.audio_recorder - INFO - Audio device set to ID: 0
+2025-11-17 16:53:28,391 - scribe.core.audio_recorder - INFO - Validated device: Microsoft Sound Mapper - Input
+2025-11-17 16:53:28,391 - scribe.core.audio_recorder - INFO - === START_RECORDING CALLED ===
+2025-11-17 16:53:28,391 - scribe.core.audio_recorder - INFO - Starting recording (device=0, rate=16000Hz)
+2025-11-17 16:53:28,391 - scribe.core.audio_recorder - INFO - About to create InputStream...
+2025-11-17 16:53:28,391 - scribe.core.audio_recorder - INFO - [STREAM] Creating stream with device=0, channels=1, rate=16000
+2025-11-17 16:53:28,391 - scribe.core.audio_recorder - INFO - [STREAM] About to define callback wrapper...
+2025-11-17 16:53:28,391 - scribe.core.audio_recorder - INFO - [STREAM] Callback wrapper defined
+2025-11-17 16:53:28,391 - scribe.core.audio_recorder - INFO - [STREAM] About to call sd.InputStream()...
+2025-11-17 16:53:28,422 - scribe.core.audio_recorder - INFO - [STREAM] sd.InputStream() returned successfully
+2025-11-17 16:53:28,422 - scribe.core.audio_recorder - INFO - [STREAM] About to call stream.start()...
+2025-11-17 16:53:28,423 - scribe.core.audio_recorder - INFO - [STREAM] stream.start() completed successfully!
+2025-11-17 16:53:28,423 - scribe.core.audio_recorder - INFO - Creating QTimer...
+2025-11-17 16:53:28,423 - scribe.core.audio_recorder - INFO - QTimer started
+2025-11-17 16:53:28,423 - scribe.core.audio_recorder - INFO - Emitting recording_started signal...
+2025-11-17 16:53:28,423 - scribe.core.audio_recorder - INFO - Recording started successfully
+2025-11-17 16:53:31,448 - scribe.core.audio_recorder - INFO - Recording stopped: 2.96s, 47424 samples
+2025-11-17 16:53:31,457 - scribe.core.audio_recorder - INFO - Saved last recording to data\audio\latest_recording.wav (archived as recording_20251117_165331.wav)
+2025-11-17 16:53:51,488 - scribe.app - ERROR - ================================================================================
+2025-11-17 16:53:51,488 - scribe.app - ERROR - UNHANDLED EXCEPTION CAUGHT!
+2025-11-17 16:53:51,488 - scribe.app - ERROR - ================================================================================
+2025-11-17 16:53:51,489 - scribe.app - ERROR - Type: <class 'AttributeError'>
+2025-11-17 16:53:51,489 - scribe.app - ERROR - Value: type object 'MessageBox' has no attribute 'StandardButton'
+2025-11-17 16:53:51,489 - scribe.app - ERROR - Traceback:
+2025-11-17 16:53:51,493 - scribe.app - ERROR - Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\ui_fluent\main_window.py", line 472, in closeEvent
+    if reply == MessageBox.StandardButton.Yes:
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'MessageBox' has no attribute 'StandardButton'
+
+2025-11-17 16:53:51,493 - scribe.app - ERROR - ================================================================================
+[TRANSCRIBING] Transcribing audio...
+
+============================================================
+[OK] TRANSCRIPTION RESULT:
+============================================================
+I wonder if the new microphone is being picked up here or if it's using the laptop microphone.
+============================================================
+
+
+================================================================================
+UNHANDLED EXCEPTION CAUGHT!
+================================================================================
+Traceback (most recent call last):
+  File "C:\code\scribe\src\scribe\ui_fluent\main_window.py", line 472, in closeEvent
+    if reply == MessageBox.StandardButton.Yes:
+                ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'MessageBox' has no attribute 'StandardButton'
+================================================================================
+2025-11-17 16:53:51,509 - scribe.core.single_instance - INFO - Released instance lock

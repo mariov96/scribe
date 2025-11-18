@@ -58,6 +58,44 @@ class ScribeApp(QObject):
         → Text goes to plugins for processing
         → Analytics tracks everything
         → Output to user
+
+    Threading Architecture:
+        CRITICAL: Scribe uses Qt's event loop with multiple threads. Understanding this is essential
+        for maintaining stability and preventing deadlocks.
+
+        Threads:
+        1. Main/GUI Thread (Qt event loop)
+           - All UI updates MUST happen here
+           - Qt signals connected with Qt.QueuedConnection are delivered here
+           - QTimer callbacks execute here
+
+        2. Keyboard Library Thread (global hotkey listener)
+           - Hotkey events are detected here (_on_hotkey_down, _on_hotkey_up)
+           - NEVER call UI methods directly from this thread
+           - Use QTimer.singleShot(0) to defer work to main thread
+           - Emit signals to communicate with main thread
+
+        3. Audio Thread (PortAudio callback)
+           - Audio samples are captured here
+           - NEVER emit Qt signals from this thread (causes deadlock)
+           - Store data in thread-safe buffers only
+
+        4. Worker Threads (transcription, etc.)
+           - Long-running operations (Whisper transcription)
+           - Communicate via Qt signals/slots
+           - Use Qt.QueuedConnection for cross-thread signals
+
+        Thread Safety Patterns:
+        - Signal-based communication: Emit signals instead of direct method calls
+        - QTimer.singleShot(0): Defer execution to Qt event loop (breaks call chains)
+        - Qt.QueuedConnection: Ensures signal delivery to correct thread
+        - Avoid synchronous cross-thread calls (causes re-entrancy deadlock)
+
+        Common Pitfalls:
+        - ❌ Calling main_window.update_status() from hotkey handler → DEADLOCK
+        - ✓ Emit recording_status_changed signal → Qt queues to main thread
+        - ❌ Direct _start_recording() from hotkey handler → HANGS
+        - ✓ QTimer.singleShot(0, lambda: _start_recording()) → WORKS
     """
 
     # Signals for UI updates
@@ -65,6 +103,8 @@ class ScribeApp(QObject):
     transcription_completed = Signal(str)  # transcribed text
     transcription_failed = Signal(str)  # error message
     plugin_command_executed = Signal(str, str)  # plugin name, result
+    recording_status_changed = Signal(bool)  # recording state
+    hotkey_status_changed = Signal(bool)  # hotkey visual feedback
 
     def __init__(self):
         """Initialize Scribe application."""
@@ -80,6 +120,9 @@ class ScribeApp(QObject):
         self.qapp = QApplication(sys.argv)
         self.qapp.setApplicationName("Scribe")
         self.qapp.setApplicationVersion(__version__)
+
+        # Install global exception handler to catch ALL unhandled exceptions
+        sys.excepthook = self._global_exception_handler
 
         # Set application icon
         import os
@@ -212,57 +255,100 @@ class ScribeApp(QObject):
 
         # Connect window signals
         self.main_window.start_listening_requested.connect(self._start_listening)
+        # Start/Stop recording directly from Home/Tray
+        self.main_window.start_recording_requested.connect(lambda: self._start_recording(source="ui"))
+        self.main_window.stop_recording_requested.connect(self._stop_recording)
         self.main_window.stop_listening_requested.connect(self._stop_listening)
         self.main_window.test_audio_requested.connect(self._test_audio_recording)
         self.main_window.settings_requested.connect(self._show_settings)
-        
+        # Microphone selection from tray
+        self.main_window.microphone_selected.connect(self._on_microphone_selected)
+        self.main_window.microphone_next_requested.connect(self._on_microphone_next)
+
         # Connect transcription page signals
         if hasattr(self.main_window, 'transcription_page'):
             self.main_window.transcription_page.start_recording.connect(self._start_recording)
             self.main_window.transcription_page.stop_recording.connect(self._stop_recording)
 
-        # Connect app signals to UI
+        # Connect app signals to UI (use QueuedConnection for thread safety)
         self.transcription_started.connect(self.main_window.on_transcription_started)
         self.transcription_completed.connect(self.main_window.on_transcription_completed)
         self.transcription_failed.connect(self.main_window.on_transcription_failed)
+
+        logger.info("Connecting recording_status_changed signal...")
+        self.recording_status_changed.connect(
+            self.main_window.update_recording_status, type=Qt.QueuedConnection
+        )
+        logger.info("recording_status_changed signal connected")
+
+        logger.info("Connecting hotkey_status_changed signal...")
+        self.hotkey_status_changed.connect(
+            self.main_window.update_hotkey_status, type=Qt.QueuedConnection
+        )
+        logger.info("hotkey_status_changed signal connected")
 
         # Set initial status
         self.main_window.update_hotkey_status(False)
         self.main_window.update_recording_status(False)
         self.main_window.update_transcription_status("idle")
 
+    def _global_exception_handler(self, exc_type, exc_value, exc_traceback):
+        """Global exception handler to catch all unhandled exceptions."""
+        logger.error("=" * 80)
+        logger.error("UNHANDLED EXCEPTION CAUGHT!")
+        logger.error("=" * 80)
+        logger.error(f"Type: {exc_type}")
+        logger.error(f"Value: {exc_value}")
+        logger.error("Traceback:")
+        import traceback
+        logger.error(''.join(traceback.format_exception(exc_type, exc_value, exc_traceback)))
+        logger.error("=" * 80)
+
+        # Also print to console
+        print("\n" + "=" * 80, flush=True)
+        print("UNHANDLED EXCEPTION CAUGHT!", flush=True)
+        print("=" * 80, flush=True)
+        traceback.print_exception(exc_type, exc_value, exc_traceback)
+        print("=" * 80, flush=True)
+
     # ==================== Hotkey & Recording ====================
 
     def _on_hotkey_down(self):
-        """Handle hotkey press (keys down)."""
-        logger.info("[MIC] HOTKEY HANDLER CALLED!")
-        logger.info(f"[MIC] Thread: {QThread.currentThread()}")
-        print("[MIC] HOTKEY HANDLER CALLED!")
+        """Handle hotkey press (keys down).
 
-        if self.main_window:
-            self.main_window.update_hotkey_status(True)
-            QTimer.singleShot(300, lambda: self.main_window.update_hotkey_status(False))
+        THREADING: This method is called from keyboard library thread.
+        Uses QTimer.singleShot(0) to defer execution to Qt main thread,
+        preventing Qt event loop deadlock from synchronous cross-thread calls.
+        """
+        try:
+            # Emit hotkey visual feedback signal (non-blocking)
+            self.hotkey_status_changed.emit(True)
+            QTimer.singleShot(300, lambda: self.hotkey_status_changed.emit(False))
 
-        if self._recording_mode == "toggle" and self.is_recording:
-            self._toggle_stop_pending = True
-            return
+            # If already recording, treat hotkey as a toggle to stop
+            if self.is_recording:
+                logger.info("Stopping recording via hotkey (toggle)")
+                self._toggle_stop_pending = False
+                self._recording_mode = "idle"
+                QTimer.singleShot(0, self._stop_recording)
+                return
 
-        if self.is_recording:
-            return
+            self._toggle_stop_pending = False
+            self._recording_mode = "hold_candidate"
+            logger.info("Starting recording via hotkey")
 
-        self._toggle_stop_pending = False
-        self._recording_mode = "hold_candidate"
-        logger.info("▶️  Starting recording...")
-        print("▶️  Starting recording...")
-        self._start_recording(source="hotkey")
+            # Defer to QTimer to break any synchronous call chain
+            QTimer.singleShot(0, lambda: self._start_recording(source="hotkey"))
+
+        except Exception as e:
+            logger.error(f"Error in hotkey handler: {e}", exc_info=True)
 
     def _on_hotkey_up(self, hold_duration: float):
         """Handle hotkey release (keys up)."""
         if self._recording_mode == "toggle" and self._toggle_stop_pending and self.is_recording:
             self._toggle_stop_pending = False
             self._recording_mode = "idle"
-            logger.info("⏹️  Stopping recording (toggle tap)...")
-            print("⏹️  Stopping recording...")
+            logger.info("Stopping recording (toggle tap)")
             self._stop_recording()
             return
 
@@ -272,12 +358,12 @@ class ScribeApp(QObject):
 
         if self._recording_mode == "hold_candidate":
             if hold_duration >= self._hold_threshold:
-                logger.info("⏹️  Stopping recording (hold release)...")
-                print("⏹️  Stopping recording...")
+                logger.info(f"Stopping recording (hold released after {hold_duration:.2f}s)")
                 self._recording_mode = "idle"
                 self._stop_recording()
             else:
                 # Promote to toggle mode (continue recording)
+                logger.debug(f"Short press ({hold_duration:.2f}s < {self._hold_threshold}s) - promoting to toggle mode")
                 self._recording_mode = "toggle"
         elif self._recording_mode == "toggle":
             # Release without pending stop; keep recording
@@ -296,7 +382,14 @@ class ScribeApp(QObject):
             logger.info("Stopped listening for hotkey")
 
     def _start_recording(self, source: str = "manual"):
-        """Start audio recording."""
+        """Start audio recording.
+
+        THREADING: Called from Qt main thread (deferred via QTimer.singleShot when source='hotkey').
+        Emits recording_status_changed signal for thread-safe UI updates.
+
+        Args:
+            source: "hotkey", "manual", or other source identifier
+        """
         if not self.audio_recorder or self.is_recording:
             return
 
@@ -307,98 +400,71 @@ class ScribeApp(QObject):
                 self._recording_mode = "manual"
             self._recording_source = source
 
-            logger.info("▶️  Starting recording...")
-            print("▶️  Starting recording...")
+            logger.info(f"Starting recording (source={source})")
             self.is_recording = True
 
-            # Update UI
-            if self.main_window:
-                self.main_window.update_recording_status(True)
+            # Emit signal for UI update (non-blocking, queued via event loop)
+            self.recording_status_changed.emit(True)
 
             # Show status popup
             if self.status_popup:
                 self.status_popup.show_recording()
 
+            # Start audio recording (after UI signal is queued)
             self.audio_recorder.start_recording()
-            
+
+            logger.info("Recording started successfully")
+
         except Exception as e:
             # Catch any errors during recording start setup
             logger.error(f"Failed to start recording: {e}", exc_info=True)
             self.is_recording = False
             self._recording_mode = "idle"
-            
-            # Update UI to reflect error
-            if self.main_window:
-                self.main_window.update_recording_status(False)
+
+            # Emit signal for UI update (non-blocking)
+            self.recording_status_changed.emit(False)
             if self.status_popup:
                 self.status_popup.hide()
-            
+
             # Show error to user
-            from qfluentwidgets import InfoBar, InfoBarPosition
-            if self.main_window:
-                InfoBar.error(
-                    title="Recording Failed",
-                    content=str(e),
-                    orient=Qt.Horizontal,
-                    isClosable=True,
-                    position=InfoBarPosition.TOP,
-                    duration=5000,
-                    parent=self.main_window
-                )
-    
-    def _do_start_recording(self):
-        """Actually start the audio recording (deferred to avoid blocking)."""
-        try:
-            logger.info("[MIC] _do_start_recording called")
-            self.audio_recorder.start_recording()
-            logger.info("[MIC] audio_recorder.start_recording() completed")
-        except Exception as e:
-            logger.error(f"Error in _do_start_recording: {e}", exc_info=True)
-            self.is_recording = False
-            self._recording_mode = "idle"
-            
-            # Update UI to reflect error
-            if self.main_window:
-                self.main_window.update_recording_status(False)
-            if self.status_popup:
-                self.status_popup.hide()
-            
-            # Show error to user
-            from qfluentwidgets import InfoBar, InfoBarPosition
-            if self.main_window:
-                InfoBar.error(
-                    title="Recording Failed",
-                    content=str(e),
-                    orient=Qt.Horizontal,
-                    isClosable=True,
-                    position=InfoBarPosition.TOP,
-                    duration=5000,
-                    parent=self.main_window
-                )
-    
+            try:
+                from qfluentwidgets import InfoBar, InfoBarPosition
+                if self.main_window:
+                    InfoBar.error(
+                        title="Recording Failed",
+                        content=str(e),
+                        orient=Qt.Horizontal,
+                        isClosable=True,
+                        position=InfoBarPosition.TOP,
+                        duration=5000,
+                        parent=self.main_window
+                    )
+            except (TypeError, AttributeError) as ui_error:
+                # InfoBar creation can fail in test scenarios with mocked UI
+                logger.debug(f"Could not show error InfoBar (likely test environment): {ui_error}")
     def _stop_recording(self):
-        """Stop audio recording and trigger transcription."""
+        """Stop audio recording and trigger transcription.
+
+        THREADING: Emits recording_status_changed signal for thread-safe UI updates.
+        """
         if not self.audio_recorder or not self.is_recording:
             return
 
-        logger.info("⏹️  Stopping recording...")
-        print("⏹️  Stopping recording...")
+        logger.info("Stopping recording")
         self.is_recording = False
         self._recording_mode = "idle"
         self._recording_source = "manual"
         self._toggle_stop_pending = False
 
-        # Update UI
-        if self.main_window:
-            self.main_window.update_recording_status(False)
+        # Emit signal for UI update (non-blocking, queued via event loop)
+        self.recording_status_changed.emit(False)
 
         audio_data = self.audio_recorder.stop_recording()
 
         if audio_data:
             self._transcribe_audio(audio_data)
         else:
-            logger.warning("[ERROR] No audio data captured")
-            print("[ERROR] No audio data captured")
+            logger.warning("No audio data captured")
             if self.status_popup:
                 self.status_popup.show_error("No audio captured")
                 QTimer.singleShot(2000, self.status_popup.close)
@@ -501,10 +567,10 @@ class ScribeApp(QObject):
         
         if was_cached:
             logger.info(f"Model '{model_name}' loaded from cache successfully")
-            success_msg = f"✅ Model '{model_name}' ready (from cache)"
+            success_msg = f" Model '{model_name}' ready (from cache)"
         else:
             logger.info(f"Model '{model_name}' downloaded and loaded successfully")
-            success_msg = f"✅ Model '{model_name}' downloaded and ready"
+            success_msg = f" Model '{model_name}' downloaded and ready"
         
         # Hide loading indicator and show success
         if hasattr(self, 'model_loading_tip'):
@@ -519,7 +585,7 @@ class ScribeApp(QObject):
         
         # Hide loading indicator and show error
         if hasattr(self, 'model_loading_tip'):
-            self.model_loading_tip.setContent(f"❌ Model load failed: {error_msg}")
+            self.model_loading_tip.setContent(f"[ERROR] Model load failed: {error_msg}")
             self.model_loading_tip.setState(False)
             from PyQt5.QtCore import QTimer
             QTimer.singleShot(3000, self.model_loading_tip.close)
@@ -582,7 +648,7 @@ class ScribeApp(QObject):
         
         # Start transcription in background
         self._transcription_worker.start()
-        logger.info("✅ Transcription worker started - UI remains responsive!")
+        logger.info(" Transcription worker started - UI remains responsive!")
     
     def _on_transcription_complete(self, result):
         """
@@ -776,7 +842,7 @@ class ScribeApp(QObject):
             try:
                 import pyperclip
                 pyperclip.copy(text)
-                logger.info("✅ Text copied to clipboard (paste manually with Ctrl+V)")
+                logger.info(" Text copied to clipboard (paste manually with Ctrl+V)")
             except Exception as e:
                 logger.warning(f"Failed to copy to clipboard: {e}")
             return
@@ -787,7 +853,7 @@ class ScribeApp(QObject):
 
         # Try win32 API first (most reliable on Windows)
         if window_handle and self._activate_window_by_handle(window_handle):
-            logger.info("✅ Window activated via handle")
+            logger.info(" Window activated via handle")
             restored = True
 
         # Fallback to pygetwindow
@@ -800,7 +866,7 @@ class ScribeApp(QObject):
                     logger.info(f"Found {len(windows)} window(s) matching title, activating first...")
                     windows[0].activate()
                     restored = True
-                    logger.info("✅ Window activated via pygetwindow")
+                    logger.info(" Window activated via pygetwindow")
                 else:
                     logger.warning(f"No windows found with title: {window_title}")
             except ImportError:
@@ -817,14 +883,14 @@ class ScribeApp(QObject):
             logger.debug("Waiting 0.5s for window to be ready...")
             time.sleep(0.5)
             if not self._inject_text_into_app(text):
-                logger.error("❌ Failed to insert text into active window; check clipboard permissions.")
+                logger.error("[ERROR] Failed to insert text into active window; check clipboard permissions.")
                 if self.status_popup:
                     self.status_popup.show_error("Unable to insert text")
                     QTimer.singleShot(1500, self.status_popup.close)
             else:
-                logger.info("✅ Text successfully returned to application!")
+                logger.info(" Text successfully returned to application!")
         else:
-            logger.warning(f"❌ Could not refocus original window '{window_title}'; leaving text in Scribe output.")
+            logger.warning(f"[ERROR] Could not refocus original window '{window_title}'; leaving text in Scribe output.")
             if self.status_popup:
                 self.status_popup.show_error("Unable to focus target app")
                 QTimer.singleShot(1500, self.status_popup.close)
@@ -846,69 +912,23 @@ class ScribeApp(QObject):
         return False
     
     def _smart_format_text(self, text: str) -> str:
-        """Apply smart formatting: spacing and capitalization based on context"""
-        if not text or not text.strip():
+        """Apply minimal, non-intrusive formatting.
+
+        IMPORTANT: Do not move the caret or send keystrokes here.
+        The previous implementation selected text (Shift+Home) and
+        pressed Right to deselect, which could shift the cursor and
+        cause pastes at the wrong position. We now avoid any cursor
+        interaction to guarantee paste-at-caret.
+        """
+        if not text:
             return text
-        
+
         try:
-            import pyautogui
-            import pyperclip
-            
-            pyautogui.FAILSAFE = False
-            
-            # Get context by reading characters before cursor
-            # Save current clipboard
-            saved_clipboard = pyperclip.paste()
-            
-            # Select word/chars before cursor with Shift+Ctrl+Left, then Ctrl+C
-            pyperclip.copy("")
-            time.sleep(0.03)
-            
-            # Try Shift+Home to get line content before cursor
-            pyautogui.hotkey('shift', 'home')
-            time.sleep(0.03)
-            pyautogui.hotkey('ctrl', 'c')
-            time.sleep(0.05)
-            
-            before_text = pyperclip.paste()
-            
-            # Deselect (Right arrow)
-            pyautogui.press('right')
-            time.sleep(0.02)
-            
-            # Restore clipboard
-            pyperclip.copy(saved_clipboard)
-            
-            # Analyze context
-            needs_capital = False
-            needs_space = False
-            
-            if before_text:
-                # Check if we need a leading space
-                if before_text and not before_text[-1].isspace():
-                    needs_space = True
-                
-                # Check if we need capitalization (start of sentence)
-                stripped = before_text.rstrip()
-                if not stripped or stripped[-1] in '.!?':
-                    needs_capital = True
-            else:
-                # No text before cursor - assume start of document/field
-                needs_capital = True
-            
-            # Apply formatting
-            formatted = text
-            if needs_capital and formatted[0].islower():
-                formatted = formatted[0].upper() + formatted[1:]
-            
-            if needs_space:
-                formatted = ' ' + formatted
-            
-            logger.debug(f"Smart format: '{text}' -> '{formatted}' (capital={needs_capital}, space={needs_space})")
-            return formatted
-            
-        except Exception as e:
-            logger.warning(f"Smart formatting failed: {e}, using original text")
+            # Keep text as-is to avoid side effects.
+            # If future simple rules are desired, they must not require
+            # reading editor context or sending keystrokes.
+            return text
+        except Exception:
             return text
 
     def _paste_via_clipboard(self, text: str) -> bool:
@@ -921,7 +941,7 @@ class ScribeApp(QObject):
             try:
                 import pyperclip
                 pyperclip.copy(text)
-                logger.info("✅ Text copied to clipboard (paste manually with Ctrl+V)")
+                logger.info(" Text copied to clipboard (paste manually with Ctrl+V)")
                 return True
             except:
                 return False
@@ -940,12 +960,12 @@ class ScribeApp(QObject):
             
             # Wait for paste to complete
             time.sleep(0.15)
-            logger.info("✅ Inserted text via clipboard paste (text remains in clipboard for re-paste)")
+            logger.info(" Inserted text via clipboard paste (text remains in clipboard for re-paste)")
             return True
         except Exception as e:
-            logger.error(f"❌ Failed to paste text: {e}")
+            logger.error(f"[ERROR] Failed to paste text: {e}")
             # Text is already in clipboard from above, so partial success
-            logger.info("✅ Text is in clipboard - paste manually with Ctrl+V")
+            logger.info(" Text is in clipboard - paste manually with Ctrl+V")
             return True  # Return True since clipboard has the text
 
     def _type_via_keystrokes(self, text: str) -> bool:
@@ -1230,3 +1250,52 @@ class ScribeApp(QObject):
         self.value_calculator.print_summary(summary)
 
         logger.info("Scribe shutdown complete")
+
+    # ==================== Microphone Management ====================
+
+    def _on_microphone_selected(self, device_id):
+        """Handle microphone selection from tray; persist and apply live."""
+        try:
+            from scribe.core.audio_recorder import AudioRecorder
+            sample_rate = getattr(self.config.config.audio, 'sample_rate', 16000)
+            if device_id is not None and not AudioRecorder.can_open(device_id, sample_rate):
+                logger.warning("Selected mic cannot open at current sample rate")
+                return
+            # Persist to config
+            self.config.set('audio', 'device_id', device_id)
+            self.config.save()
+            # Apply live
+            if self.audio_recorder:
+                self.audio_recorder.set_device(device_id)
+        except Exception as e:
+            logger.error(f"Failed to select microphone: {e}")
+
+    def _on_microphone_next(self):
+        """Cycle to next valid microphone and apply."""
+        try:
+            from scribe.core.audio_recorder import AudioRecorder
+            sample_rate = getattr(self.config.config.audio, 'sample_rate', 16000)
+            devices = AudioRecorder.list_valid_input_devices(sample_rate=sample_rate)
+            if not devices:
+                return
+            current_id = getattr(self.config.config.audio, 'device_id', None)
+            ids = [d['id'] for d in devices]
+            if current_id in ids:
+                idx = (ids.index(current_id) + 1) % len(ids)
+            else:
+                idx = 0
+            self._on_microphone_selected(ids[idx])
+            # Optional UI toast
+            if self.main_window:
+                from qfluentwidgets import InfoBar, InfoBarPosition
+                InfoBar.info(
+                    title="Microphone Switched",
+                    content=devices[idx]['name'],
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=1500,
+                    parent=self.main_window
+                )
+        except Exception as e:
+            logger.error(f"Failed to cycle microphone: {e}")

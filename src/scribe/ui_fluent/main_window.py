@@ -29,7 +29,11 @@ class ScribeMainWindow(MSFluentWindow):
     
     # Signals for app integration
     start_listening_requested = Signal()
+    start_recording_requested = Signal()
+    stop_recording_requested = Signal()
     stop_listening_requested = Signal()
+    microphone_selected = Signal(object)  # Optional[int]
+    microphone_next_requested = Signal()
     test_audio_requested = Signal()
     settings_requested = Signal()
     
@@ -169,6 +173,14 @@ class ScribeMainWindow(MSFluentWindow):
         """
         self.setStyleSheet(dark_background_style)
 
+        # Setup auto-refresh timer for home stats (every 30 seconds)
+        self.stats_timer = QTimer(self)
+        self.stats_timer.timeout.connect(self.update_home_stats)
+        self.stats_timer.start(30000)  # 30 seconds
+        
+        # Initial stats update
+        QTimer.singleShot(1000, self.update_home_stats)
+
         QTimer.singleShot(500, self._show_welcome)
     
     def _setup_page_animations(self):
@@ -297,11 +309,22 @@ class ScribeMainWindow(MSFluentWindow):
         tray_menu.addAction(self.show_hide_action)
         
         tray_menu.addSeparator()
+
+        # Microphone submenu
+        from scribe.core.audio_recorder import AudioRecorder
+        self.mic_menu = QMenu("  🎤  Microphone", tray_menu)
+        self._populate_mic_menu(self.mic_menu)
+        tray_menu.addMenu(self.mic_menu)
+
+        # Quick: Next Mic
+        next_mic_action = QAction("  🔁  Next Microphone", self)
+        next_mic_action.triggered.connect(self.microphone_next_requested.emit)
+        tray_menu.addAction(next_mic_action)
         
-        # Start Listening action
-        start_action = QAction("  🎤  Start Listening", self)
-        start_action.triggered.connect(self._on_tray_start_listening)
-        tray_menu.addAction(start_action)
+        # Start/Stop Recording action (toggles)
+        self.tray_start_action = QAction("  🎙️  Start Recording", self)
+        self.tray_start_action.triggered.connect(self._on_tray_start_recording)
+        tray_menu.addAction(self.tray_start_action)
         
         tray_menu.addSeparator()
         
@@ -356,13 +379,63 @@ class ScribeMainWindow(MSFluentWindow):
             self.activateWindow()
             self.show_hide_action.setText("  Hide Scribe")
     
-    def _on_tray_start_listening(self):
-        """Start listening from tray"""
-        self.show()
-        self.activateWindow()
-        self.show_hide_action.setText("  Hide Scribe")
-        # Navigate to insights page
-        self.stackedWidget.setCurrentWidget(self.insights_page)
+    def _on_tray_start_recording(self):
+        """Start recording directly from tray without changing view"""
+        try:
+            self.start_recording_requested.emit()
+            InfoBar.success(
+                title="Recording",
+                content="Recording started (tray)",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=1500,
+                parent=self
+            )
+        except Exception:
+            # Non-fatal UI feedback; don't crash on tray action
+            pass
+
+    def _populate_mic_menu(self, menu: QMenu):
+        """Populate microphone submenu with valid input devices as radio actions."""
+        try:
+            menu.clear()
+            from scribe.core.audio_recorder import AudioRecorder
+            devices = AudioRecorder.list_valid_input_devices(sample_rate=16000)
+            group = []
+            # System default option
+            default_act = QAction("System Default", menu)
+            default_act.setCheckable(True)
+            default_act.triggered.connect(lambda: self.microphone_selected.emit(None))
+            menu.addAction(default_act)
+            if devices:
+                menu.addSeparator()
+            for d in devices:
+                label = f"{d['name']}" + ("  (Default)" if d.get('is_default') else "")
+                act = QAction(label, menu)
+                act.setCheckable(True)
+                act.triggered.connect(lambda checked, dev_id=d['id']: self.microphone_selected.emit(dev_id))
+                menu.addAction(act)
+                group.append(act)
+        except Exception:
+            # Best effort; don't crash tray on errors
+            pass
+
+    def _on_tray_stop_recording(self):
+        """Stop recording directly from tray without changing view"""
+        try:
+            self.stop_recording_requested.emit()
+            InfoBar.info(
+                title="Stopped",
+                content="Recording stopped (tray)",
+                orient=Qt.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=1200,
+                parent=self
+            )
+        except Exception:
+            pass
     
     def _on_tray_settings(self):
         """Open settings from tray"""
@@ -412,10 +485,14 @@ class ScribeMainWindow(MSFluentWindow):
         for page in pages_to_animate:
             self._add_page_animation(page)
 
-        # Connect home page signals
-        self.home_page.start_listening_clicked.connect(self.start_listening_requested.emit)
+        # Connect home page signals (Start Recording should record, not just listen)
+        self.home_page.start_listening_clicked.connect(self.start_recording_requested.emit)
+        self.home_page.stop_recording_clicked.connect(self.stop_recording_requested.emit)
         self.home_page.test_audio_clicked.connect(self._on_test_audio)
         self.home_page.settings_clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.settings_page))
+        self.home_page.view_history_clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.history_page))
+        self.home_page.view_insights_clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.insights_page))
+        self.home_page.transcription_clicked.connect(self._on_transcription_clicked)
     
     def _add_navigation(self):
         self.addSubInterface(self.home_page, FIF.HOME, "Home")
@@ -519,6 +596,9 @@ class ScribeMainWindow(MSFluentWindow):
         }
         self.add_transcription_event(entry)
         
+        # Update home stats immediately after transcription
+        QTimer.singleShot(100, self.update_home_stats)
+        
         # Note: FloatingRecordingWidget handles visual feedback - no InfoBar needed
     
     def on_transcription_failed(self, error: str):
@@ -550,8 +630,9 @@ class ScribeMainWindow(MSFluentWindow):
             self.insights_page.add_event(entry)
 
     def update_audio_level(self, level: float):
-        """Update audio level - could show on home page in future."""
-        pass  # Removed - no longer used
+        """Update audio level in recording widget waveform"""
+        if hasattr(self, 'recording_widget') and hasattr(self.recording_widget, 'waveform'):
+            self.recording_widget.waveform.update_audio_level(level)
     
     def update_hotkey_status(self, active: bool):
         """Update UI to show hotkey was detected"""
@@ -559,16 +640,39 @@ class ScribeMainWindow(MSFluentWindow):
         pass
     
     def update_recording_status(self, recording: bool):
-        """Update UI to show recording status"""
-        if hasattr(self.home_page, 'update_status'):
-            self.home_page.update_status(recording=recording)
-        
-        # Update floating recording widget
-        if recording:
-            self.recording_widget.start_recording()
-            self.recording_widget.position_at_bottom_right(self)
-        else:
-            self.recording_widget.finish()
+        """Update UI to show recording status.
+
+        THREADING: Called from Qt main thread via queued signal connection.
+        """
+        try:
+            logger.debug(f"Updating recording UI: recording={recording}")
+
+            if hasattr(self.home_page, 'update_status'):
+                self.home_page.update_status(recording=recording)
+
+            # Update floating recording widget
+            if recording:
+                self.recording_widget.start_recording()
+                self.recording_widget.position_at_bottom_right(self)
+                # Toggle tray action to Stop
+                try:
+                    self.tray_start_action.triggered.disconnect()
+                except Exception:
+                    pass
+                self.tray_start_action.setText("  ⏹️  Stop Recording")
+                self.tray_start_action.triggered.connect(self._on_tray_stop_recording)
+            else:
+                self.recording_widget.finish()
+                # Toggle tray action to Start
+                try:
+                    self.tray_start_action.triggered.disconnect()
+                except Exception:
+                    pass
+                self.tray_start_action.setText("  🎙️  Start Recording")
+                self.tray_start_action.triggered.connect(self._on_tray_start_recording)
+
+        except Exception as e:
+            logger.error(f"Error updating recording UI: {e}", exc_info=True)
     
     def update_transcription_status(self, status: str):
         """Update transcription status on home page"""
@@ -601,6 +705,53 @@ class ScribeMainWindow(MSFluentWindow):
             duration=3000,
             parent=self
         )
+
+    def _on_transcription_clicked(self, transcription_id: int):
+        """Handle transcription card click - navigate to history and select item"""
+        # Switch to history page
+        self.stackedWidget.setCurrentWidget(self.history_page)
+        # Select the transcription in the history page
+        if hasattr(self.history_page, 'select_transcription'):
+            self.history_page.select_transcription(transcription_id)
+
+    def update_home_stats(self):
+        """Update home page stats from history manager"""
+        try:
+            # Get transcriptions from history page
+            if not hasattr(self, 'history_page') or not hasattr(self.history_page, '_history_items'):
+                return
+                
+            all_history = self.history_page._history_items
+            
+            # Get today's transcriptions count
+            total_transcriptions = len(all_history)
+            
+            # Calculate total words and time saved
+            total_words = 0
+            total_time_seconds = 0
+            
+            for item in all_history:
+                # Count words in transcription text
+                if item.get('text'):
+                    word_count = len(item['text'].split())
+                    total_words += word_count
+                    # Estimate time saved: typing speed ~40 wpm, so words/40 minutes * 60 = seconds
+                    total_time_seconds += (word_count / 40) * 60
+            
+            # Update stats on home page
+            self.home_page.update_stats(
+                total_transcriptions=total_transcriptions,
+                words_saved=total_words,
+                time_saved_seconds=int(total_time_seconds)
+            )
+            
+            # Update recent activity (get last 5 transcriptions)
+            recent = all_history[:5]  # Already in reverse order (most recent first)
+            self.home_page.update_recent_activity(recent)
+            
+        except Exception as e:
+            import traceback
+            logging.error(f"Failed to update home stats: {e}\n{traceback.format_exc()}")
 
 
 def main():

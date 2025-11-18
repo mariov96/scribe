@@ -1,17 +1,148 @@
 """
-Scribe branding constants and colors
+Scribe Design System
+Modern, consistent design constants for the entire application.
 """
 
 from scribe.__version__ import __version__
+from PyQt5.QtGui import QColor
 
 SCRIBE_VERSION = __version__  # Now imports from __version__.py
 SCRIBE_TAGLINE = "Voice Control for Your Workflow"
-SCRIBE_PURPLE = "#6751A1"
-SCRIBE_BLUE = "#4A90E2"
 
-# UI Scaling - Reduced by 15% per user request
-UI_SCALE_FACTOR = 0.85  # 15% smaller
-DEFAULT_FONT_SIZE = 9  # Base font size in points (reduced from 11)
+# ============================================================================
+# COLOR PALETTE - Modern, accessible colors
+# ============================================================================
+
+# Brand Colors
+SCRIBE_PURPLE = "#6751A1"  # Primary brand color
+SCRIBE_BLUE = "#4A90E2"    # Secondary accent
+
+# Semantic Colors (Dark Theme optimized)
+COLOR_SUCCESS = "#52C41A"      # Green - success states
+COLOR_WARNING = "#FAAD14"      # Amber - warning states
+COLOR_ERROR = "#F5222D"        # Red - error states
+COLOR_INFO = "#1890FF"         # Blue - informational states
+
+# Recording States
+COLOR_RECORDING = "#FF4D4F"    # Bright red for recording
+COLOR_READY = "#52C41A"        # Green for ready state
+COLOR_PROCESSING = "#FAAD14"   # Amber for processing
+
+# Neutral Grays (Dark Theme)
+COLOR_BG_PRIMARY = "#1E1E1E"       # Main background
+COLOR_BG_SECONDARY = "#252525"     # Card backgrounds
+COLOR_BG_TERTIARY = "#2D2D2D"      # Elevated surfaces
+COLOR_BORDER = "#3A3A3A"           # Subtle borders
+COLOR_DIVIDER = "#303030"          # Dividers
+
+# Text Colors (Dark Theme)
+COLOR_TEXT_PRIMARY = "#E8E8E8"     # Primary text
+COLOR_TEXT_SECONDARY = "#A8A8A8"   # Secondary text
+COLOR_TEXT_TERTIARY = "#707070"    # Tertiary text/hints
+COLOR_TEXT_DISABLED = "#4A4A4A"    # Disabled text
+
+# ============================================================================
+# TYPOGRAPHY SCALE - Clear hierarchy
+# ============================================================================
+
+# Font Sizes (in points)
+FONT_SIZE_HERO = 24        # Hero text (main status)
+FONT_SIZE_H1 = 20          # Page titles
+FONT_SIZE_H2 = 16          # Section headers
+FONT_SIZE_H3 = 14          # Subsection headers
+FONT_SIZE_BODY = 13        # Body text (default)
+FONT_SIZE_SMALL = 11       # Small text
+FONT_SIZE_CAPTION = 10     # Captions, hints
+
+# Font Weights
+FONT_WEIGHT_LIGHT = "300"
+FONT_WEIGHT_NORMAL = "400"
+FONT_WEIGHT_MEDIUM = "500"
+FONT_WEIGHT_SEMIBOLD = "600"
+FONT_WEIGHT_BOLD = "700"
+
+# ============================================================================
+# SPACING SCALE - Consistent rhythm
+# ============================================================================
+
+SPACING_XS = 4      # Extra small - tight spacing
+SPACING_SM = 8      # Small - compact elements
+SPACING_MD = 16     # Medium - default spacing
+SPACING_LG = 24     # Large - section spacing
+SPACING_XL = 32     # Extra large - major sections
+SPACING_XXL = 48    # Double extra large - page sections
+
+# Component-specific spacing
+CARD_PADDING = SPACING_MD
+CARD_SPACING = SPACING_MD
+SECTION_SPACING = SPACING_LG
+PAGE_MARGIN = SPACING_LG
+
+# ============================================================================
+# BORDER RADIUS - Modern, consistent corners
+# ============================================================================
+
+RADIUS_SM = 4       # Small elements
+RADIUS_MD = 8       # Cards, buttons
+RADIUS_LG = 12      # Large cards
+RADIUS_XL = 16      # Modal dialogs
+RADIUS_ROUND = 999  # Fully rounded (pills)
+
+# ============================================================================
+# SHADOWS - Subtle depth
+# ============================================================================
+
+SHADOW_SM = "0 1px 2px rgba(0, 0, 0, 0.25)"
+SHADOW_MD = "0 2px 8px rgba(0, 0, 0, 0.35)"
+SHADOW_LG = "0 4px 16px rgba(0, 0, 0, 0.45)"
+
+# ============================================================================
+# ICON MAPPINGS - FluentIcons to replace emoji
+# ============================================================================
+
+from qfluentwidgets import FluentIcon as FIF
+
+# Recording & Audio
+ICON_MICROPHONE = FIF.MICROPHONE
+ICON_RECORDING = FIF.MICROPHONE
+ICON_VOLUME = FIF.VOLUME
+ICON_SPEAKER = FIF.SPEAKERS
+
+# UI Actions
+ICON_PLAY = FIF.PLAY
+ICON_PAUSE = FIF.PAUSE
+ICON_STOP = FIF.STOP_WATCH
+ICON_SETTINGS = FIF.SETTING
+ICON_TEST = FIF.EXPRESSIVE_INPUT_ENTRY
+
+# Status & Feedback
+ICON_SUCCESS = FIF.COMPLETED
+ICON_ERROR = FIF.CANCEL
+ICON_WARNING = FIF.INFO
+ICON_INFO = FIF.INFO
+
+# Features
+ICON_HOTKEY = FIF.EXPRESSIVE_INPUT_ENTRY  # Closest to keyboard
+ICON_SPEED = FIF.SPEED_OFF
+ICON_PRIVACY = FIF.FOLDER  # Using FOLDER as closest to lock
+ICON_LOCAL = FIF.FOLDER
+ICON_HISTORY = FIF.HISTORY
+ICON_PLUGINS = FIF.APPLICATION
+ICON_INSIGHTS = FIF.HISTORY  # Using HISTORY as closest to chart
+
+# Navigation
+ICON_HOME = FIF.HOME
+ICON_BACK = FIF.CANCEL  # Using CANCEL as closest to back
+ICON_FORWARD = FIF.PLAY  # Using PLAY as closest to forward arrow
+ICON_UP = FIF.UP if hasattr(FIF, 'UP') else FIF.CARE_UP_SOLID
+ICON_DOWN = FIF.DOWN if hasattr(FIF, 'DOWN') else FIF.CARE_DOWN_SOLID
+
+# ============================================================================
+# LEGACY COMPATIBILITY
+# ============================================================================
+
+UI_SCALE_FACTOR = 0.85  # 15% smaller (legacy)
+DEFAULT_FONT_SIZE = FONT_SIZE_BODY  # Base font size
 
 # Changelog
 CHANGELOG = """

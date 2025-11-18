@@ -15,7 +15,11 @@
       "Bash(tee:*)",
       "Bash(pkill:*)",
       "Bash(gh pr list:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(tasklist:*)",
+      "Bash(findstr:*)",
+      "Bash(pytest:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

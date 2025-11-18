@@ -1,0 +1,62 @@
+2025-11-17 16:21:40,723 - scribe.core.single_instance - INFO - Stale lock found (PID=40752), replacing it
+2025-11-17 16:21:40,724 - scribe.core.single_instance - INFO - Acquired instance lock: PID=39440, version=2.0.1, build=1763067100
+2025-11-17 16:21:40,724 - scribe.app - INFO - Initializing Scribe v2.0.1
+2025-11-17 16:21:40,758 - scribe.analytics.value_calculator - INFO - ValueCalculator initialized. Data dir: data\analytics
+2025-11-17 16:21:40,763 - scribe.app - INFO - Initializing transcription engine...
+2025-11-17 16:21:40,763 - scribe.core.transcription_engine - INFO - Initializing Whisper transcription engine...
+C:\Users\User\AppData\Roaming\Python\Python313\site-packages\ctranslate2\__init__.py:8: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+2025-11-17 16:21:41,090 - scribe.core.transcription_engine - INFO - \u26a0\ufe0f  PyTorch not installed, defaulting to CPU
+2025-11-17 16:21:41,091 - scribe.core.transcription_engine - INFO - \U0001f680 Using device: cpu with compute type: int8
+2025-11-17 16:21:41,091 - scribe.core.transcription_engine - INFO - \U0001f4e6 Loading Whisper model: small
+2025-11-17 16:21:42,137 - httpx - INFO - HTTP Request: GET https://huggingface.co/api/models/Systran/faster-whisper-small/revision/main "HTTP/1.1 200 OK"
+2025-11-17 16:21:43,773 - scribe.core.transcription_engine - INFO - \u2705 Whisper model 'small' loaded successfully on cpu
+2025-11-17 16:21:43,773 - scribe.app - INFO - Initializing audio recorder...
+2025-11-17 16:21:43,774 - scribe.core.audio_recorder - INFO - Found 13 input devices
+2025-11-17 16:21:43,774 - scribe.core.audio_recorder - INFO - AudioRecorder initialized (sample_rate=16000, channels=1)
+2025-11-17 16:21:43,774 - scribe.app - INFO - Initializing hotkey manager...
+2025-11-17 16:21:43,774 - scribe.core.hotkey_manager - INFO - Hotkey configured: ctrl+alt
+2025-11-17 16:21:43,774 - scribe.core.hotkey_manager - INFO - Starting hotkey listener for: ctrl+alt
+2025-11-17 16:21:43,933 - scribe.core.hotkey_manager - INFO - keyboard library hotkey registered
+2025-11-17 16:21:43,958 - scribe.core.hotkey_manager - INFO - pynput listener started for hotkey detection
+2025-11-17 16:21:43,959 - scribe.core.hotkey_manager - INFO - Hotkey listener started successfully
+2025-11-17 16:21:43,959 - scribe.app - INFO - Loading plugins...
+2025-11-17 16:21:44,011 - scribe.plugins.window_manager.plugin - INFO - WindowManager initialized with 0 app shortcuts
+2025-11-17 16:21:44,011 - scribe.plugins.registry - INFO - \u2705 Registered plugin: window_manager v1.0.0
+2025-11-17 16:21:44,012 - scribe.app - INFO - WindowManager plugin loaded
+2025-11-17 16:21:44,012 - scribe.app - INFO - Loaded 1 plugins
+2025-11-17 16:21:44,012 - scribe.app - INFO - Initializing UI...
+2025-11-17 16:21:44,560 - scribe.ui_fluent.main_window - INFO - Active screen: 1280x800 @ 3.0x DPI
+2025-11-17 16:21:44,560 - scribe.ui_fluent.main_window - INFO - Physical size: 427x267
+2025-11-17 16:21:44,560 - scribe.ui_fluent.main_window - INFO - Setting window size: 768x480
+2025-11-17 16:21:44,560 - scribe.ui_fluent.main_window - INFO - Window centered at: PyQt5.QtCore.QPoint(256, 160)
+2025-11-17 16:21:45,127 - scribe.ui_fluent.pages.history - INFO - History loaded: 45 items
+2025-11-17 16:21:45,181 - scribe.core.audio_recorder - INFO - Found 13 input devices
+2025-11-17 16:21:45,423 - scribe.plugins.meeting.plugin - INFO - Loaded 0 meetings
+2025-11-17 16:21:45,423 - scribe.plugins.meeting.plugin - INFO - \u2705 Meeting Note Taker plugin initialized
+2025-11-17 16:21:45,424 - scribe.ui_fluent.main_window - INFO - \u2705 Meeting Note Taker plugin loaded
+2025-11-17 16:21:45,626 - scribe.app - INFO - Connecting recording_status_changed signal...
+2025-11-17 16:21:45,626 - scribe.app - INFO - recording_status_changed signal connected
+2025-11-17 16:21:45,626 - scribe.app - INFO - Connecting hotkey_status_changed signal...
+2025-11-17 16:21:45,626 - scribe.app - INFO - hotkey_status_changed signal connected
+2025-11-17 16:21:45,626 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status called: recording=False
+2025-11-17 16:21:45,626 - scribe.ui_fluent.main_window - INFO - [UI] Updating home_page status...
+2025-11-17 16:21:45,626 - scribe.ui_fluent.main_window - INFO - [UI] home_page status updated
+2025-11-17 16:21:45,627 - scribe.ui_fluent.main_window - INFO - [UI] Finishing recording widget...
+2025-11-17 16:21:45,627 - scribe.ui_fluent.main_window - INFO - [UI] Recording widget finished
+2025-11-17 16:21:45,627 - scribe.ui_fluent.main_window - INFO - [UI] update_recording_status completed successfully
+2025-11-17 16:21:45,636 - scribe.app - INFO - Scribe initialized successfully
+2025-11-17 16:21:45,636 - scribe.app - INFO - [OK] Ready! Use 'Start Listening' button or Ctrl+Alt hotkey (global hooks may require admin privileges)
+2025-11-17 16:21:45,636 - scribe.app - INFO - [INFO] Transcribed text will appear in console and as typed output
+2025-11-17 16:21:45,636 - scribe.app - INFO - Showing main window...
+2025-11-17 16:21:46,706 - scribe.app - INFO - Window visible: True
+2025-11-17 16:21:46,706 - scribe.app - INFO - Window geometry: PyQt5.QtCore.QRect(256, 160, 768, 480)
+2025-11-17 16:21:46,706 - scribe.app - INFO - Scribe running...
+2025-11-17 16:21:57,561 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:21:57,561 - scribe.core.hotkey_manager - INFO - [HOTKEY] Emitting hotkey_pressed signal
+2025-11-17 16:21:57,561 - scribe.core.hotkey_manager - INFO - [HOTKEY] Signal emitted
+2025-11-17 16:21:57,562 - scribe.core.hotkey_manager - INFO - [HOTKEY] _handle_hotkey_pressed called!
+2025-11-17 16:21:57,562 - scribe.core.hotkey_manager - INFO - [HOTKEY] Combo already active, ignoring
+2025-11-17 16:21:57,575 - scribe.app - INFO - [MIC] HOTKEY HANDLER CALLED!
+2025-11-17 16:21:57,575 - scribe.app - INFO - [MIC] Thread: <PyQt5.QtCore.QThread object at 0x000001E405368290>
+2025-11-17 16:21:57,575 - scribe.app - INFO - \u25b6\ufe0f  Starting recording...

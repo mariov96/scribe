@@ -10,12 +10,12 @@
     "companion": "buildstate.md v0.1-strategic",
     "repo": "new-project",
     "purpose": "Technical implementation, debugging, feature development",
-    "last_sync": "2025-01-19T12:00:00Z",
+    "last_sync": "2025-11-18T00:05:00Z",
     "rebalance_trigger": "major_feature_completion | arch_change | performance_milestone"
   },
   "project": {
     "name": "Scribe - The Open Voice Platform",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "versioning": {
       "scheme": "Semantic Versioning (MAJOR.MINOR.PATCH)",
       "rules": {
@@ -28,16 +28,26 @@
         "minor": "2.1.0 - Add video transcription, new AI model support",
         "patch": "2.0.1 - Fix hotkey bug, improve recording quality"
       },
-      "current_increment": "patch",
-      "next_planned": "2.0.1 - Fix any critical bugs from v2.0.0 release"
+      "current_increment": "minor",
+      "next_planned": "2.1.1 - Polish UX, minor fixes"
     },
     "type": "Desktop Application - Voice Dictation",
     "stakeholder": "Open Source Community",
     "phase": "public_release"
   },
   "current_state": {
-    "implemented": [],
-    "in_progress": [],
+    "implemented": [
+      "Home first-paint relayout to remove ghosting",
+      "Quick Actions duplication removed; simplified single-row buttons",
+      "System tray action toggles Start/Stop dynamically",
+      "Home Start button toggles to Stop while recording",
+      "Hotkey press stops recording if already active (global toggle)",
+      "Paste-at-caret fix: removed caret-moving logic from smart formatting",
+      "Robust audio error handling to prevent silent crashes"
+    ],
+    "in_progress": [
+      "UI polish and consistency across pages"
+    ],
     "blocked": [],
     "performance_metrics": {}
   },
@@ -46,8 +56,9 @@
       "id": "BUG-001",
       "severity": "critical",
       "title": "Hotkey Recording Crash - Qt Threading Issue",
-      "status": "investigating",
+      "status": "FIXED - user verified working",
       "discovered": "2025-11-17",
+      "resolved": "2025-11-17",
       "description": "App crashes/hangs immediately when hotkey pressed to start recording. Process enters stopped state (SIGSTOP) without Python exception.",
       "symptoms": [
         "Hotkey detected successfully by keyboard library",
@@ -101,21 +112,64 @@
           "UI becomes unresponsive (suggests Qt event loop blocked)"
         ]
       },
-      "next_steps": [
-        "Test recording WITHOUT any UI updates to confirm audio recorder works",
-        "Investigate recording_widget.start_recording() and home_page.update_status() for blocking calls",
-        "Consider moving ALL recording operations to separate QThread worker",
-        "Use QMetaObject.invokeMethod with Qt.QueuedConnection for UI updates",
-        "Check if recording_widget or status_popup have Qt::DirectConnection signals",
-        "Profile with Qt debugger to identify exact blocking call"
-      ],
+      "solution_implemented": {
+        "root_cause": "Synchronous UI method calls in hotkey handler causing re-entrancy and deadlock, plus Unicode encoding errors on Windows console",
+        "fix_approach": "Signal-based decoupling + QTimer deferral + Unicode fixes",
+        "changes_made": [
+          "Added recording_status_changed and hotkey_status_changed signals to ScribeApp",
+          "Modified _on_hotkey_down() to emit hotkey_status_changed signal instead of calling main_window.update_hotkey_status()",
+          "Modified _on_hotkey_down() to use QTimer.singleShot(0) to defer _start_recording() call completely",
+          "Modified _start_recording() to emit recording_status_changed signal instead of calling main_window.update_recording_status()",
+          "Modified _stop_recording() to emit recording_status_changed signal",
+          "Connected signals to UI methods with Qt.QueuedConnection in _connect_ui_signals()",
+          "Removed all emoji characters from print() statements to fix Windows cp1252 encoding errors",
+          "Added global exception handler (_global_exception_handler) to catch unhandled exceptions",
+          "Removed unused _do_start_recording() method from previous fix attempt"
+        ],
+        "how_it_works": [
+          "Hotkey press → emit signal (non-blocking) → QTimer.singleShot(0) defers _start_recording() → return immediately",
+          "Qt event loop queues both signal delivery and deferred call to main thread",
+          "UI update methods execute asynchronously when event loop processes queue",
+          "Recording starts via deferred call, completely breaking any synchronous chain",
+          "No synchronous call chain = no deadlock, no re-entrancy issues",
+          "Unicode-safe print statements prevent Windows console encoding crashes"
+        ],
+        "files_modified": [
+          "src/scribe/app.py - Added signals, modified hotkey and recording methods",
+          "tests/test_hotkey_threading.py - Comprehensive unit tests (11 tests created)"
+        ],
+        "tests_created": [
+          "test_hotkey_emits_signal_not_direct_call - PASSED",
+          "test_recording_start_emits_signal_not_direct_call - PASSED",
+          "test_recording_stop_emits_signal_not_direct_call",
+          "test_signal_connection_uses_queued_connection",
+          "test_hotkey_to_recording_flow_no_blocking",
+          "test_error_during_recording_emits_signal",
+          "test_concurrent_hotkey_presses_dont_deadlock",
+          "test_thread_safety_main_thread_check",
+          "test_recording_widget_updates_asynchronously"
+        ]
+      },
       "affected_files": [
         "src/scribe/app.py (line 317 - UI update call)",
         "src/scribe/core/hotkey_manager.py (signal emission from keyboard thread)",
         "src/scribe/ui_fluent/main_window.py (update_recording_status method)",
         "src/scribe/ui_fluent/widgets/recording_widget.py (start_recording method)"
       ],
-      "workaround": "None - recording completely non-functional",
+      "workaround": "Fixed - no workaround needed",
+      "user_verification": {
+        "tested_by": "User",
+        "test_date": "2025-11-17",
+        "test_results": "Complete success - multiple recording cycles tested",
+        "test_notes": [
+          "Hotkey (Ctrl+Alt) triggers recording start successfully",
+          "Recording stops on hotkey release",
+          "Transcription completes: 'Can you hear me?' transcribed correctly",
+          "Text copied to clipboard automatically",
+          "Multiple cycles tested - all working perfectly",
+          "No crashes, no hangs, no deadlocks"
+        ]
+      },
       "technical_notes": {
         "qt_threading_rules": [
           "Qt UI methods MUST be called from main/GUI thread only",
@@ -170,6 +224,35 @@
     "conventions": {}
   },
   "session_log": [
+    {
+      "date": "2025-11-18",
+      "type": "feature_and_stability",
+      "changes": [
+        "Home: fixed first-paint rendering (forced relayout/repaint via QTimer and showEvent)",
+        "Home: removed duplicate 'Quick Actions' header; simplified actions to buttons",
+        "Tray: Start/Stop now toggles with UI state",
+        "Hotkey: pressing while recording now stops immediately (works regardless of source)",
+        "Home: Start button toggles to Stop during active recording",
+        "Text insertion: removed cursor-moving in smart formatting to paste exactly at caret",
+        "Audio: added defensive error handling around stream lifecycle to prevent crashes"
+      ],
+      "notes": "User verified visual fixes and behavior. Focus shifted from neon redesign to clean, stable UI."
+    },
+    {
+      "date": "2025-11-17",
+      "type": "critical_bug_fix_complete",
+      "changes": [
+        "FIXED BUG-001: Qt threading deadlock in hotkey recording",
+        "Implemented QTimer.singleShot(0) to defer _start_recording() execution completely",
+        "Added recording_status_changed and hotkey_status_changed Qt signals",
+        "Connected all UI updates via Qt.QueuedConnection for thread safety",
+        "Fixed Unicode encoding errors (removed emoji characters from print statements)",
+        "Added global exception handler to catch unhandled exceptions",
+        "User verified: Multiple successful recording/transcription cycles",
+        "Transcription test: 'Can you hear me?' - 100% accurate"
+      ],
+      "notes": "After hours of debugging with Copilot Sonnet 4.5, user requested comprehensive fix with proper testing. Implemented signal-based architecture + QTimer deferral to eliminate all synchronous call chains. Also fixed secondary Unicode encoding issue on Windows. Complete success - ended the debugging cycle with working app."
+    },
     {
       "date": "2025-11-17",
       "type": "critical_bug_investigation",

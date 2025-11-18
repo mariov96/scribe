@@ -1,9 +1,9 @@
 """Version information for Scribe."""
 import time
 
-VERSION = (2, 0, 1)
+VERSION = (2, 1, 0)
 
-__version__ = "2.0.1"
+__version__ = "2.1.0"
 
 # Build timestamp - updated automatically on each build/commit
 # Format: Unix timestamp (seconds since epoch)

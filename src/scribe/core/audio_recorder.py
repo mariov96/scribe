@@ -92,6 +92,43 @@ class AudioRecorder(QObject):
         except Exception as e:
             logger.error(f"Failed to list devices: {e}")
             return []
+
+    @staticmethod
+    def can_open(device_id: Optional[int], sample_rate: int = 16000, channels: int = 1) -> bool:
+        """Lightweight probe to verify a device can open at the given sample rate.
+
+        Returns True when an InputStream can be created and started; closes immediately.
+        Never raises; logs and returns False on failure.
+        """
+        try:
+            stream = sd.InputStream(
+                device=device_id,
+                channels=channels,
+                samplerate=sample_rate,
+                dtype='int16',
+                blocksize=0,
+                latency=None,
+                callback=None,
+            )
+            # Some drivers require start/stop to fully validate
+            stream.start()
+            stream.stop()
+            stream.close()
+            return True
+        except Exception as e:
+            logger.debug(f"Device open probe failed (id={device_id}, rate={sample_rate}): {e}")
+            return False
+
+    @staticmethod
+    def list_valid_input_devices(sample_rate: int = 16000, channels: int = 1) -> List[Dict]:
+        """Return only input devices that successfully open at the given sample rate."""
+        devices = AudioRecorder.list_devices()
+        valid: List[Dict] = []
+        for d in devices:
+            if d.get('channels', 0) > 0 and AudioRecorder.can_open(d['id'], sample_rate, channels):
+                valid.append(d)
+        logger.info(f"Filtered valid input devices: {len(valid)} / {len(devices)}")
+        return valid
     
     @staticmethod
     def get_default_device() -> Optional[Dict]:
@@ -135,16 +172,11 @@ class AudioRecorder(QObject):
             
             self.audio_data = []
             self.is_recording = True
-            
-            logger.info(f"=== START_RECORDING CALLED ===")
+
             logger.info(f"Starting recording (device={self.device_id}, rate={self.sample_rate}Hz)")
-            logger.info(f"About to create InputStream...")
-            
-            # Start input stream with additional error handling
+
+            # Start input stream with error handling
             try:
-                logger.info(f"[STREAM] Creating stream with device={self.device_id}, channels={self.channels}, rate={self.sample_rate}")
-                logger.info(f"[STREAM] About to define callback wrapper...")
-                
                 # Create callback wrapper to avoid Qt issues
                 def audio_callback_wrapper(indata, frames, time_info, status):
                     """Wrapper to call the instance method safely."""
@@ -153,10 +185,7 @@ class AudioRecorder(QObject):
                     except Exception as e:
                         # Silently catch errors to prevent stream crash
                         pass
-                
-                logger.info(f"[STREAM] Callback wrapper defined")
-                logger.info(f"[STREAM] About to call sd.InputStream()...")
-                
+
                 self.stream = sd.InputStream(
                     device=self.device_id,
                     channels=self.channels,
@@ -166,21 +195,15 @@ class AudioRecorder(QObject):
                     blocksize=0,  # Use default block size for stability
                     latency=None  # Let PortAudio decide latency
                 )
-                logger.info(f"[STREAM] sd.InputStream() returned successfully")
-                logger.info(f"[STREAM] About to call stream.start()...")
                 self.stream.start()
-                logger.info(f"[STREAM] stream.start() completed successfully!")
             except sd.PortAudioError as e:
                 raise RuntimeError(f"PortAudio error: {e}. Device may be in use or unavailable.") from e
-            
-            logger.info("Creating QTimer...")
+
             # Start timer to emit level changes from main thread (not audio thread)
-            self._level_timer = QTimer(self)  # Pass self as parent
+            self._level_timer = QTimer(self)
             self._level_timer.timeout.connect(self._emit_level)
             self._level_timer.start(50)  # Update 20 times per second
-            logger.info("QTimer started")
-            
-            logger.info("Emitting recording_started signal...")
+
             self.recording_started.emit()
             logger.info("Recording started successfully")
             
