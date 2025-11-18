@@ -1,7 +1,7 @@
 version: 2.0.0
 profile_name: default
 audio:
-  device_id: null
+  device_id: 1
   sample_rate: 48000
   channels: 1
   silence_duration: 1200

@@ -48,6 +48,7 @@ class AudioRecorder(QObject):
         self.is_recording = False
         self.audio_data = []
         self._last_level = 0.0
+        self._is_monitoring = False
         self.device_id = None  # None = default device
         audio_cfg = None
         if self.config:
@@ -215,7 +216,7 @@ class AudioRecorder(QObject):
     
     def _emit_level(self):
         """Emit level change from main thread (called by timer)."""
-        if self.is_recording and hasattr(self, '_last_level'):
+        if (self.is_recording or self._is_monitoring) and hasattr(self, '_last_level'):
             self.level_changed.emit(self._last_level)
     
     def _audio_callback(self, indata, frames, time, status):
@@ -258,7 +259,7 @@ class AudioRecorder(QObject):
         try:
             self.is_recording = False
             
-            # Stop level timer
+            # Stop level timer if not used by monitoring
             if hasattr(self, '_level_timer'):
                 self._level_timer.stop()
                 self._level_timer.deleteLater()
@@ -413,3 +414,84 @@ class AudioRecorder(QObject):
             return 0.0
         
         return self._last_level
+
+    # --- Lightweight input level monitoring (no audio accumulation) ---
+    def start_level_monitor(self, device_id: Optional[int] = None, sample_rate: int = 16000, channels: int = 1):
+        """Start a lightweight input stream that only computes and emits levels.
+
+        Opens an InputStream and updates `_last_level` from its callback, without
+        accumulating audio buffers. Emits `level_changed` via a QTimer.
+        """
+        if self._is_monitoring:
+            logger.warning("Already monitoring levels")
+            return
+        if self.is_recording:
+            raise RuntimeError("Cannot start level monitor while recording")
+
+        try:
+            self._is_monitoring = True
+            # Use provided device if given, otherwise current, otherwise default
+            monitor_device = device_id if device_id is not None else self.device_id
+            # Validate/openability early
+            if monitor_device is not None and not AudioRecorder.can_open(monitor_device, sample_rate, channels):
+                raise RuntimeError("Selected device cannot be opened for monitoring")
+
+            def monitor_callback(indata, frames, time_info, status):
+                try:
+                    if status:
+                        logger.debug(f"Monitor status: {status}")
+                    chunk = indata
+                    rms = float(np.sqrt(np.mean(chunk.astype(np.float32) ** 2)))
+                    normalized = min(1.0, rms / np.iinfo(np.int16).max * 4.0)
+                    self._last_level = normalized
+                except Exception:
+                    pass
+
+            self._monitor_stream = sd.InputStream(
+                device=monitor_device,
+                channels=channels,
+                samplerate=sample_rate,
+                dtype='int16',
+                callback=monitor_callback,
+                blocksize=0,
+                latency=None,
+            )
+            self._monitor_stream.start()
+
+            # Timer to emit level updates
+            self._level_timer = QTimer(self)
+            self._level_timer.timeout.connect(self._emit_level)
+            self._level_timer.start(50)
+            logger.info("Level monitoring started")
+        except Exception as e:
+            self._is_monitoring = False
+            if hasattr(self, '_monitor_stream'):
+                try:
+                    self._monitor_stream.stop()
+                    self._monitor_stream.close()
+                except Exception:
+                    pass
+                finally:
+                    del self._monitor_stream
+            raise
+
+    def stop_level_monitor(self):
+        """Stop the level monitoring stream if active."""
+        if not self._is_monitoring:
+            return
+        try:
+            if hasattr(self, '_level_timer'):
+                self._level_timer.stop()
+                self._level_timer.deleteLater()
+                del self._level_timer
+            if hasattr(self, '_monitor_stream'):
+                try:
+                    self._monitor_stream.stop()
+                    self._monitor_stream.close()
+                except Exception as e:
+                    logger.debug(f"Error stopping monitor stream: {e}")
+                finally:
+                    del self._monitor_stream
+            logger.info("Level monitoring stopped")
+        finally:
+            self._is_monitoring = False

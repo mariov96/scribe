@@ -78,6 +78,12 @@ class SettingsPage(ScrollArea):
         
         # Connect auto-save handlers (after loading to avoid spurious saves)
         self._connect_auto_save_handlers()
+
+        # Ensure we clean up monitoring when page is destroyed
+        try:
+            self.destroyed.connect(self._cleanup_meter)
+        except Exception:
+            pass
     
     def _create_general_settings(self):
         from qfluentwidgets import LineEdit, StrongBodyLabel
@@ -217,13 +223,14 @@ class SettingsPage(ScrollArea):
 
         # Quick actions: Refresh, System Default, Next Mic
         quick_row = QHBoxLayout()
-        refresh_btn = PushButton(FIF.SYNC, "Refresh")
+        refresh_btn = PushButton("Refresh")
         refresh_btn.setFixedWidth(110)
         refresh_btn.clicked.connect(self._refresh_devices)
-        default_btn = PushButton(FIF.RESTORE, "System Default")
+        # Use text-only button to avoid icon availability issues
+        default_btn = PushButton("System Default")
         default_btn.setFixedWidth(130)
         default_btn.clicked.connect(lambda: self._set_device_default())
-        next_btn = PushButton(FIF.NEXT, "Next Mic")
+        next_btn = PushButton("Next Mic")
         next_btn.setFixedWidth(110)
         next_btn.clicked.connect(self._cycle_next_device)
         quick_row.addStretch()
@@ -246,6 +253,28 @@ class SettingsPage(ScrollArea):
         rate_row.addStretch()
         rate_row.addWidget(self.rate_combo)
         
+        # Live level meter + controls
+        meter_row = QHBoxLayout()
+        meter_label = BodyLabel("Live Level")
+        self.level_bar = QProgressBar()
+        self.level_bar.setRange(0, 100)
+        self.level_bar.setValue(0)
+        self.level_bar.setFixedWidth(260)
+        self.level_bar.setTextVisible(False)
+        self.level_bar.setStyleSheet("""
+            QProgressBar { height: 8px; border: 1px solid #3F3F3F; border-radius: 4px; background-color: #2B2B2B; }
+            QProgressBar::chunk { background-color: #4CAF50; border-radius: 4px; }
+        """)
+        self.meter_toggle_btn = PushButton(FIF.MICROPHONE, "Start Meter")
+        self.meter_toggle_btn.setFixedWidth(130)
+        self.meter_toggle_btn.clicked.connect(self._toggle_level_monitor)
+        meter_row.addWidget(meter_label)
+        meter_row.addSpacing(8)
+        meter_row.addWidget(self.level_bar)
+        meter_row.addSpacing(12)
+        meter_row.addWidget(self.meter_toggle_btn)
+        meter_row.addStretch()
+
         # Test button
         test_row = QHBoxLayout()
         test_btn = PrimaryPushButton(FIF.MICROPHONE, "Test Microphone")
@@ -258,6 +287,7 @@ class SettingsPage(ScrollArea):
         layout.addLayout(device_row)
         layout.addLayout(quick_row)
         layout.addLayout(rate_row)
+        layout.addLayout(meter_row)
         layout.addLayout(test_row)
         
         return card
@@ -1134,9 +1164,8 @@ Continue?"""
                 duration=2000,
                 parent=self
             )
-            
+            # Notify listeners that settings changed
             self.config_changed.emit("all")
-            
         except Exception as e:
             logger.error(f"Failed to save configuration: {e}", exc_info=True)
             InfoBar.error(
@@ -1148,6 +1177,54 @@ Continue?"""
                 duration=3000,
                 parent=self
             )
+
+    def _cleanup_meter(self):
+            """Stop the meter if running to free the device."""
+            try:
+                if hasattr(self, '_meter_recorder') and self._meter_recorder:
+                    self._meter_recorder.stop_level_monitor()
+            except Exception:
+                pass
+
+    def _toggle_level_monitor(self):
+        """Start or stop the lightweight input level monitor."""
+        try:
+            # Stop if running
+            if hasattr(self, '_meter_recorder') and self._meter_recorder and getattr(self._meter_recorder, '_is_monitoring', False):
+                try:
+                    self._meter_recorder.stop_level_monitor()
+                except Exception:
+                    pass
+                self.meter_toggle_btn.setText("Start Meter")
+                self.level_bar.setValue(0)
+                return
+
+            # Start monitoring
+            from scribe.core.audio_recorder import AudioRecorder
+            device_id = self.device_combo.currentData()
+            sample_rate = self.rate_combo.currentData()
+            self._meter_recorder = getattr(self, '_meter_recorder', None) or AudioRecorder()
+            self._meter_recorder.level_changed.connect(self._on_level_changed)
+            self._meter_recorder.start_level_monitor(device_id=device_id, sample_rate=sample_rate, channels=1)
+            self.meter_toggle_btn.setText("Stop Meter")
+        except Exception as e:
+            InfoBar.error(
+                title="Monitor Failed",
+                content=f"Unable to start level meter: {e}",
+                orient=Qt.Orientation.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP_RIGHT,
+                duration=3000,
+                parent=self
+            )
+
+    def _on_level_changed(self, level: float):
+        """Update the UI meter from 0.0-1.0 level."""
+        try:
+            pct = max(0, min(100, int(level * 100)))
+            self.level_bar.setValue(pct)
+        except Exception:
+            pass
     
     def _connect_auto_save_handlers(self):
         """Connect all controls to auto-save their changes."""
