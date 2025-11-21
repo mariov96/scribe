@@ -9,6 +9,8 @@ from .insights import InsightsPage
 from .history import HistoryPage
 from .settings import SettingsPage
 from .about import AboutPage
+from .dashboard import DashboardPage
+from .home_modern import ModernHomePage
 
 __all__ = [
     'HomePage',
@@ -17,5 +19,7 @@ __all__ = [
     'InsightsPage',
     'HistoryPage',
     'SettingsPage',
-    'AboutPage'
+    'AboutPage',
+    'DashboardPage',
+    'ModernHomePage'
 ]

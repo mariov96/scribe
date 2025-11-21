@@ -95,7 +95,7 @@ class HotkeyManager(QObject):
                 suppress=False,
                 trigger_on_release=True,
             )
-            logger.info("keyboard library hotkey registered")
+            logger.debug("keyboard library hotkey registered")
             return True
         except Exception as e:
             logger.warning(f"keyboard hotkey registration failed: {e}")
@@ -137,7 +137,7 @@ class HotkeyManager(QObject):
 
         self._pynput_listener = pynput_keyboard.Listener(on_press=on_press, on_release=on_release)
         self._pynput_listener.start()
-        logger.info("pynput listener started for hotkey detection")
+        logger.debug("pynput listener started for hotkey detection")
 
     def _parse_combo(self, combo: str) -> set[str]:
         """Parse hotkey combo string into normalized key names."""
@@ -307,15 +307,15 @@ class HotkeyManager(QObject):
         self._handle_hotkey_released()
 
     def _handle_hotkey_pressed(self):
-        logger.info("[HOTKEY] _handle_hotkey_pressed called!")
+        logger.debug("[HOTKEY] pressed")
         if self._combo_active:
-            logger.info("[HOTKEY] Combo already active, ignoring")
+            logger.debug("[HOTKEY] combo already active, ignoring")
             return
         self._combo_active = True
         self._hold_start_time = time.time()
-        logger.info("[HOTKEY] Emitting hotkey_pressed signal")
+        logger.debug("[HOTKEY] emitting hotkey_pressed")
         self.hotkey_pressed.emit()
-        logger.info("[HOTKEY] Signal emitted")
+        logger.debug("[HOTKEY] signal emitted")
 
     def _handle_hotkey_released(self):
         if not self._combo_active:
@@ -323,3 +323,4 @@ class HotkeyManager(QObject):
         self._combo_active = False
         duration = time.time() - self._hold_start_time if self._hold_start_time else 0.0
         self.hotkey_released.emit(max(0.0, duration))
+        logger.debug("[HOTKEY] released (%.0f ms)" % (duration*1000))

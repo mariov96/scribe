@@ -125,14 +125,15 @@ class HistoryPage(QWidget):
         
         # Main layout
         main_layout = QVBoxLayout(self)
-        main_layout.setContentsMargins(20, 20, 20, 20)
-        main_layout.setSpacing(12)
+        main_layout.setContentsMargins(16, 12, 16, 12)
+        main_layout.setSpacing(8)
         
         # Header
         header_layout = QVBoxLayout()
         title = TitleLabel("Transcription History")
+        title.setStyleSheet("font-size: 18px;")
         subtitle = BodyLabel("Click a recording to view details")
-        subtitle.setStyleSheet("color: #808080; font-size: 12px;")
+        subtitle.setStyleSheet("color: #A0A0A0; font-size: 12px;")
         header_layout.addWidget(title)
         header_layout.addWidget(subtitle)
         header_layout.addSpacing(4)
@@ -169,7 +170,7 @@ class HistoryPage(QWidget):
         """Create left panel with transcription list"""
         panel = CardWidget()
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(8, 8, 8, 8)
+        layout.setContentsMargins(6, 6, 6, 6)
         layout.setSpacing(4)
         
         # List title
@@ -185,10 +186,10 @@ class HistoryPage(QWidget):
                 background-color: #2D2D2D;
                 border: 1px solid #3F3F3F;
                 border-radius: 4px;
-                font-size: 11px;
+                font-size: 12px;
             }
             QListWidget::item {
-                padding: 8px;
+                padding: 6px;
                 border-bottom: 1px solid #3F3F3F;
             }
             QListWidget::item:selected {
@@ -214,13 +215,13 @@ class HistoryPage(QWidget):
         """Create right panel with selected recording details"""
         panel = CardWidget()
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(16, 16, 16, 16)
-        layout.setSpacing(8)  # Reduced from 16
+        layout.setContentsMargins(12, 10, 12, 10)
+        layout.setSpacing(6)
         
         # Detail title with playback button
         title_row = QHBoxLayout()
         self.detail_title = SubtitleLabel("Select a recording")
-        self.detail_title.setStyleSheet("font-size: 14px; font-weight: bold;")
+        self.detail_title.setStyleSheet("font-size: 15px; font-weight: bold;")
         
         self.play_btn = PushButton(FIF.PLAY, "Play Recording")
         self.play_btn.setFixedWidth(140)
@@ -234,7 +235,7 @@ class HistoryPage(QWidget):
         # Metrics grid - organized cards
         metrics_container = QWidget()
         metrics_layout = QGridLayout(metrics_container)
-        metrics_layout.setSpacing(6)  # Reduced from 8
+        metrics_layout.setSpacing(6)
         metrics_layout.setContentsMargins(0, 0, 0, 0)
         
         # Create metric labels
@@ -262,7 +263,7 @@ class HistoryPage(QWidget):
         rating_row.setSpacing(8)
         
         rating_label = BodyLabel("⭐ Rate:")
-        rating_label.setStyleSheet("font-size: 11px; color: #888;")
+        rating_label.setStyleSheet("font-size: 12px; color: #aaa;")
         
         self.rating_widget = StarRatingWidget()
         self.rating_widget.valueChanged.connect(self._on_rating_changed)
@@ -297,8 +298,8 @@ class HistoryPage(QWidget):
         
         self.before_text = QTextEdit()
         self.before_text.setReadOnly(True)
-        self.before_text.setMinimumHeight(40)  # Minimum for short text
-        self.before_text.setMaximumHeight(150)  # Maximum for long text
+        self.before_text.setMinimumHeight(48)
+        self.before_text.setMaximumHeight(140)
         self.before_text.setPlaceholderText("Original transcription...")
         self.before_text.setStyleSheet("""
             QTextEdit {
@@ -313,8 +314,8 @@ class HistoryPage(QWidget):
         
         self.after_text = QTextEdit()
         self.after_text.setReadOnly(True)
-        self.after_text.setMinimumHeight(40)  # Minimum for short text
-        self.after_text.setMaximumHeight(150)  # Maximum for long text
+        self.after_text.setMinimumHeight(48)
+        self.after_text.setMaximumHeight(140)
         self.after_text.setPlaceholderText("AI formatted text...")
         self.after_text.setStyleSheet("""
             QTextEdit {
@@ -337,12 +338,12 @@ class HistoryPage(QWidget):
         
         # Main transcription text area
         text_label = StrongBodyLabel("📄 Transcription")
-        text_label.setStyleSheet("font-size: 12px;")
+        text_label.setStyleSheet("font-size: 13px;")
         
         self.text_display = QTextEdit()
         self.text_display.setReadOnly(True)
-        self.text_display.setMinimumHeight(60)  # Minimum for short text
-        self.text_display.setMaximumHeight(300)  # Maximum for long text
+        self.text_display.setMinimumHeight(72)
+        self.text_display.setMaximumHeight(280)
         self.text_display.setPlaceholderText("Select a recording to view transcription...")
         self.text_display.setStyleSheet("""
             QTextEdit {
@@ -350,9 +351,9 @@ class HistoryPage(QWidget):
                 border: none;
                 border-left: 3px solid #2196F3;
                 border-radius: 2px;
-                padding: 12px;
-                font-size: 13px;
-                line-height: 1.5;
+                padding: 10px;
+                font-size: 14px;
+                line-height: 1.45;
             }
         """)
         

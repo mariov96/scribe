@@ -25,10 +25,7 @@ from ..branding import (
     ICON_TEST, ICON_PLAY, ICON_SUCCESS, ICON_WARNING,
     SCRIBE_PURPLE
 )
-from ..widgets import BrandedHeader, ValueCard
-
-
-# Import new modern components
+from ..widgets import ValueCard
 from .home_modern import StatCard, RecentActivityCard, QuickActionCard
 
 
@@ -205,21 +202,24 @@ class HomePage(ScrollArea):
         hotkey_pill = self._create_feature_pill(
             "⌨️ Ctrl+Alt",
             "Global hotkey",
-            "#1890FF"
+            "#1890FF",
+            FIF.EXPRESSIVE_INPUT_ENTRY
         )
 
         # Speed pill - GREEN
         speed_pill = self._create_feature_pill(
             "⚡ Instant",
             "Release to transcribe",
-            "#52C41A"
+            "#52C41A",
+            FIF.SPEED_OFF
         )
 
         # Privacy pill - AMBER
         privacy_pill = self._create_feature_pill(
             "🔒 100% Private",
             "All processing local",
-            "#FAAD14"
+            "#FAAD14",
+            FIF.FOLDER
         )
 
         features_row.addWidget(hotkey_pill)
@@ -231,7 +231,7 @@ class HomePage(ScrollArea):
 
         return card
 
-    def _create_feature_pill(self, title, subtitle, color):
+    def _create_feature_pill(self, title, subtitle, color, icon):
         """Create colorful feature pill"""
         container = QWidget()
         container.setStyleSheet(f"""
@@ -242,9 +242,19 @@ class HomePage(ScrollArea):
             }}
         """)
 
-        layout = QVBoxLayout(container)
+        layout = QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(2)
+        layout.setSpacing(12)
+
+        # Icon
+        icon_widget = IconWidget(icon)
+        icon_widget.setFixedSize(24, 24)
+        icon_widget.setStyleSheet("color: white;")
+        layout.addWidget(icon_widget)
+
+        # Text container
+        text_layout = QVBoxLayout()
+        text_layout.setSpacing(2)
 
         title_label = StrongBodyLabel(title)
         title_label.setStyleSheet(f"""
@@ -259,8 +269,9 @@ class HomePage(ScrollArea):
             color: rgba(255, 255, 255, 0.9);
         """)
 
-        layout.addWidget(title_label)
-        layout.addWidget(subtitle_label)
+        text_layout.addWidget(title_label)
+        text_layout.addWidget(subtitle_label)
+        layout.addLayout(text_layout)
 
         return container
 
@@ -603,29 +614,41 @@ class HomePage(ScrollArea):
         return container
     
     def _create_quick_actions(self):
-        """Create quick actions as simple buttons to avoid any visual duplication"""
+        """Create quick actions as cards for better visual hierarchy"""
         container = QWidget()
         layout = QHBoxLayout(container)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(SPACING_MD)
         
-        # Start Recording
-        self.btn_record = PrimaryPushButton(FIF.MICROPHONE, "Start Recording", container)
-        self.btn_record.setFixedHeight(36)
-        self.btn_record.clicked.connect(self.start_listening_clicked)
-        layout.addWidget(self.btn_record)
+        # Start Recording Card
+        self.record_card = QuickActionCard(
+            FIF.MICROPHONE,
+            "Start Recording",
+            "Press to begin",
+            parent=self
+        )
+        self.record_card.clicked.connect(self.start_listening_clicked)
+        layout.addWidget(self.record_card)
         
-        # View History
-        btn_history = PushButton(FIF.HISTORY, "View History", container)
-        btn_history.setFixedHeight(36)
-        btn_history.clicked.connect(self.view_history_clicked)
-        layout.addWidget(btn_history)
+        # View History Card
+        self.history_card = QuickActionCard(
+            FIF.HISTORY,
+            "View History",
+            "Browse past logs",
+            parent=self
+        )
+        self.history_card.clicked.connect(self.view_history_clicked)
+        layout.addWidget(self.history_card)
         
-        # View Insights
-        btn_insights = PushButton(FIF.INFO, "View Insights", container)
-        btn_insights.setFixedHeight(36)
-        btn_insights.clicked.connect(self.view_insights_clicked)
-        layout.addWidget(btn_insights)
+        # View Insights Card
+        self.insights_card = QuickActionCard(
+            FIF.INFO,
+            "View Insights",
+            "See productivity",
+            parent=self
+        )
+        self.insights_card.clicked.connect(self.view_insights_clicked)
+        layout.addWidget(self.insights_card)
         
         layout.addStretch()
         return container

@@ -2,17 +2,22 @@ version: 2.0.0
 profile_name: default
 audio:
   device_id: 1
-  sample_rate: 48000
+  sample_rate: 16000
   channels: 1
   silence_duration: 1200
   min_duration: 800
+  noise_suppression: false
+  vad_aggressiveness: 1
+  noise_gate_db: -60
+  level_normalization: false
+  target_level_dbfs: -20
 hotkey:
   activation_key: alt+ctrl
   recording_mode: voice_activity_detection
 whisper:
   use_api: false
-  model: small
-  language: null
+  model: base
+  language: en
   device: auto
   compute_type: int8
   temperature: 0.0

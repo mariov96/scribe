@@ -1,32 +1,16 @@
-#!/usr/bin/env python3
-"""
-Utility script to list available audio input devices.
-
-Usage:
-    python tools/list_audio_devices.py
-"""
-
 import sounddevice as sd
 
-
-def main():
+def list_devices():
+    print("Available Audio Devices:")
+    print("-" * 60)
+    print(f"{'ID':<4} {'Name':<40} {'Channels':<10} {'Sample Rate'}")
+    print("-" * 60)
+    
     devices = sd.query_devices()
-    default_input = sd.default.device[0]
-
-    print("🎤 Available input devices:")
-    print("-" * 60)
-    for idx, device in enumerate(devices):
-        if device["max_input_channels"] <= 0:
-            continue
-        marker = " (default)" if idx == default_input else ""
-        print(
-            f"[{idx:>3}] {device['name']}{marker}\n"
-            f"      max channels: {device['max_input_channels']}, "
-            f"default sample rate: {device['default_samplerate']}"
-        )
-    print("-" * 60)
-    print("Tip: Use the ID in Settings → Audio Device inside Scribe.")
-
+    for i, device in enumerate(devices):
+        # Filter for input devices (microphones)
+        if device['max_input_channels'] > 0:
+            print(f"{i:<4} {device['name']:<40} {device['max_input_channels']:<10} {device['default_samplerate']}")
 
 if __name__ == "__main__":
-    main()
+    list_devices()

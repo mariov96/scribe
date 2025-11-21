@@ -19,10 +19,16 @@ class ScribeSystemTray(QSystemTrayIcon):
 
     # Signals
     show_window_clicked = Signal()
+    toggle_visibility_clicked = Signal()
     start_recording_clicked = Signal()
     stop_recording_clicked = Signal()
     settings_clicked = Signal()
+    history_clicked = Signal()
+    insights_clicked = Signal()
+    about_clicked = Signal()
     quit_clicked = Signal()
+    microphone_selected = Signal(object)  # Optional[int]
+    microphone_next_requested = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -103,9 +109,21 @@ class ScribeSystemTray(QSystemTrayIcon):
 
         # === QUICK ACTIONS ===
         # Show/Hide Window
-        self.show_action = QAction("Show Window", menu)
-        self.show_action.triggered.connect(self.show_window_clicked.emit)
-        menu.addAction(self.show_action)
+        self.show_hide_action = QAction("Show Scribe", menu)
+        self.show_hide_action.triggered.connect(self.toggle_visibility_clicked.emit)
+        menu.addAction(self.show_hide_action)
+
+        menu.addSeparator()
+
+        # Microphone submenu
+        self.mic_menu = QMenu("Microphone", menu)
+        self._populate_mic_menu(self.mic_menu)
+        menu.addMenu(self.mic_menu)
+
+        # Quick: Next Mic
+        next_mic_action = QAction("Next Microphone", menu)
+        next_mic_action.triggered.connect(self.microphone_next_requested.emit)
+        menu.addAction(next_mic_action)
 
         # Start/Stop Recording (dynamic)
         self.record_action = QAction("Start Recording", menu)
@@ -119,13 +137,17 @@ class ScribeSystemTray(QSystemTrayIcon):
         settings_action.triggered.connect(self.settings_clicked.emit)
         menu.addAction(settings_action)
 
-        insights_action = QAction("View Insights", menu)
-        # TODO: Connect to insights page signal
+        history_action = QAction("History", menu)
+        history_action.triggered.connect(self.history_clicked.emit)
+        menu.addAction(history_action)
+
+        insights_action = QAction("Insights", menu)
+        insights_action.triggered.connect(self.insights_clicked.emit)
         menu.addAction(insights_action)
 
-        history_action = QAction("View History", menu)
-        # TODO: Connect to history page signal
-        menu.addAction(history_action)
+        about_action = QAction("About Scribe", menu)
+        about_action.triggered.connect(self.about_clicked.emit)
+        menu.addAction(about_action)
 
         menu.addSeparator()
 
@@ -149,6 +171,32 @@ class ScribeSystemTray(QSystemTrayIcon):
         menu.addAction(quit_action)
 
         self.setContextMenu(menu)
+
+    def _populate_mic_menu(self, menu: QMenu):
+        """Populate microphone submenu with valid input devices as radio actions."""
+        try:
+            menu.clear()
+            # Import here to avoid circular imports or early initialization issues
+            from scribe.core.audio_recorder import AudioRecorder
+            devices = AudioRecorder.list_valid_input_devices(sample_rate=16000)
+            
+            # System default option
+            default_act = QAction("System Default", menu)
+            default_act.setCheckable(True)
+            default_act.triggered.connect(lambda: self.microphone_selected.emit(None))
+            menu.addAction(default_act)
+            
+            if devices:
+                menu.addSeparator()
+                
+            for d in devices:
+                label = f"{d['name']}" + ("  (Default)" if d.get('is_default') else "")
+                act = QAction(label, menu)
+                act.setCheckable(True)
+                act.triggered.connect(lambda checked, dev_id=d['id']: self.microphone_selected.emit(dev_id))
+                menu.addAction(act)
+        except Exception as e:
+            logger.error(f"Failed to populate mic menu: {e}")
 
     def _toggle_recording(self):
         """Toggle recording state and emit appropriate signal."""
@@ -175,14 +223,21 @@ class ScribeSystemTray(QSystemTrayIcon):
             self.status_action.setText("Status: Ready")
             self.setToolTip("Scribe - Voice Control for Your Workflow")
 
+    def update_visibility_text(self, is_visible: bool):
+        """Update the Show/Hide menu item text."""
+        if is_visible:
+            self.show_hide_action.setText("Hide Scribe")
+        else:
+            self.show_hide_action.setText("Show Scribe")
+
     def _on_activated(self, reason):
         """Handle tray icon activation (click, double-click)."""
         if reason == QSystemTrayIcon.DoubleClick:
-            # Double-click shows main window
-            self.show_window_clicked.emit()
+            # Double-click toggles visibility
+            self.toggle_visibility_clicked.emit()
         elif reason == QSystemTrayIcon.Trigger:
-            # Single left-click also shows window (Windows behavior)
-            self.show_window_clicked.emit()
+            # Single left-click also toggles visibility (Windows behavior)
+            self.toggle_visibility_clicked.emit()
 
     def show_notification(self, title: str, message: str, duration: int = 3000):
         """

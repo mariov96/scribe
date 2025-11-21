@@ -10,7 +10,7 @@ from qfluentwidgets import (
     ScrollArea, TitleLabel, SubtitleLabel, BodyLabel,
     CardWidget, SwitchButton, ComboBox, PrimaryPushButton, PushButton,
     FluentIcon as FIF, setTheme, Theme, setThemeColor,
-    InfoBar, InfoBarPosition, MessageBox
+    InfoBar, InfoBarPosition, MessageBox, IconWidget
 )
 
 from scribe.config import ConfigManager
@@ -56,19 +56,24 @@ class SettingsPage(ScrollArea):
         logs_card = self._create_logs_settings()
         
         self.vBoxLayout.addWidget(title)
-        self.vBoxLayout.addWidget(SubtitleLabel("General"))
+        
+        self.vBoxLayout.addWidget(self._create_section_header(FIF.SETTING, "General"))
         self.vBoxLayout.addWidget(general_card)
         self.vBoxLayout.addSpacing(12)
-        self.vBoxLayout.addWidget(SubtitleLabel("Audio"))
+        
+        self.vBoxLayout.addWidget(self._create_section_header(FIF.MICROPHONE, "Audio"))
         self.vBoxLayout.addWidget(audio_card)
         self.vBoxLayout.addSpacing(12)
-        self.vBoxLayout.addWidget(SubtitleLabel("Whisper Model"))
+        
+        self.vBoxLayout.addWidget(self._create_section_header(FIF.ROBOT, "Whisper Model"))
         self.vBoxLayout.addWidget(whisper_card)
         self.vBoxLayout.addSpacing(12)
-        self.vBoxLayout.addWidget(SubtitleLabel("Appearance"))
+        
+        self.vBoxLayout.addWidget(self._create_section_header(FIF.BRUSH, "Appearance"))
         self.vBoxLayout.addWidget(appearance_card)
         self.vBoxLayout.addSpacing(12)
-        self.vBoxLayout.addWidget(SubtitleLabel("Logs & Debugging"))
+        
+        self.vBoxLayout.addWidget(self._create_section_header(FIF.DOCUMENT, "Logs & Debugging"))
         self.vBoxLayout.addWidget(logs_card)
         
         self.vBoxLayout.addStretch(1)
@@ -85,6 +90,23 @@ class SettingsPage(ScrollArea):
         except Exception:
             pass
     
+    def _create_section_header(self, icon: FIF, text: str):
+        container = QWidget()
+        layout = QHBoxLayout(container)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(8)
+        
+        icon_widget = IconWidget(icon)
+        icon_widget.setFixedSize(20, 20)
+        
+        label = SubtitleLabel(text)
+        
+        layout.addWidget(icon_widget)
+        layout.addWidget(label)
+        layout.addStretch()
+        
+        return container
+
     def _create_general_settings(self):
         from qfluentwidgets import LineEdit, StrongBodyLabel
 
@@ -102,23 +124,11 @@ class SettingsPage(ScrollArea):
         hotkey_label = StrongBodyLabel("Press to record hotkey:")
         hotkey_label.setStyleSheet("font-size: 11px;")  # Reduced from 12px (10% smaller)
         
-        # Hotkey display/capture button (10% smaller: 200->180, 40->36)
-        self.hotkey_button = PushButton("Click to Set Hotkey")
+        # Hotkey display/capture button
+        self.hotkey_button = PrimaryPushButton("Click to Set Hotkey")
         self.hotkey_button.setFixedWidth(180)
         self.hotkey_button.setFixedHeight(36)
         self.hotkey_button.clicked.connect(self._capture_hotkey)
-        self.hotkey_button.setStyleSheet("""
-            PushButton {
-                font-size: 12px;
-                font-weight: bold;
-                background-color: #3A3A3A;
-                border: 2px solid #4CAF50;
-            }
-            PushButton:hover {
-                background-color: #4A4A4A;
-                border: 2px solid #66BB6A;
-            }
-        """)
         
         # Reset button (10% smaller: 140->126)
         reset_hotkey_btn = PushButton("Reset to Default")
@@ -207,7 +217,8 @@ class SettingsPage(ScrollArea):
             
             if devices:
                 for device in devices:
-                    label = f"{device['name']}"
+                    # Show channels and default sample rate to help selection
+                    label = f"{device['name']} — ch:{device.get('channels', '?')}, {device.get('sample_rate', '?')} Hz"
                     if device['is_default']:
                         label += " (Default)"
                     self.device_combo.addItem(label, userData=device['id'])
@@ -240,6 +251,10 @@ class SettingsPage(ScrollArea):
         quick_row.addSpacing(6)
         quick_row.addWidget(next_btn)
         quick_row.addStretch()
+
+        # Guidance text
+        tips = BodyLabel("Tip: 16 kHz is fastest for speech; 48 kHz for music/noise. Use the live meter and 3s Test to compare mics.")
+        tips.setStyleSheet("color: #A0A0A0; font-size: 11px;")
         
         # Sample rate
         rate_row = QHBoxLayout()
@@ -253,6 +268,52 @@ class SettingsPage(ScrollArea):
         rate_row.addStretch()
         rate_row.addWidget(self.rate_combo)
         
+        # Processing options: Noise suppression, VAD, Normalization
+        proc_row1 = QHBoxLayout()
+        ns_label = BodyLabel("Noise Suppression")
+        self.noise_supp_switch = SwitchButton()
+        proc_row1.addWidget(ns_label)
+        proc_row1.addStretch()
+        proc_row1.addWidget(self.noise_supp_switch)
+
+        proc_row2 = QHBoxLayout()
+        vad_label = BodyLabel("VAD Aggressiveness")
+        self.vad_combo = ComboBox()
+        for lvl in [0,1,2,3]:
+            self.vad_combo.addItem(f"{lvl}", userData=lvl)
+        vad_label.setFixedWidth(160)
+        proc_row2.addWidget(vad_label)
+        proc_row2.addWidget(self.vad_combo)
+        proc_row2.addStretch()
+
+        proc_row3 = QHBoxLayout()
+        gate_label = BodyLabel("Noise Gate (dBFS)")
+        self.gate_combo = ComboBox()
+        for db in [-50,-45,-40,-35,-30]:
+            self.gate_combo.addItem(f"{db} dB", userData=db)
+        gate_label.setFixedWidth(160)
+        proc_row3.addWidget(gate_label)
+        proc_row3.addWidget(self.gate_combo)
+        proc_row3.addStretch()
+
+        proc_row4 = QHBoxLayout()
+        norm_label = BodyLabel("Level Normalization")
+        self.level_norm_switch = SwitchButton()
+        self.level_target_combo = ComboBox()
+        for tdb in [-24,-22,-20,-18,-16,-14,-12]:
+            self.level_target_combo.addItem(f"{tdb} dB", userData=tdb)
+        self.level_target_combo.setEnabled(False)
+        def _toggle_norm(enabled: bool):
+            self.level_target_combo.setEnabled(enabled)
+        self.level_norm_switch.checkedChanged.connect(_toggle_norm)
+        proc_row4.addWidget(norm_label)
+        proc_row4.addStretch()
+        proc_row4.addWidget(self.level_norm_switch)
+        proc_row4.addSpacing(12)
+        proc_row4.addWidget(BodyLabel("Target:"))
+        proc_row4.addWidget(self.level_target_combo)
+        proc_row4.addStretch()
+
         # Live level meter + controls
         meter_row = QHBoxLayout()
         meter_label = BodyLabel("Live Level")
@@ -287,6 +348,11 @@ class SettingsPage(ScrollArea):
         layout.addLayout(device_row)
         layout.addLayout(quick_row)
         layout.addLayout(rate_row)
+        layout.addLayout(proc_row1)
+        layout.addLayout(proc_row2)
+        layout.addLayout(proc_row3)
+        layout.addLayout(proc_row4)
+        layout.addWidget(tips)
         layout.addLayout(meter_row)
         layout.addLayout(test_row)
         
@@ -510,6 +576,7 @@ class SettingsPage(ScrollArea):
         
         try:
             from scribe.core.audio_recorder import AudioRecorder
+            import io, numpy as np, soundfile as sf
             
             # Get selected device
             device_id = self.device_combo.currentData()
@@ -536,15 +603,67 @@ class SettingsPage(ScrollArea):
             def stop_test():
                 audio_data = recorder.stop_recording()
                 if audio_data:
-                    InfoBar.success(
-                        title="Test Successful",
-                        content=f"Recorded {len(audio_data)} bytes",
-                        orient=Qt.Orientation.Horizontal,
-                        isClosable=True,
-                        position=InfoBarPosition.TOP_RIGHT,
-                        duration=2000,
-                        parent=self
-                    )
+                    # Analyze metrics
+                    try:
+                        y, sr = sf.read(io.BytesIO(audio_data), dtype='float32')
+                        if y.ndim > 1:
+                            y = y.mean(axis=1)
+                        # Frame-based RMS
+                        frame = max(256, int(sr*0.02))
+                        n = len(y) // frame
+                        if n == 0:
+                            raise ValueError("insufficient audio")
+                        y2 = y[:n*frame].reshape(n, frame)
+                        rms = np.sqrt((y2**2).mean(axis=1)) + 1e-9
+                        rms_db = 20*np.log10(rms)
+                        noise_floor = float(np.percentile(rms_db, 20))
+                        speech_level = float(np.percentile(rms_db, 80))
+                        snr = max(0.0, speech_level - noise_floor)
+                        peak = float(np.max(np.abs(y)) + 1e-9)
+                        peak_db = 20*np.log10(peak)
+                        crest = float(peak_db - np.mean(rms_db))
+                        clipping = float((np.sum(np.abs(y) >= 0.99) / len(y)) * 100.0)
+                        # Brief summary
+                        summary = f"SNR {snr:.1f} dB • Noise {noise_floor:.0f} dBFS • Peak {peak_db:.0f} dBFS • Clip {clipping:.2f}%"
+                        InfoBar.success(
+                            title="Mic Test: Quality Summary",
+                            content=summary,
+                            orient=Qt.Orientation.Horizontal,
+                            isClosable=True,
+                            position=InfoBarPosition.TOP_RIGHT,
+                            duration=5000,
+                            parent=self
+                        )
+                        logger.info(f"[MIC] Summary: {summary} (crest {crest:.1f} dB)")
+                        # Simple recommendations
+                        recs = []
+                        if snr < 10:
+                            recs.append("High noise: try a closer mic or enable Noise Suppression")
+                        if clipping > 0.1:
+                            recs.append("Clipping detected: lower input gain")
+                        if speech_level < -30:
+                            recs.append("Low level: consider Level Normalization to -20 dBFS")
+                        if recs:
+                            InfoBar.warning(
+                                title="Mic Suggestions",
+                                content="; ".join(recs)[:180],
+                                orient=Qt.Orientation.Horizontal,
+                                isClosable=True,
+                                position=InfoBarPosition.TOP_RIGHT,
+                                duration=6000,
+                                parent=self
+                            )
+                    except Exception as e:
+                        logger.debug(f"Mic analysis failed: {e}")
+                        InfoBar.success(
+                            title="Test Successful",
+                            content=f"Recorded {len(audio_data)} bytes",
+                            orient=Qt.Orientation.Horizontal,
+                            isClosable=True,
+                            position=InfoBarPosition.TOP_RIGHT,
+                            duration=2000,
+                            parent=self
+                        )
                 else:
                     InfoBar.warning(
                         title="Test Warning",
@@ -792,13 +911,16 @@ class SettingsPage(ScrollArea):
         from pathlib import Path
         
         # Confirmation dialog
-        result = MessageBox(
+        from PyQt5.QtWidgets import QMessageBox
+        result = QMessageBox.question(
+            self,
             "Clear Old Log Files?",
             "This will delete all log files except the 3 most recent. This action cannot be undone.",
-            self
-        ).exec_()
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No,
+        )
         
-        if result != MessageBox.StandardButton.Yes:
+        if result != QMessageBox.Yes:
             return
         
         log_dir = Path.home() / ".scribe" / "logs"
@@ -886,6 +1008,19 @@ class SettingsPage(ScrollArea):
         rate_idx = self.rate_combo.findData(config.audio.sample_rate)
         if rate_idx >= 0:
             self.rate_combo.setCurrentIndex(rate_idx)
+        # Processing settings
+        self.noise_supp_switch.setChecked(getattr(config.audio, 'noise_suppression', True))
+        vad_idx = self.vad_combo.findData(getattr(config.audio, 'vad_aggressiveness', 2))
+        if vad_idx >= 0:
+            self.vad_combo.setCurrentIndex(vad_idx)
+        gate_idx = self.gate_combo.findData(getattr(config.audio, 'noise_gate_db', -40))
+        if gate_idx >= 0:
+            self.gate_combo.setCurrentIndex(gate_idx)
+        self.level_norm_switch.setChecked(getattr(config.audio, 'level_normalization', False))
+        tgt_idx = self.level_target_combo.findData(getattr(config.audio, 'target_level_dbfs', -20))
+        if tgt_idx >= 0:
+            self.level_target_combo.setCurrentIndex(tgt_idx)
+        self.level_target_combo.setEnabled(self.level_norm_switch.isChecked())
         
         # Whisper settings
         model_idx = self.model_combo.findData(config.whisper.model)
@@ -1236,6 +1371,11 @@ Continue?"""
         # Audio settings
         self.device_combo.currentIndexChanged.connect(self._auto_save_audio_setting)
         self.rate_combo.currentIndexChanged.connect(self._auto_save_audio_setting)
+        self.noise_supp_switch.checkedChanged.connect(self._auto_save_audio_setting)
+        self.vad_combo.currentIndexChanged.connect(self._auto_save_audio_setting)
+        self.gate_combo.currentIndexChanged.connect(self._auto_save_audio_setting)
+        self.level_norm_switch.checkedChanged.connect(self._auto_save_audio_setting)
+        self.level_target_combo.currentIndexChanged.connect(self._auto_save_audio_setting)
         
         # Whisper settings
         self.model_combo.currentIndexChanged.connect(self._auto_save_whisper_setting)
@@ -1273,6 +1413,12 @@ Continue?"""
 
             self.config_manager.set('audio', 'device_id', device_id)
             self.config_manager.set('audio', 'sample_rate', self.rate_combo.currentData())
+            # Processing options
+            self.config_manager.set('audio', 'noise_suppression', self.noise_supp_switch.isChecked())
+            self.config_manager.set('audio', 'vad_aggressiveness', self.vad_combo.currentData())
+            self.config_manager.set('audio', 'noise_gate_db', self.gate_combo.currentData())
+            self.config_manager.set('audio', 'level_normalization', self.level_norm_switch.isChecked())
+            self.config_manager.set('audio', 'target_level_dbfs', self.level_target_combo.currentData())
             self.config_manager.save()
             logger.info("Audio settings auto-saved")
         except Exception as e:
@@ -1281,9 +1427,19 @@ Continue?"""
     def _auto_save_whisper_setting(self):
         """Auto-save Whisper settings when changed."""
         try:
-            self.config_manager.set('whisper', 'model', self.model_combo.currentData())
-            self.config_manager.set('whisper', 'device', self.compute_device_combo.currentData())
-            self.config_manager.set('whisper', 'compute_type', self.compute_type_combo.currentData())
+            sender = self.sender()
+            # Only write the field that actually changed to avoid triple emissions
+            if sender is self.model_combo:
+                self.config_manager.set('whisper', 'model', self.model_combo.currentData())
+            elif sender is self.compute_device_combo:
+                self.config_manager.set('whisper', 'device', self.compute_device_combo.currentData())
+            elif sender is self.compute_type_combo:
+                self.config_manager.set('whisper', 'compute_type', self.compute_type_combo.currentData())
+            else:
+                # Fallback: set all (shouldn't normally happen)
+                self.config_manager.set('whisper', 'model', self.model_combo.currentData())
+                self.config_manager.set('whisper', 'device', self.compute_device_combo.currentData())
+                self.config_manager.set('whisper', 'compute_type', self.compute_type_combo.currentData())
             self.config_manager.save()
             logger.info("Whisper settings auto-saved")
             

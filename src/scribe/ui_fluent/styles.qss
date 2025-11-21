@@ -1,0 +1,46 @@
+/* Main window background - very dark */
+QMainWindow, MSFluentWindow {
+    background-color: #1E1E1E !important;
+}
+
+/* Content area - dark gray */
+QScrollArea, ScrollArea {
+    background-color: #252525 !important;
+    border: none !important;
+}
+
+/* Viewport (content inside scroll areas) */
+QScrollArea > QWidget, ScrollArea > QWidget {
+    background-color: #252525 !important;
+}
+
+/* Cards - slightly lighter for contrast */
+CardWidget {
+    background-color: #2D2D2D !important;
+    border: 1px solid #3F3F3F !important;
+}
+
+/* All labels should be light colored */
+QLabel, TitleLabel, SubtitleLabel, BodyLabel, CaptionLabel, StrongBodyLabel {
+    color: #F0F0F0 !important;
+}
+
+/* Navigation sidebar - darkest */
+NavigationInterface, QWidget#navigationWidget {
+    background-color: #1A1A1A !important;
+}
+
+/* Button hover effects */
+PrimaryPushButton:hover {
+    background-color: #7E57C2 !important;
+}
+
+PushButton:hover {
+    background-color: #3A3A3A !important;
+}
+
+/* Smooth transitions - removed 'all' to fix Unknown property transition warning */
+/* Qt stylesheets don't support the 'transition' property like CSS3 */
+/* PrimaryPushButton, PushButton, CardWidget {
+    transition: all 0.2s ease-in-out;
+} */

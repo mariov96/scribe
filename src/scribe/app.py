@@ -178,6 +178,10 @@ class ScribeApp(QObject):
         # Background worker
         self._transcription_worker: Optional[TranscriptionWorker] = None
 
+        # Debounce for whisper model reloads (prevents duplicate notifications)
+        self._whisper_reload_timer: Optional[QTimer] = None
+        self._model_switch_in_progress: bool = False
+
     def initialize(self) -> bool:
         """
         Initialize all components.
@@ -511,7 +515,17 @@ class ScribeApp(QObject):
         if section == "ai_formatting":
             self._text_formatter.update_config(self.config.config.ai_formatting)
         elif section == "whisper":
-            self._reload_transcription_engine()
+            # Debounce rapid successive whisper changes (model/device/precision)
+            try:
+                if self._whisper_reload_timer is None:
+                    self._whisper_reload_timer = QTimer(self)
+                    self._whisper_reload_timer.setSingleShot(True)
+                    self._whisper_reload_timer.timeout.connect(self._reload_transcription_engine)
+                # Restart timer (coalesce multiple config_changed events)
+                self._whisper_reload_timer.start(500)
+            except Exception:
+                # Fallback immediately if timer setup fails
+                self._reload_transcription_engine()
         elif section == "audio" and self.audio_recorder:
             audio_cfg = self.config.config.audio
             self.audio_recorder.set_sample_rate(audio_cfg.sample_rate)
@@ -521,6 +535,27 @@ class ScribeApp(QObject):
         if not self.transcription_engine:
             return
         logger.info("Reloading transcription engine with new configuration...")
+        
+        # If a model switch is already in progress, just update the tooltip text
+        # and skip starting another reload to avoid duplicate notifications.
+        try:
+            if self._model_switch_in_progress and hasattr(self, 'model_loading_tip') and self.model_loading_tip:
+                from pathlib import Path
+                model_name = self.config.config.whisper.model
+                model_dir = Path("models") / f"models--Systran--faster-whisper-{model_name}"
+                is_cached = model_dir.exists() and (model_dir / "snapshots").exists()
+                message = (
+                    f"Loading {model_name} model from cache..." if is_cached \
+                    else f"Downloading {model_name} model (first time)… This may take a few minutes."
+                )
+                try:
+                    self.model_loading_tip.setContent(message)
+                except Exception:
+                    pass
+                # Do not enqueue another load while one is active
+                return
+        except Exception:
+            pass
         
         # Check if model is already downloaded
         model_name = self.config.config.whisper.model
@@ -534,12 +569,81 @@ class ScribeApp(QObject):
             message = f"Loading {model_name} model from cache..."
             logger.info(f"Model {model_name} found in cache")
         else:
-            message = f"Downloading {model_name} model (first time)..."
+            message = f"Downloading {model_name} model (first time)… This may take a few minutes."
             logger.info(f"Model {model_name} not cached, will download")
         
+        # Ensure we only show a single switching tooltip
+        try:
+            if hasattr(self, 'model_loading_tip') and self.model_loading_tip:
+                try:
+                    self.model_loading_tip.close()
+                except Exception:
+                    pass
+        except Exception:
+            pass
+
         self.model_loading_tip = StateToolTip("Switching Model", message, self.main_window)
         self.model_loading_tip.move(self.model_loading_tip.getSuitablePos())
         self.model_loading_tip.show()
+        self._model_switch_in_progress = True
+
+        # Watchdog: if load takes too long, dismiss tooltip and inform user it's continuing
+        try:
+            if hasattr(self, '_model_switch_watchdog') and self._model_switch_watchdog:
+                self._model_switch_watchdog.stop()
+                self._model_switch_watchdog.deleteLater()
+        except Exception:
+            pass
+        self._model_switch_watchdog = QTimer(self)
+        self._model_switch_watchdog.setSingleShot(True)
+        def _watchdog_timeout():
+            try:
+                if self._model_switch_in_progress and hasattr(self, 'model_loading_tip') and self.model_loading_tip:
+                    self.model_loading_tip.setContent("Still loading… continuing in background")
+                    self.model_loading_tip.setState(True)
+                    QTimer.singleShot(1500, self.model_loading_tip.close)
+                    logger.info("Model switch still in progress; continuing in background")
+            except Exception:
+                pass
+        self._model_switch_watchdog.timeout.connect(_watchdog_timeout)
+        self._model_switch_watchdog.start(90000)  # 90s safety timeout
+
+        # Gentle auto-dismiss after 30s; continue in background and notify on completion
+        try:
+            if hasattr(self, '_model_switch_autoclose') and self._model_switch_autoclose:
+                self._model_switch_autoclose.stop()
+                self._model_switch_autoclose.deleteLater()
+        except Exception:
+            pass
+        self._model_switch_autoclose = QTimer(self)
+        self._model_switch_autoclose.setSingleShot(True)
+        def _autoclose_timeout():
+            try:
+                if self._model_switch_in_progress:
+                    # Close the tooltip to avoid lingering UI and inform user
+                    if hasattr(self, 'model_loading_tip') and self.model_loading_tip:
+                        try:
+                            self.model_loading_tip.close()
+                        except Exception:
+                            pass
+                    try:
+                        from qfluentwidgets import InfoBar, InfoBarPosition
+                        if self.main_window:
+                            InfoBar.info(
+                                title="Switching Model",
+                                content=f"Continuing in background… you'll be notified when ready",
+                                orient=Qt.Horizontal,
+                                isClosable=True,
+                                position=InfoBarPosition.TOP_RIGHT,
+                                duration=2500,
+                                parent=self.main_window,
+                            )
+                    except Exception:
+                        pass
+            except Exception:
+                pass
+        self._model_switch_autoclose.timeout.connect(_autoclose_timeout)
+        self._model_switch_autoclose.start(30000)  # 30s gentle auto-dismiss
         
         # Load model in background thread to avoid blocking UI
         def load_model_background():
@@ -578,6 +682,40 @@ class ScribeApp(QObject):
             self.model_loading_tip.setState(True)
             from PyQt5.QtCore import QTimer
             QTimer.singleShot(2000, self.model_loading_tip.close)
+            try:
+                # Release timers and references
+                if hasattr(self, '_model_switch_watchdog') and self._model_switch_watchdog:
+                    self._model_switch_watchdog.stop()
+                    self._model_switch_watchdog.deleteLater()
+                    self._model_switch_watchdog = None
+                if hasattr(self, '_model_switch_autoclose') and self._model_switch_autoclose:
+                    self._model_switch_autoclose.stop()
+                    self._model_switch_autoclose.deleteLater()
+                    self._model_switch_autoclose = None
+            except Exception:
+                pass
+
+        # Show an explicit success InfoBar so users know switching completed
+        try:
+            from qfluentwidgets import InfoBar, InfoBarPosition
+            if self.main_window:
+                InfoBar.success(
+                    title="Model Switched",
+                    content=f"Now using '{model_name}' ({'cache' if was_cached else 'downloaded'})",
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=3000,
+                    parent=self.main_window,
+                )
+        except Exception:
+            pass
+
+        self._model_switch_in_progress = False
+        try:
+            self.model_loading_tip = None
+        except Exception:
+            pass
     
     def _on_model_load_failed(self, error_msg: str):
         """Called when model loading fails."""
@@ -589,6 +727,39 @@ class ScribeApp(QObject):
             self.model_loading_tip.setState(False)
             from PyQt5.QtCore import QTimer
             QTimer.singleShot(3000, self.model_loading_tip.close)
+            try:
+                if hasattr(self, '_model_switch_watchdog') and self._model_switch_watchdog:
+                    self._model_switch_watchdog.stop()
+                    self._model_switch_watchdog.deleteLater()
+                    self._model_switch_watchdog = None
+                if hasattr(self, '_model_switch_autoclose') and self._model_switch_autoclose:
+                    self._model_switch_autoclose.stop()
+                    self._model_switch_autoclose.deleteLater()
+                    self._model_switch_autoclose = None
+            except Exception:
+                pass
+
+        # Also show error InfoBar for clarity
+        try:
+            from qfluentwidgets import InfoBar, InfoBarPosition
+            if self.main_window:
+                InfoBar.error(
+                    title="Model Switch Failed",
+                    content=error_msg,
+                    orient=Qt.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP_RIGHT,
+                    duration=5000,
+                    parent=self.main_window,
+                )
+        except Exception:
+            pass
+
+        self._model_switch_in_progress = False
+        try:
+            self.model_loading_tip = None
+        except Exception:
+            pass
 
     def _on_recording_started(self):
         """Callback when recording starts."""
@@ -914,20 +1085,47 @@ class ScribeApp(QObject):
     def _smart_format_text(self, text: str) -> str:
         """Apply minimal, non-intrusive formatting.
 
-        IMPORTANT: Do not move the caret or send keystrokes here.
-        The previous implementation selected text (Shift+Home) and
-        pressed Right to deselect, which could shift the cursor and
-        cause pastes at the wrong position. We now avoid any cursor
-        interaction to guarantee paste-at-caret.
+        - Keep paste-at-caret guarantee (no caret movement or keystrokes).
+        - Light heuristics for readability: optional leading space, capitalization,
+          and tidy sentence-ending punctuation.
         """
         if not text:
             return text
 
         try:
-            # Keep text as-is to avoid side effects.
-            # If future simple rules are desired, they must not require
-            # reading editor context or sending keystrokes.
-            return text
+            cfg = getattr(self.config.config, 'post_processing', None)
+            add_leading_space = True if not cfg else getattr(cfg, 'add_leading_space', True)
+            capitalize_first = True if not cfg else getattr(cfg, 'capitalize_first', True)
+            ensure_period = False if not cfg else getattr(cfg, 'ensure_period', False)
+            add_trailing_space = False if not cfg else getattr(cfg, 'add_trailing_space', False)
+
+            s = text
+
+            # Normalize whitespace at ends only; preserve internal spacing
+            s = s.strip()
+
+            # Capitalize the first alphabetic character, respecting leading quotes/brackets
+            if capitalize_first:
+                import re
+                def _cap_first(m):
+                    prefix = m.group(1) or ''
+                    ch = m.group(2)
+                    return prefix + ch.upper()
+                s = re.sub(r"^([\(\[\{\'\"\u2018\u2019\u201C\u201D\s]*)([a-z])", _cap_first, s)
+
+            # Ensure sentence-ending punctuation if configured and text seems like a sentence
+            if ensure_period and s and s[-1] not in '.!?…':
+                s = s + '.'
+
+            # Leading space if we are likely appending to existing text
+            if add_leading_space and s and not s[0].isspace() and s[0] not in ',.;:!?)]}':
+                s = ' ' + s
+
+            # Optional trailing space to continue typing naturally
+            if add_trailing_space and (not s.endswith(' ') and (s.endswith('.') or s.endswith('!') or s.endswith('?'))):
+                s = s + ' '
+
+            return s
         except Exception:
             return text
 

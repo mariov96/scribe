@@ -13,6 +13,7 @@ from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass
 
 from .base import BasePlugin, CommandDefinition, PluginError
+from .loader import load_plugins
 
 
 logger = logging.getLogger(__name__)
@@ -271,63 +272,23 @@ class PluginRegistry:
             logger.error(f"Failed to reload plugin {plugin_name}: {e}")
             return False
 
-    @classmethod
-    def discover_plugins(cls, plugins_dir: Path) -> List[BasePlugin]:
+    def load_and_register_plugins(self, plugin_dirs: List[Path], plugin_configs: Dict[str, Any]):
         """
-        Discover plugins in a directory by convention.
-
-        Convention: Each plugin in its own subdirectory with plugin.py
-        Example: plugins/window_manager/plugin.py
+        Discover, load, and register all valid plugins.
 
         Args:
-            plugins_dir: Directory to search for plugins
-
-        Returns:
-            List of discovered plugin instances
-
-        Note:
-            This is a convenience method. For production, use explicit registration.
+            plugin_dirs: A list of directories to search for plugins.
+            plugin_configs: A dictionary of plugin-specific configurations.
         """
-        discovered = []
+        logger.info(f"Loading plugins from: {plugin_dirs}")
+        discovered_plugins = load_plugins(plugin_dirs)
 
-        if not plugins_dir.exists():
-            logger.warning(f"Plugins directory does not exist: {plugins_dir}")
-            return discovered
-
-        for plugin_path in plugins_dir.iterdir():
-            if not plugin_path.is_dir():
-                continue
-
-            plugin_file = plugin_path / "plugin.py"
-            if not plugin_file.exists():
-                continue
-
+        for plugin in discovered_plugins:
             try:
-                # Load module dynamically
-                spec = importlib.util.spec_from_file_location(
-                    f"scribe.plugins.{plugin_path.name}",
-                    plugin_file
-                )
-                if spec and spec.loader:
-                    module = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(module)
-
-                    # Find BasePlugin subclasses in module
-                    for item_name in dir(module):
-                        item = getattr(module, item_name)
-                        if (isinstance(item, type) and
-                            issubclass(item, BasePlugin) and
-                            item is not BasePlugin):
-
-                            # Instantiate plugin
-                            plugin_instance = item()
-                            discovered.append(plugin_instance)
-                            logger.info(f"Discovered plugin: {plugin_instance.name}")
-
-            except Exception as e:
-                logger.error(f"Failed to load plugin from {plugin_path}: {e}")
-
-        return discovered
+                config = plugin_configs.get(plugin.name, {})
+                self.register_plugin(plugin, config)
+            except PluginError as e:
+                logger.error(f"Failed to register plugin {plugin.name}: {e}")
 
     def __repr__(self) -> str:
         return f"<PluginRegistry plugins={len(self._plugins)} commands={len(self._commands)}>"

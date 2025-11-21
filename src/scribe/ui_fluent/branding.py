@@ -41,6 +41,11 @@ COLOR_TEXT_SECONDARY = "#A8A8A8"   # Secondary text
 COLOR_TEXT_TERTIARY = "#707070"    # Tertiary text/hints
 COLOR_TEXT_DISABLED = "#4A4A4A"    # Disabled text
 
+# Text Colors (Light Theme)
+COLOR_TEXT_PRIMARY_LIGHT = "#202020"     # Primary text
+COLOR_TEXT_SECONDARY_LIGHT = "#606060"   # Secondary text
+COLOR_TEXT_TERTIARY_LIGHT = "#909090"    # Tertiary text/hints
+
 # ============================================================================
 # TYPOGRAPHY SCALE - Clear hierarchy
 # ============================================================================
@@ -209,7 +214,7 @@ def get_contrasting_colors():
     Returns: (light_mode_color, dark_mode_color)"""
     from PyQt5.QtGui import QColor
     # Light mode: very dark text, Dark mode: very light text
-    return (QColor(20, 20, 20), QColor(240, 240, 240))
+    return (QColor(32, 32, 32), QColor(240, 240, 240))
 
 
 def get_secondary_colors():
@@ -217,7 +222,7 @@ def get_secondary_colors():
     Returns: (light_mode_color, dark_mode_color)"""
     from PyQt5.QtGui import QColor
     # Light mode: dark grey, Dark mode: light grey
-    return (QColor(80, 80, 80), QColor(180, 180, 180))
+    return (QColor(96, 96, 96), QColor(180, 180, 180))
 
 
 # Legacy functions for backward compatibility

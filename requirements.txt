@@ -17,7 +17,6 @@ pydantic_core>=2.16,<2.42
 # Modern GUI Framework - Fluent Design (PySide6 only, no PyQt5)
 PySide6>=6.4.2
 PySide6-Fluent-Widgets>=1.5.0
-qfluentwidgets>=1.5.0
 
 # Input Simulation & Automation
 pynput==1.7.6

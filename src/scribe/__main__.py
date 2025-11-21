@@ -39,6 +39,25 @@ logging.basicConfig(
     ]
 )
 
+# Reduce noisy Qt warnings (e.g., QPainter) without hiding important errors
+try:
+    from PyQt5.QtCore import qInstallMessageHandler, QtDebugMsg, QtWarningMsg, QtCriticalMsg, QtFatalMsg
+
+    def _qt_message_filter(msg_type, context, message):
+        # Filter repetitive paint warnings that flood logs on some systems
+        if message.startswith("QPainter::") or message.startswith("QWidgetEffectSourcePrivate::"):
+            return
+        # Forward other messages to stderr to keep visibility
+        try:
+            sys.stderr.write(message + "\n")
+        except Exception:
+            pass
+
+    qInstallMessageHandler(_qt_message_filter)
+except Exception:
+    # If PyQt not yet available or handler fails, continue without filtering
+    pass
+
 from scribe.__version__ import __version__, BUILD_TIMESTAMP
 from scribe.app import ScribeApp
 from scribe.core.single_instance import SingleInstanceManager

@@ -42,6 +42,32 @@ class AudioConfig(BaseModel):
         le=2000,
         description="Minimum recording duration in ms"
     )
+    noise_suppression: bool = Field(
+        default=True,
+        description="Apply basic noise gating before transcription"
+    )
+    vad_aggressiveness: int = Field(
+        default=2,
+        ge=0,
+        le=3,
+        description="Voice activity detection aggressiveness (0-3, higher = more strict)"
+    )
+    noise_gate_db: int = Field(
+        default=-40,
+        ge=-80,
+        le=-10,
+        description="Noise gate threshold in dBFS (samples below are attenuated)"
+    )
+    level_normalization: bool = Field(
+        default=False,
+        description="Normalize audio level to a target RMS before transcription"
+    )
+    target_level_dbfs: int = Field(
+        default=-20,
+        ge=-30,
+        le=-12,
+        description="Target RMS level in dBFS for normalization"
+    )
 
 
 class HotkeyConfig(BaseModel):

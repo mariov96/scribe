@@ -4,7 +4,7 @@ Scribe Configuration Management.
 
 from .config_manager import ConfigManager
 from .models import (
-    AppConfig,
+    ScribeConfig as AppConfig,
     AudioConfig,
     HotkeyConfig,
     WhisperConfig,
@@ -16,7 +16,7 @@ from .models import (
 
 __all__ = [
     "ConfigManager",
-    "AppConfig",
+    "ScribeConfig",
     "AudioConfig",
     "HotkeyConfig",
     "WhisperConfig",

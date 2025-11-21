@@ -7,6 +7,9 @@ Wraps faster-whisper with clean interface.
 import logging
 from dataclasses import dataclass
 from typing import Optional
+from pathlib import Path
+import numpy as np
+import soundfile as sf
 
 logger = logging.getLogger(__name__)
 
@@ -147,8 +150,6 @@ class TranscriptionEngine:
         try:
             import io
             import tempfile
-            import numpy as np
-            import soundfile as sf
             
             # Convert input to temporary WAV file
             with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_file:
@@ -164,6 +165,12 @@ class TranscriptionEngine:
                         temp_file.write(src.read())
                 audio_path = temp_file.name
             
+            # Optional preprocessing: VAD/noise gate
+            try:
+                audio_path = self._preprocess_audio(Path(audio_path))
+            except Exception as e:
+                logger.debug(f"Preprocess skipped/error: {e}")
+
             logger.info(f"🎤 Transcribing audio file: {audio_path}")
             
             # Optimized transcription parameters for speed
@@ -228,3 +235,90 @@ class TranscriptionEngine:
         except Exception as e:
             logger.error(f"Transcription failed: {e}", exc_info=True)
             return None
+
+    # --- Audio preprocessing (simple, fast, optional) ---
+    def _preprocess_audio(self, wav_path: Path) -> str:
+        """Apply a light noise gate and optional VAD-based trimming.
+
+        Returns the path to the processed file (may be the same as input).
+        """
+        cfg = getattr(self.config, 'config', None)
+        if not cfg or not getattr(cfg.audio, 'noise_suppression', True):
+            return str(wav_path)
+
+        try:
+            data, sr = sf.read(str(wav_path))
+            if data.ndim > 1:
+                data = np.mean(data, axis=1)
+            # Normalize to float32 [-1,1]
+            if data.dtype != np.float32:
+                data = data.astype(np.float32)
+            max_abs = np.max(np.abs(data)) + 1e-9
+            # dBFS threshold
+            gate_db = getattr(cfg.audio, 'noise_gate_db', -40)
+            thresh = max(1e-6, 10 ** (gate_db / 20.0))
+            # Compute short-time energy envelope
+            frame = max(256, int(sr * 0.02))  # ~20ms
+            hop = frame // 2
+            padded = np.pad(data, (0, (frame - len(data) % frame) % frame))
+            frames = padded.reshape(-1, frame)
+            rms = np.sqrt(np.mean(frames**2, axis=1))
+            # Build mask where energy is above threshold fraction of max
+            rms_norm = rms / (np.max(rms) + 1e-9)
+            mask = rms_norm >= thresh
+            # Expand mask back to samples
+            mask_samples = np.repeat(mask, frame)[:len(padded)]
+            gated = np.where(mask_samples[:len(data)], data, 0.0)
+
+            # Optional VAD trim using webrtcvad if available (mono, 16k recommended)
+            try:
+                import webrtcvad
+                vad_level = int(getattr(cfg.audio, 'vad_aggressiveness', 2))
+                vad = webrtcvad.Vad(vad_level)
+                # Ensure 16k mono 16-bit PCM chunks
+                import struct
+                if sr != 16000:
+                    # Lightweight resample to 16k using numpy (nearest)
+                    ratio = 16000 / float(sr)
+                    idx = (np.arange(int(len(gated) * ratio)) / ratio).astype(np.int64)
+                    gated = gated[idx]
+                    sr = 16000
+                pcm16 = np.clip(gated * 32767, -32768, 32767).astype(np.int16)
+                bytes_ = pcm16.tobytes()
+                win_ms = 30
+                step = int(16000 * win_ms / 1000) * 2  # bytes per 30ms
+                voiced_bits = []
+                for i in range(0, len(bytes_), step):
+                    chunk = bytes_[i:i+step]
+                    if len(chunk) < step:
+                        break
+                    voiced_bits.append(vad.is_speech(chunk, 16000))
+                # Keep only voiced frames
+                mask_vad = np.repeat(np.array(voiced_bits, dtype=bool), int(step/2))
+                mask_vad = mask_vad[:len(pcm16)]
+                pcm16 = np.where(mask_vad, pcm16, 0)
+                gated = pcm16.astype(np.float32) / 32768.0
+            except Exception:
+                pass
+
+            # Optional level normalization to target RMS dBFS
+            try:
+                if getattr(cfg.audio, 'level_normalization', False):
+                    target_db = float(getattr(cfg.audio, 'target_level_dbfs', -20))
+                    # Compute RMS
+                    rms = float(np.sqrt(np.mean(gated ** 2)) + 1e-9)
+                    rms_db = 20.0 * np.log10(max(rms, 1e-9))
+                    gain_db = target_db - rms_db
+                    gain = 10 ** (gain_db / 20.0)
+                    # Apply soft limiter to avoid clipping
+                    normalized = np.tanh(gated * gain * 2.0) / 2.0
+                    gated = normalized.astype(np.float32)
+            except Exception:
+                pass
+
+            out_path = wav_path.with_suffix('.pre.wav')
+            sf.write(str(out_path), gated, sr)
+            return str(out_path)
+        except Exception as e:
+            logger.debug(f"Audio preprocess failed: {e}")
+            return str(wav_path)

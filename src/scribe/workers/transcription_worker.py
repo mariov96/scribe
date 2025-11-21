@@ -26,13 +26,13 @@ class TranscriptionWorker(QThread):
     transcription_failed = Signal(str)  # Error message
     progress_update = Signal(str)  # Status update (optional, for future use)
     
-    def __init__(self, transcription_engine: TranscriptionEngine, audio_data: bytes):
+    def __init__(self, transcription_engine: TranscriptionEngine, audio_data):
         """
         Initialize worker.
         
         Args:
             transcription_engine: Engine to use for transcription
-            audio_data: Audio bytes to transcribe
+            audio_data: Audio data (bytes or numpy array) to transcribe
         """
         super().__init__()
         self.transcription_engine = transcription_engine

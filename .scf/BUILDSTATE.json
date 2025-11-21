@@ -1,0 +1,175 @@
+{
+  "schema_version": "1.0",
+  "meta": {
+    "repo": "scribe",
+    "created": "2025-11-20",
+    "last_updated": "2025-11-20",
+    "scf_version": "v2.0.0",
+    "maintained_by": "Mario"
+  },
+  "project": {
+    "name": "Scribe",
+    "type": "application",
+    "domain": "voice-automation",
+    "description": "Open-source voice-first automation platform with persistent memory and learning capabilities",
+    "scope": "Complete voice automation system: transcription, command execution, conversation memory, cross-device sync",
+    "target_audience": "Power users seeking local-first, extensible voice automation without corporate lock-in",
+    "structure_version": "v2-dotscf",
+    "expected_location": ".scf/"
+  },
+  "scf_metadata": {
+    "scf_hub": "/home/mario/projects/session-continuity-framework",
+    "hub_last_sync": "2025-11-20T00:00:00",
+    "spoke_id": "scribe",
+    "discovery_enabled": true
+  },
+  "active_voice": {
+    "current": "github-copilot",
+    "session_started": "2025-11-20T00:00:00",
+    "preferences": {
+      "style": "pragmatic",
+      "verbosity": "moderate",
+      "code_comments": "comprehensive"
+    }
+  },
+  "voice_context": {
+    "conversation_phase": "active_development",
+    "focus_areas": ["memory_system", "voice_commands", "plugin_architecture"],
+    "cache_metadata": {
+      "cache_id": null,
+      "provider": "gemini",
+      "model": "gemini-2.0-flash-exp",
+      "cached_token_count": 0,
+      "cost_savings_usd": 0.0,
+      "last_invalidation": null,
+      "queries_this_session": 0
+    }
+  },
+  "voice_sessions": [],
+  "architecture": {
+    "patterns": ["event-driven", "plugin-based", "microservices"],
+    "tech_stack": {
+      "primary_language": "python",
+      "version": "3.11+",
+      "frameworks": ["fastapi", "pytest"],
+      "key_libraries": ["whisper", "pydantic", "sqlalchemy"],
+      "platform": "windows"
+    },
+    "structure": {
+      "src/scribe": "Core application code",
+      "tests": "Test suite",
+      "docs": "Documentation",
+      "logs": "Application logs"
+    }
+  },
+  "goals": {
+    "immediate": [
+      "Stabilize voice transcription pipeline",
+      "Implement conversation memory search",
+      "Add plugin system foundation",
+      "Create value metrics dashboard"
+    ],
+    "short_term": [
+      "Cross-device sync implementation",
+      "Advanced voice command routing",
+      "Community plugin marketplace foundation",
+      "Performance optimization (sub-200ms latency)"
+    ],
+    "long_term": [
+      "Multi-language support",
+      "Mobile companion app",
+      "Enterprise deployment options",
+      "AI assistant integration (Claude, GPT, Gemini)"
+    ]
+  },
+  "current_phase": {
+    "name": "Alpha Development (v2.0.0-alpha)",
+    "focus": "Core feature completion and stability testing",
+    "blockers": [],
+    "recent_progress": [
+      "Implemented SQLite database for conversation memory",
+      "Established dynamic plugin loading system",
+      "Stabilized transcription pipeline with language setting fix",
+      "SCF v2.0 initialized for enhanced context management",
+      "Core transcription engine operational",
+      "Plugin architecture designed"
+    ]
+  },
+  "decisions": {
+    "high_impact": [
+      {
+        "id": "001",
+        "date": "2025-11-20",
+        "title": "Local-first architecture with optional cloud sync",
+        "rationale": "User privacy and data sovereignty are core values. Cloud sync is opt-in, not required",
+        "alternatives_considered": ["Cloud-only", "Hybrid-default"],
+        "impact": 10
+      },
+      {
+        "id": "002",
+        "date": "2025-11-20",
+        "title": "Plugin system for extensibility",
+        "rationale": "Community innovation is key to long-term success. Plugin architecture enables rapid feature addition without core bloat",
+        "alternatives_considered": ["Monolithic", "Microservices-only"],
+        "impact": 9
+      }
+    ],
+    "medium_impact": [],
+    "low_impact": []
+  },
+  "moments": [],
+  "tech_debt": [
+    {
+      "area": "Error handling",
+      "description": "Need comprehensive error recovery for voice pipeline failures",
+      "priority": "high",
+      "estimated_effort": "3 days"
+    }
+  ],
+  "next_steps": [
+    "Complete conversation memory SQLite schema",
+    "Implement voice command plugin loader",
+    "Add metrics collection for value dashboard",
+    "Write integration tests for transcription pipeline"
+  ],
+  "change_log": [
+    {
+      "date": "2025-11-20",
+      "version": "v2.0.0-alpha",
+      "desc": "SCF v2.0 initialization - established continuity framework for context preservation",
+      "synced_with": "BUILDSTATE.md",
+      "scf_version": "v2.0.0"
+    }
+  ],
+  "team": {
+    "roles": {
+      "lead_developer": ["Mario"],
+      "contributors": [],
+      "community": []
+    },
+    "communication": {
+      "primary_channel": "github-issues",
+      "documentation_location": "docs/"
+    }
+  },
+  "resources": {
+    "dependencies": [
+      {
+        "name": "Python",
+        "version": "3.11+",
+        "purpose": "Primary runtime"
+      },
+      {
+        "name": "Whisper",
+        "version": "latest",
+        "purpose": "Speech-to-text engine"
+      }
+    ],
+    "documentation": [
+      "README.md",
+      "DEPLOYMENT_GUIDE.md",
+      "CONTRIBUTING.md"
+    ],
+    "tools": []
+  }
+}

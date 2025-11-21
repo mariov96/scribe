@@ -171,7 +171,12 @@ class ScribeMainWindow(MSFluentWindow):
             transition: all 0.2s ease-in-out;
         }
         """
-        self.setStyleSheet(dark_background_style)
+        # Apply style to application to ensure it covers all windows
+        QApplication.instance().setStyleSheet(dark_background_style)
+        
+        # Enable High DPI scaling
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+        QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
 
         # Setup auto-refresh timer for home stats (every 30 seconds)
         self.stats_timer = QTimer(self)
@@ -533,20 +538,46 @@ class ScribeMainWindow(MSFluentWindow):
     
     def closeEvent(self, event):
         """Minimize to tray on close button, hold Shift to actually quit"""
-        from qfluentwidgets import MessageBox
         from PyQt5.QtCore import Qt as QtCore
+        from PyQt5.QtWidgets import QDialog, QVBoxLayout
+        from qfluentwidgets import TitleLabel, BodyLabel, PrimaryPushButton, PushButton, CardWidget
         
         # Check if Shift key is held
         modifiers = QApplication.keyboardModifiers()
         if modifiers == QtCore.ShiftModifier:
             # Shift held - actually quit with Fluent-styled dialog
-            title = 'Quit Scribe?'
-            content = 'Are you sure you want to quit Scribe?\n\n(Close without Shift to minimize to system tray)'
-            
-            dialog = MessageBox(title, content, self)
-            reply = dialog.exec_()
-            
-            if reply == MessageBox.StandardButton.Yes:
+            dlg = QDialog(self)
+            dlg.setWindowTitle("Quit Scribe?")
+            dlg.setModal(True)
+            dlg.setFixedWidth(480)
+            layout = QVBoxLayout(dlg)
+            layout.setContentsMargins(16, 16, 16, 16)
+            layout.setSpacing(12)
+
+            card = CardWidget()
+            card_layout = QVBoxLayout(card)
+            card_layout.setContentsMargins(20, 20, 20, 16)
+            card_layout.setSpacing(10)
+            title_lbl = TitleLabel("Quit Scribe?")
+            body_lbl = BodyLabel("Are you sure you want to quit Scribe?\n\nClose without holding Shift to minimize to system tray.")
+            card_layout.addWidget(title_lbl)
+            card_layout.addWidget(body_lbl)
+
+            # Buttons row
+            from PyQt5.QtWidgets import QHBoxLayout
+            btn_row = QHBoxLayout()
+            btn_row.addStretch()
+            quit_btn = PrimaryPushButton("Quit")
+            cancel_btn = PushButton("Cancel")
+            btn_row.addWidget(cancel_btn)
+            btn_row.addWidget(quit_btn)
+            card_layout.addLayout(btn_row)
+            layout.addWidget(card)
+
+            cancel_btn.clicked.connect(dlg.reject)
+            quit_btn.clicked.connect(dlg.accept)
+
+            if dlg.exec_() == QDialog.Accepted:
                 if hasattr(self, 'tray_icon'):
                     self.tray_icon.hide()
                 event.accept()

@@ -14,10 +14,12 @@ import logging
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.scribe.core.transcription_engine import TranscriptionEngine
+from src.scribe.core.transcription_engine import TranscriptionEngine, TranscriptionResult
 from src.scribe.core.audio_recorder import AudioRecorder
 from src.scribe.core.hotkey_manager import HotkeyManager
 from src.scribe.ui_fluent.components.device_selector import DeviceSelector
+from src.scribe.config.config_manager import ConfigManager
+from src.scribe.config.models import ScribeConfig, WhisperConfig
 
 class TestCoreFeatures(unittest.TestCase):
     """Test core functionality and known issues."""
@@ -51,6 +53,43 @@ class TestCoreFeatures(unittest.TestCase):
         self.assertFalse(recorder.is_recording)
         # Check if stream is deleted
         self.assertFalse(hasattr(recorder, 'stream'))
+
+    @patch('faster_whisper.WhisperModel')
+    def test_transcription_language_setting(self, mock_whisper_model):
+        """Test that the transcription engine respects the language setting."""
+        # Mock the config to specify Spanish
+        mock_config_manager = MagicMock(spec=ConfigManager)
+        mock_config_manager.config = ScribeConfig(
+            whisper=WhisperConfig(
+                model='tiny',
+                device='cpu',
+                compute_type='int8',
+                language='es'
+            )
+        )
+
+        # Mock the model's transcribe method to return a dummy result
+        mock_model_instance = mock_whisper_model.return_value
+        mock_model_instance.transcribe.return_value = ([], MagicMock(language='es'))
+
+        # Initialize the engine with the mocked config
+        engine = TranscriptionEngine(mock_config_manager)
+        engine.model = mock_model_instance
+
+        # Create some dummy audio data
+        dummy_audio = np.zeros(16000, dtype=np.float32)
+
+        # Act
+        result = engine.transcribe(dummy_audio)
+
+        # Assert
+        self.assertIsNotNone(result)
+        self.assertEqual(result.language, 'es')
+        
+        # Verify that transcribe was called with the correct language
+        mock_model_instance.transcribe.assert_called_once()
+        called_args, called_kwargs = mock_model_instance.transcribe.call_args
+        self.assertEqual(called_kwargs.get('language'), 'es')
 
 class TestWSLIntegration(unittest.TestCase):
     """Test WSL-specific functionality."""

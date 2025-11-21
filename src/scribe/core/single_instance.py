@@ -301,9 +301,10 @@ class SingleInstanceManager:
                 # Same version and build already running
                 build_str = self._format_build_time(old_build)
                 logger.warning(f"Scribe v{old_version} is already running (PID={old_pid}, build={old_build})")
-                print(f"\n⚠️  Scribe v{old_version} is already running")
-                print(f"   PID: {old_pid}")
-                print(f"   Build: {build_str}")
+                # Use a simple ASCII character that is supported by the default codec
+                print(f"\n[!] Scribe v{old_version} is already running")
+                print(f"    PID: {old_pid}")
+                print(f"    Build: {build_str}")
                 return False
     
     def release(self):
