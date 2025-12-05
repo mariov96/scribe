@@ -416,24 +416,58 @@ class SettingsPage(ScrollArea):
                 "pros": "Best accuracy, proper punctuation",
                 "cons": "Very slow on CPU, needs 3GB RAM",
                 "best_for": "Studio quality, GPU recommended"
+            },
+            "distil-medium.en": {
+                "size": "394 MB",
+                "speed": "⚡⚡⚡⚡ Ultra Fast",
+                "quality": "⭐⭐⭐⭐ Very Good",
+                "time_cpu": "~0.5-1s",
+                "time_gpu": "~0.2-0.4s",
+                "pros": "6x faster than standard, 49% smaller, English-optimized",
+                "cons": "English only, slightly less robust to noise",
+                "best_for": "Fast English transcription, real-time use"
+            },
+            "distil-large-v3": {
+                "size": "756 MB",
+                "speed": "⚡⚡ Very Fast",
+                "quality": "⭐⭐⭐⭐⭐ Excellent",
+                "time_cpu": "~1-2s",
+                "time_gpu": "~0.5-1s",
+                "pros": "6x faster than large, maintains 99% accuracy",
+                "cons": "English-focused, larger than distil-medium",
+                "best_for": "High-speed + high-accuracy balance"
             }
         }
         
-        # Model selection row
+        # Model selection row with active status
         model_row = QHBoxLayout()
         model_label = SubtitleLabel("Transcription Model")
         model_label.setStyleSheet("font-weight: bold;")
         model_row.addWidget(model_label)
+        model_row.addStretch()
         
-        # Model dropdown - WIDER for full model names
+        # Active model status chip - shows what's currently in use
+        self.active_model_chip = BodyLabel("● Active: Loading...")
+        self.active_model_chip.setStyleSheet("""
+            background-color: #2D5016;
+            color: #8BC34A;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        """)
+        model_row.addWidget(self.active_model_chip)
+        
+        # Model dropdown - shows available models with download status
         model_select_row = QHBoxLayout()
-        model_select_label = BodyLabel("Model:")
+        model_select_label = BodyLabel("Select Model:")
         self.model_combo = ComboBox()
-        models = ["tiny", "base", "small", "medium", "large-v2"]
+        # Populate models initially (will be refreshed with status in _load_from_config)
+        models = ["tiny", "base", "small", "medium", "large-v2", "distil-medium.en", "distil-large-v3"]
         for model in models:
-            display_name = model.replace("-", " ").title()
+            display_name = model.replace("-", " ").replace(".en", " (EN)").title()
             self.model_combo.addItem(display_name, userData=model)
-        self.model_combo.setFixedWidth(300)  # Increased from 200
+        self.model_combo.setFixedWidth(320)
         self.model_combo.currentTextChanged.connect(self._on_model_changed)
         
         model_select_row.addWidget(model_select_label)
@@ -452,31 +486,18 @@ class SettingsPage(ScrollArea):
             font-size: 11px;
         """)
         
-        # Download button
-        download_row = QHBoxLayout()
-        self.download_model_btn = PrimaryPushButton(FIF.DOWNLOAD, "Download Model")
-        self.download_model_btn.setFixedWidth(200)
-        self.download_model_btn.clicked.connect(self._download_model)
-        self.download_model_btn.setVisible(False)  # Hidden by default
-        download_row.addStretch()
-        download_row.addWidget(self.download_model_btn)
-        download_row.addStretch()
+        # Download status (shows if model is cached locally)
+        download_status_row = QHBoxLayout()
+        self.download_status_label = BodyLabel("")
+        self.download_status_label.setStyleSheet("color: #4CAF50; font-weight: bold; font-size: 11px;")
+        download_status_row.addStretch()
+        download_status_row.addWidget(self.download_status_label)
+        download_status_row.addStretch()
         
-        # Progress bar for download
-        self.download_progress = QProgressBar()
-        self.download_progress.setVisible(False)
-        self.download_progress.setStyleSheet("""
-            QProgressBar {
-                border: 1px solid #3F3F3F;
-                border-radius: 4px;
-                text-align: center;
-                background-color: #2B2B2B;
-            }
-            QProgressBar::chunk {
-                background-color: #4CAF50;
-                border-radius: 3px;
-            }
-        """)
+        # Note: Models are automatically downloaded by faster-whisper when selected
+        download_note = BodyLabel("💡 Models download automatically when first selected")
+        download_note.setStyleSheet("color: #888; font-size: 10px; font-style: italic;")
+        download_note.setWordWrap(True)
         
         # Separator
         separator = QWidget()
@@ -556,8 +577,8 @@ class SettingsPage(ScrollArea):
         layout.addLayout(model_row)
         layout.addLayout(model_select_row)
         layout.addWidget(self.model_info_label)
-        layout.addLayout(download_row)
-        layout.addWidget(self.download_progress)
+        layout.addLayout(download_status_row)
+        layout.addWidget(download_note)
         layout.addWidget(separator)
         layout.addWidget(device_section)
         layout.addLayout(device_row)
@@ -1033,6 +1054,11 @@ class SettingsPage(ScrollArea):
             self.compute_device_combo.setCurrentIndex(device_idx)
             self._on_device_changed()  # Update device info
         
+        # Update model dropdown items with download status
+        self._update_model_combo_items()
+        # Update active model status chip
+        self.update_active_model_status()
+        
         compute_idx = self.compute_type_combo.findData(config.whisper.compute_type)
         if compute_idx >= 0:
             self.compute_type_combo.setCurrentIndex(compute_idx)
@@ -1074,19 +1100,28 @@ class SettingsPage(ScrollArea):
         self._check_model_downloaded(model)
     
     def _check_model_downloaded(self, model):
-        """Check if model is already downloaded and show/hide download button."""
+        """Check if model is already downloaded and show/hide download button. Returns True if downloaded."""
         import os
         from pathlib import Path
         
-        # Check in models directory
-        model_dir = Path("models") / f"models--Systran--faster-whisper-{model}"
-        
-        if model_dir.exists() and any(model_dir.iterdir()):
-            self.download_model_btn.setVisible(False)
-            self.download_model_btn.setText("Model Downloaded")
+        # Check in models directory - handle Distil-Whisper naming
+        if model.startswith("distil-"):
+            model_check = model.replace("distil-", "distil-whisper/distil-")
+            model_dir = Path("models") / f"models--{model_check.replace('/', '--')}"
         else:
-            self.download_model_btn.setVisible(True)
-            self.download_model_btn.setText(f"Download {model.title()} Model")
+            model_dir = Path("models") / f"models--Systran--faster-whisper-{model}"
+        
+        is_downloaded = model_dir.exists() and any(model_dir.iterdir())
+        
+        if is_downloaded:
+            self.download_status_label.setText("✓ Cached Locally")
+            self.download_status_label.setVisible(True)
+        else:
+            self.download_status_label.setText("⬇ Will download on first use")
+            self.download_status_label.setStyleSheet("color: #FFA726; font-weight: bold; font-size: 11px;")
+            self.download_status_label.setVisible(True)
+        
+        return is_downloaded
     
     def _on_device_changed(self):
         """Update device information when compute device changes."""
@@ -1153,101 +1188,7 @@ class SettingsPage(ScrollArea):
                     duration=3000,
                     parent=self
                 )
-    
-    def _download_model(self):
-        """Download the selected Whisper model."""
-        model = self.model_combo.currentData()
-        
-        # Show confirmation dialog
-        title = f"Download {model.title()} Model?"
-        info = self.model_info[model]
-        content = f"""This will download the {model} model ({info['size']}).
 
-Quality: {info['quality']}
-Speed: {info['speed']}
-
-Continue?"""
-        
-        w = MessageBox(title, content, self)
-        if w.exec():
-            self._start_model_download(model)
-    
-    def _start_model_download(self, model):
-        """Start downloading model in background thread."""
-        self.download_model_btn.setEnabled(False)
-        self.download_model_btn.setText("⏳ Downloading...")
-        self.download_progress.setVisible(True)
-        self.download_progress.setValue(0)
-        
-        # Create worker thread
-        from PyQt5.QtCore import QThread, pyqtSignal
-        
-        class ModelDownloader(QThread):
-            progress = pyqtSignal(int, str)
-            finished = pyqtSignal(bool, str)
-            
-            def __init__(self, model_name):
-                super().__init__()
-                self.model_name = model_name
-            
-            def run(self):
-                try:
-                    from faster_whisper import WhisperModel
-                    
-                    self.progress.emit(10, "Connecting to HuggingFace...")
-                    
-                    # This will download the model if not present
-                    model = WhisperModel(
-                        self.model_name,
-                        device="cpu",
-                        compute_type="int8",
-                        download_root="models"
-                    )
-                    
-                    self.progress.emit(100, "Download complete!")
-                    self.finished.emit(True, f"Model {self.model_name} downloaded successfully!")
-                    
-                except Exception as e:
-                    self.finished.emit(False, f"Download failed: {str(e)}")
-        
-        self.downloader = ModelDownloader(model)
-        self.downloader.progress.connect(self._on_download_progress)
-        self.downloader.finished.connect(self._on_download_finished)
-        self.downloader.start()
-    
-    def _on_download_progress(self, value, message):
-        """Update download progress."""
-        self.download_progress.setValue(value)
-        self.download_model_btn.setText(f"⏳ {message}")
-    
-    def _on_download_finished(self, success, message):
-        """Handle download completion."""
-        self.download_progress.setVisible(False)
-        self.download_model_btn.setEnabled(True)
-        
-        if success:
-            InfoBar.success(
-                title="Download Complete",
-                content=message,
-                orient=Qt.Orientation.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.TOP_RIGHT,
-                duration=3000,
-                parent=self
-            )
-            # Update button state
-            self._check_model_downloaded(self.model_combo.currentData())
-        else:
-            InfoBar.error(
-                title="Download Failed",
-                content=message,
-                orient=Qt.Orientation.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.TOP_RIGHT,
-                duration=5000,
-                parent=self
-            )
-            self.download_model_btn.setText("🔄 Retry Download")
     
     def _save_config(self):
         """Save UI settings to ConfigManager."""
@@ -1443,6 +1384,9 @@ Continue?"""
             self.config_manager.save()
             logger.info("Whisper settings auto-saved")
             
+            # Update active model status immediately (before reload completes)
+            self.update_active_model_status()
+            
             # Reload transcription engine with new settings
             self.config_changed.emit("whisper")
         except Exception as e:
@@ -1606,4 +1550,61 @@ Continue?"""
         """)
         self.current_hotkey_label.setText(f"Current: {default_hotkey.upper()}")
         self._pending_hotkey = default_hotkey
+    
+    def _update_model_combo_items(self):
+        """Update model dropdown items to show download status inline."""
+        from pathlib import Path
+        
+        current_model = self.model_combo.currentData()
+        models = ["tiny", "base", "small", "medium", "large-v2", "distil-medium.en", "distil-large-v3"]
+        
+        # Rebuild dropdown with status indicators
+        self.model_combo.blockSignals(True)
+        self.model_combo.clear()
+        
+        for model in models:
+            # Check different naming patterns for Distil models
+            if model.startswith("distil-"):
+                model_check = model.replace("distil-", "distil-whisper/distil-")
+                model_dir = Path("models") / f"models--{model_check.replace('/', '--')}"
+            else:
+                model_dir = Path("models") / f"models--Systran--faster-whisper-{model}"
+            
+            is_downloaded = model_dir.exists() and any(model_dir.iterdir())
+            
+            display_name = model.replace("-", " ").replace(".en", " (EN)").title()
+            if is_downloaded:
+                display_name = f"✓ {display_name}"
+            else:
+                display_name = f"⬇ {display_name}"
+            
+            self.model_combo.addItem(display_name, userData=model)
+        
+        # Restore selection
+        model_idx = self.model_combo.findData(current_model)
+        if model_idx >= 0:
+            self.model_combo.setCurrentIndex(model_idx)
+        
+        self.model_combo.blockSignals(False)
+    
+    def update_active_model_status(self):
+        """Update the active model status chip showing what's currently loaded."""
+        try:
+            config = self.config_manager.config
+            model = config.whisper.model
+            device = config.whisper.device
+            compute_type = config.whisper.compute_type
+            
+            # Format device name
+            device_display = {"auto": "Auto", "cpu": "CPU", "cuda": "GPU"}.get(device, device.upper())
+            
+            # Format compute type
+            compute_display = compute_type.replace("float", "FP").replace("int8", "INT8")
+            
+            status_text = f"● Active: {model.replace('-', ' ').title()} · {device_display} · {compute_display}"
+            self.active_model_chip.setText(status_text)
+            
+        except Exception as e:
+            logger.error(f"Failed to update active model status: {e}")
+            self.active_model_chip.setText("● Active: Unknown")
 

@@ -78,6 +78,17 @@ class TranscriptionEngine:
         try:
             logger.info("Initializing Whisper transcription engine...")
             
+            # Detect best device (GPU or CPU)
+            device, compute_type = self._detect_best_device()
+            
+            # Log GPU status with detailed info
+            try:
+                from src.scribe.core.gpu_utils import log_gpu_status
+                log_gpu_status(device, compute_type)
+            except Exception as e:
+                logger.debug(f"Could not load GPU utils: {e}")
+                logger.info(f"Using device: {device} with compute type: {compute_type}")
+            
             # Import required packages
             try:
                 from faster_whisper import WhisperModel
@@ -88,32 +99,44 @@ class TranscriptionEngine:
             
             # Get model configuration
             model_size = self.config.config.whisper.model
-            device = self.config.config.whisper.device
-            compute_type = self.config.config.whisper.compute_type
+            config_device = self.config.config.whisper.device
+            config_compute = self.config.config.whisper.compute_type
             
-            # Smart device detection
-            if device == "auto" or compute_type == "auto":
-                detected_device, detected_compute = self._detect_best_device()
-                if device == "auto":
-                    device = detected_device
-                if compute_type == "auto":
-                    compute_type = detected_compute
+            # Determine final device settings
+            if config_device == "auto":
+                # Use detected device
+                device = device
+                compute_type = compute_type
+                if device == "cpu":
+                    logger.info("🔄 Auto-detection: GPU not available, using CPU")
+            else:
+                # Respect explicit config setting (user override)
+                device = config_device
+                compute_type = config_compute if config_compute != "auto" else ("int8" if config_device == "cpu" else "float16")
+                if device == "cpu":
+                    logger.info("💻 Using CPU mode (configured explicitly)")
+                else:
+                    logger.info(f"⚙️  Using configured device: {device}")
             
-            logger.info(f"🚀 Using device: {device} with compute type: {compute_type}")
             logger.info(f"📦 Loading Whisper model: {model_size}")
+            logger.info(f"   Device: {device}, Compute: {compute_type}")
+            logger.info(f"   Download root: models")
             
-            # Load model with optimized settings
-            self.model = WhisperModel(
-                model_size,
-                device=device,
-                compute_type=compute_type,
-                download_root="models",
-                num_workers=4,  # Parallel CPU threads for faster processing
-                cpu_threads=4   # Number of CPU threads per worker
-            )
-            
-            logger.info(f"✅ Whisper model '{model_size}' loaded successfully on {device}")
-            return True
+            try:
+                # Load model with optimized settings
+                self.model = WhisperModel(
+                    model_size,
+                    device=device,
+                    compute_type=compute_type,
+                    download_root="models",
+                    num_workers=4,  # Parallel CPU threads for faster processing
+                    cpu_threads=4   # Number of CPU threads per worker
+                )
+                logger.info(f"✅ Whisper model '{model_size}' loaded successfully on {device}")
+                return True
+            except Exception as model_error:
+                logger.error(f"❌ Failed to load Whisper model: {model_error}", exc_info=True)
+                raise
 
             # Real model initialization (commented out for now)
             # # Ensure legacy ConfigManager is initialized

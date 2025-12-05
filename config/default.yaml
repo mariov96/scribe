@@ -8,7 +8,7 @@ audio:
   min_duration: 800
   noise_suppression: false
   vad_aggressiveness: 1
-  noise_gate_db: -60
+  noise_gate_db: -50
   level_normalization: false
   target_level_dbfs: -20
 hotkey:
@@ -16,10 +16,10 @@ hotkey:
   recording_mode: voice_activity_detection
 whisper:
   use_api: false
-  model: base
-  language: en
+  model: distil-medium.en
+  language: null
   device: auto
-  compute_type: int8
+  compute_type: auto
   temperature: 0.0
   api_key: null
   api_base_url: https://api.openai.com/v1

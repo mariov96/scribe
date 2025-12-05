@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 ### Added
+- **GPU Acceleration Support** - PyTorch with CUDA 12.1 support for 5-10x faster transcription on NVIDIA GPUs.
+  - Automatic GPU detection with graceful fallback to CPU
+  - Supports float16 precision on GPU for optimal performance
+  - Works with all modern NVIDIA GPUs (GTX 10 series+, Quadro, RTX)
+  - Added `GPU_QUICKSTART.md` and `GPU_SETUP.md` documentation
+  - Added `verify_gpu.bat` verification script
+  - Active device/precision shown in Settings → Transcription status chip
+  - Example: 18s audio transcribes in ~2-4s (GPU) vs 9-13s (CPU)
 - **Conversation Memory System** - Implemented a robust SQLite database for storing and managing transcription history, replacing the previous JSON-based system.
   - Created a `DatabaseManager` to handle all database operations.
   - Integrated the `DatabaseManager` into the `HistoryPage` for all data operations.

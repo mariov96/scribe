@@ -134,12 +134,9 @@ class StatusPopup(QWidget):
                 border: none;
             }
         """)
-        # Make sure we're visible and force repaint
+        # Make sure we're visible (Qt will handle repainting automatically)
         if not self.isVisible():
             self._fade_in()
-        else:
-            self.update()
-            self.repaint()
 
     def show_complete(self):
         """Show completion status briefly"""
@@ -153,12 +150,9 @@ class StatusPopup(QWidget):
                 border: none;
             }
         """)
-        # Make sure we're visible and force repaint
+        # Make sure we're visible (Qt will handle repainting automatically)
         if not self.isVisible():
             self._fade_in()
-        else:
-            self.update()
-            self.repaint()
 
     def show_error(self, message="Error"):
         """Show error status"""

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional, Any
 from PySide6.QtCore import QObject, Signal
 
-from .models import ScribeConfig as AppConfig
+from .models import AppConfig
 
 
 class ConfigManager(QObject):

@@ -10,6 +10,18 @@ import logging
 from pathlib import Path
 from datetime import datetime
 
+# CRITICAL: Set environment variables BEFORE importing Qt or ctranslate2
+# Prevents DLL conflicts on Windows between Qt and Intel MKL (used by ctranslate2)
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"  # Allow Intel MKL to load even if already loaded
+os.environ["OMP_NUM_THREADS"] = "1"  # Prevent OpenMP threading conflicts
+
+# WORKAROUND: Pre-import ctranslate2 BEFORE Qt to avoid DLL loading conflicts on Windows
+# This ensures ctranslate2's DLLs are loaded before Qt's, preventing crashes
+try:
+    import ctranslate2  # Load CT2 DLLs first
+except ImportError:
+    pass  # Will be handled later if actually needed
+
 # Setup logging - both file and console with timestamp
 log_dir = Path.home() / ".scribe" / "logs"
 log_dir.mkdir(parents=True, exist_ok=True)

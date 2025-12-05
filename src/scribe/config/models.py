@@ -108,9 +108,13 @@ class WhisperConfig(BaseModel):
         default=False,
         description="Use OpenAI API instead of local model"
     )
-    model: Literal["tiny", "tiny.en", "base", "base.en", "small", "small.en", "medium", "medium.en", "large", "large-v1", "large-v2", "large-v3"] = Field(
+    model: Literal[
+        "tiny", "tiny.en", "base", "base.en", "small", "small.en", 
+        "medium", "medium.en", "large", "large-v1", "large-v2", "large-v3",
+        "distil-medium.en", "distil-large-v3"
+    ] = Field(
         default="base",
-        description="Whisper model size (larger = more accurate, slower)"
+        description="Whisper model size (larger = more accurate, slower). Distil models are 6x faster."
     )
     language: Optional[str] = Field(
         default=None,

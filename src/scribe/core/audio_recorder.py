@@ -173,6 +173,8 @@ class AudioRecorder(QObject):
             
             self.audio_data = []
             self.is_recording = True
+            self._recording_start_time = datetime.now()
+            self._max_recording_seconds = 120  # 2 minute safety limit
 
             logger.info(f"Starting recording (device={self.device_id}, rate={self.sample_rate}Hz)")
 
@@ -227,6 +229,14 @@ class AudioRecorder(QObject):
             
             # Store audio data
             if self.is_recording:
+                # Safety check: enforce maximum recording length
+                if hasattr(self, '_recording_start_time') and hasattr(self, '_max_recording_seconds'):
+                    elapsed = (datetime.now() - self._recording_start_time).total_seconds()
+                    if elapsed > self._max_recording_seconds:
+                        logger.warning(f"Recording exceeded {self._max_recording_seconds}s limit, auto-stopping")
+                        self.is_recording = False
+                        return
+                
                 chunk = indata.copy()
                 self.audio_data.append(chunk)
                 try:
@@ -281,14 +291,27 @@ class AudioRecorder(QObject):
                 self.recording_stopped.emit(b"")
                 return b""
             
-            audio_array = np.concatenate(self.audio_data, axis=0)
+            logger.debug(f"Concatenating {len(self.audio_data)} audio chunks...")
+            try:
+                audio_array = np.concatenate(self.audio_data, axis=0)
+            except Exception as e:
+                logger.error(f"Failed to concatenate audio chunks: {e}", exc_info=True)
+                self.recording_stopped.emit(b"")
+                return b""
+            
             duration = len(audio_array) / self.sample_rate
             
             logger.info(f"Recording stopped: {duration:.2f}s, {len(audio_array)} samples")
             
             # Save to temporary WAV file and read as bytes
             temp_path = Path("temp_recording.wav")
-            sf.write(temp_path, audio_array, self.sample_rate)
+            logger.debug(f"Writing audio to {temp_path}...")
+            try:
+                sf.write(temp_path, audio_array, self.sample_rate)
+            except Exception as e:
+                logger.error(f"Failed to write audio file: {e}", exc_info=True)
+                self.recording_stopped.emit(b"")
+                return b""
             
             with open(temp_path, 'rb') as f:
                 audio_bytes = f.read()
@@ -298,13 +321,20 @@ class AudioRecorder(QObject):
             # Clean up temp file
             temp_path.unlink(missing_ok=True)
             
+            # Clear audio data buffer to free memory
+            self.audio_data.clear()
+            logger.debug("Cleared audio data buffer")
+            
             self.recording_stopped.emit(audio_bytes)
             return audio_bytes
             
         except Exception as e:
             error_msg = f"Failed to stop recording: {e}"
-            logger.error(error_msg)
+            logger.error(error_msg, exc_info=True)
             self.error_occurred.emit(error_msg)
+            # Clear audio data even on error to prevent memory leak
+            if hasattr(self, 'audio_data'):
+                self.audio_data.clear()
             return b""
 
     def _save_debug_recording(self, temp_path: Path):

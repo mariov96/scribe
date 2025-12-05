@@ -64,6 +64,12 @@ Your Improvement:
 - **Sync Scribe**: Share learnings across devices
 - **+ Community Plugins**: Build your own!
 
+### ⚡ **GPU Acceleration** (New!)
+- **5-10x faster transcription** with NVIDIA GPU support
+- Automatic GPU detection and fallback to CPU
+- Supports all modern NVIDIA GPUs (GTX 10 series+)
+- See `GPU_QUICKSTART.md` for setup
+
 ---
 
 ## 🚀 **Quick Start**

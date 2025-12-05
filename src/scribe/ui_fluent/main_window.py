@@ -467,7 +467,7 @@ class ScribeMainWindow(MSFluentWindow):
         self.home_page = HomePage(self.value_calculator, self)
         self.insights_page = InsightsPage(self.value_calculator, self)
         self.history_page = HistoryPage(self)
-        self.plugins_page = PluginsPage(self.plugin_registry, self.config_manager, self)
+        self.plugins_page = PluginsPage(self.plugin_registry, self)
         self.settings_page = SettingsPage(self.config_manager, self)
         self.about_page = AboutPage(self)
         

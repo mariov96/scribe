@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover - optional dependency
     win32gui = None
     win32con = None
 
-from PyQt5.QtCore import QObject, QTimer, QThread, Qt, pyqtSignal as Signal
+from PyQt5.QtCore import QObject, QTimer, QThread, Qt, pyqtSignal as Signal, qInstallMessageHandler, QtMsgType
 from PyQt5.QtWidgets import QApplication, QDialog
 from PyQt5.QtGui import QIcon
 
@@ -123,6 +123,31 @@ class ScribeApp(QObject):
 
         # Install global exception handler to catch ALL unhandled exceptions
         sys.excepthook = self._global_exception_handler
+        
+        # Install Qt message handler to suppress cosmetic QFluentWidgets warnings
+        def qt_message_handler(msg_type, context, message):
+            # Suppress "Unknown property transition" warnings from QFluentWidgets animations
+            if "Unknown property transition" in message:
+                return
+            # Suppress QPainter threading warnings (StatusPopup updates from signals)
+            if "QPainter::" in message or "paint device" in message:
+                return
+            # Suppress StatusPopup focus warnings (expected behavior for non-focus widgets)
+            if "WindowDoesNotAcceptFocus" in message or "requestActivate()" in message:
+                return
+            # Let other messages through to normal logging
+            if msg_type == QtMsgType.QtDebugMsg:
+                logger.debug(f"Qt: {message}")
+            elif msg_type == QtMsgType.QtInfoMsg:
+                logger.info(f"Qt: {message}")
+            elif msg_type == QtMsgType.QtWarningMsg:
+                logger.warning(f"Qt: {message}")
+            elif msg_type == QtMsgType.QtCriticalMsg:
+                logger.error(f"Qt: {message}")
+            elif msg_type == QtMsgType.QtFatalMsg:
+                logger.critical(f"Qt: {message}")
+        
+        qInstallMessageHandler(qt_message_handler)
 
         # Set application icon
         import os
@@ -708,6 +733,14 @@ class ScribeApp(QObject):
                     duration=3000,
                     parent=self.main_window,
                 )
+                
+                # Update active model status chip in settings
+                try:
+                    settings_page = getattr(self.main_window, 'settingsInterface', None)
+                    if settings_page and hasattr(settings_page, 'update_active_model_status'):
+                        settings_page.update_active_model_status()
+                except Exception as e:
+                    logger.debug(f"Could not update active model status: {e}")
         except Exception:
             pass
 
